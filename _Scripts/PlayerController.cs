@@ -4,6 +4,7 @@ using System;
 public partial class PlayerController : Node3D
 {
 	[Export] float speed = 5;
+	[Export] Node3D mainCam;
 
 	Vector3 moveDirection;
 	
@@ -21,32 +22,39 @@ public partial class PlayerController : Node3D
 	
 	void GetInput()
 	{
+		Vector3 zDir = Vector3.Zero;
+		Vector3 xDir = Vector3.Zero;
 		if (Input.IsKeyPressed(Key.W))
 		{
-			moveDirection.Z = 1;
+			zDir = mainCam.GetGlobalBasis().Z.Normalized();
 		}
 		else if (Input.IsKeyPressed(Key.S))
 		{
-			moveDirection.Z = -1;
+			zDir = -mainCam.GetGlobalBasis().Z.Normalized();
 		}
 		else
 		{
-			moveDirection.Z = 0;
+			zDir = Vector3.Zero;
 		}
+		
 		if (Input.IsKeyPressed(Key.A))
 		{
-			moveDirection.X = 1;
+			xDir = mainCam.GetGlobalBasis().X.Normalized();
 		}
 		else if (Input.IsKeyPressed(Key.D))
 		{
-			moveDirection.X = -1;
+			xDir = -mainCam.GetGlobalBasis().X.Normalized();
 		}
 		else
 		{
-			moveDirection.X = 0;
+			xDir = Vector3.Zero;
 		}
 
+		moveDirection = xDir + zDir;
+		
+		moveDirection.Y = 0;
 		moveDirection.Normalized();
+		GD.Print(moveDirection);
 	}
 
 	void Move(double delta)
