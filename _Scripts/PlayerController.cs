@@ -3,10 +3,13 @@ using System;
 
 public partial class PlayerController : Node3D
 {
-	[Export] float speed = 5;
-	[Export] Node3D mainCam;
+	[Export] public PlayerStats playerStats;
+	[Export(PropertyHint.Range, "0,1,")] float _PlayersprintAmount;
+	[Export] Node3D _mainCam;
 
-	Vector3 moveDirection;
+	[Export] public PlayerActions PlayerAction;
+
+	Vector3 _moveDirection;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -26,11 +29,11 @@ public partial class PlayerController : Node3D
 		Vector3 xDir = Vector3.Zero;
 		if (Input.IsKeyPressed(Key.W))
 		{
-			zDir = mainCam.GetGlobalBasis().Z.Normalized();
+			zDir = _mainCam.GetGlobalBasis().Z.Normalized();
 		}
 		else if (Input.IsKeyPressed(Key.S))
 		{
-			zDir = -mainCam.GetGlobalBasis().Z.Normalized();
+			zDir = -_mainCam.GetGlobalBasis().Z.Normalized();
 		}
 		else
 		{
@@ -39,26 +42,44 @@ public partial class PlayerController : Node3D
 		
 		if (Input.IsKeyPressed(Key.A))
 		{
-			xDir = mainCam.GetGlobalBasis().X.Normalized();
+			xDir = _mainCam.GetGlobalBasis().X.Normalized();
 		}
 		else if (Input.IsKeyPressed(Key.D))
 		{
-			xDir = -mainCam.GetGlobalBasis().X.Normalized();
+			xDir = -_mainCam.GetGlobalBasis().X.Normalized();
 		}
 		else
 		{
 			xDir = Vector3.Zero;
 		}
 
-		moveDirection = xDir + zDir;
+		_moveDirection = xDir + zDir;
 		
-		moveDirection.Y = 0;
-		moveDirection.Normalized();
-		GD.Print(moveDirection);
+		_moveDirection.Y = 0;
 	}
 
 	void Move(double delta)
 	{
-		Translate(moveDirection * (float)delta * speed);
+		_moveDirection.Normalized();
+		Translate(_moveDirection * (float)delta * playerStats.Speed);
 	}
+
+	public void DoAction(PlayerActions action)
+	{
+		
+	}
+}
+
+public enum PlayerActions
+{
+	Sprint,
+	SpinMove,
+	StiffArm,
+	Jump,
+	Tackle,
+	Block,
+	Dive,
+	Catch,
+	Throw,
+	Kick
 }
