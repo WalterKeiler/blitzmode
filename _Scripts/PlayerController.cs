@@ -6,6 +6,7 @@ public partial class PlayerController : Node3D
 	[Export] public PlayerStats playerStats;
 	[Export(PropertyHint.Range, "0,1,")] float _PlayersprintAmount = 1;
 	[Export] Node3D _mainCam;
+	[Export] InputManager _inputManager;
 	[Export] public bool isplayerControlled;
 	[Export] public bool isOffence;
 	[Export] public PlayerActions PlayerAction;
@@ -27,33 +28,10 @@ public partial class PlayerController : Node3D
 	
 	void GetInput()
 	{
-		Vector3 zDir = Vector3.Zero;
+
+		Vector3 inputDir = _inputManager.GetDirectionalInput();
 		Vector3 xDir = Vector3.Zero;
-		if (Input.IsKeyPressed(Key.W))
-		{
-			zDir = _mainCam.GetGlobalBasis().Z.Normalized();
-		}
-		else if (Input.IsKeyPressed(Key.S))
-		{
-			zDir = -_mainCam.GetGlobalBasis().Z.Normalized();
-		}
-		else
-		{
-			zDir = Vector3.Zero;
-		}
-		
-		if (Input.IsKeyPressed(Key.A))
-		{
-			xDir = _mainCam.GetGlobalBasis().X.Normalized();
-		}
-		else if (Input.IsKeyPressed(Key.D))
-		{
-			xDir = -_mainCam.GetGlobalBasis().X.Normalized();
-		}
-		else
-		{
-			xDir = Vector3.Zero;
-		}
+		Vector3 zDir = Vector3.Zero;
 		
 		if (Input.IsKeyPressed(Key.Shift))
 		{
@@ -63,7 +41,8 @@ public partial class PlayerController : Node3D
 		{
 			CancelAction(PlayerActions.Sprint);
 		}
-
+		zDir = inputDir.Z * _mainCam.GetGlobalBasis().Z.Normalized();
+		xDir = inputDir.X * _mainCam.GetGlobalBasis().X.Normalized();
 		_moveDirection = xDir + zDir;
 		
 		_moveDirection.Y = 0;

@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://dkddmtmu5c3pb"]
+[gd_scene load_steps=9 format=3 uid="uid://dkddmtmu5c3pb"]
 
 [ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="1_6652p"]
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Stats/Players/Quarterback.tres" id="2_23cto"]
+[ext_resource type="PackedScene" uid="uid://cl04xbkb6lkf4" path="res://_Scenes/InputManager.tscn" id="3_3702o"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -46,7 +47,10 @@ skeleton = NodePath("../..")
 transform = Transform3D(1, 0, 0, 0, 1, -3.55271e-15, 0, 3.55271e-15, 1, 0, 0, 0)
 shape = SubResource("WorldBoundaryShape3D_0xxls")
 
-[node name="Player" parent="." node_paths=PackedStringArray("_mainCam") instance=ExtResource("1_6652p")]
+[node name="Player" parent="." node_paths=PackedStringArray("_mainCam", "_inputManager") instance=ExtResource("1_6652p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0423708, 2.80241, -0.0428658)
 playerStats = ExtResource("2_23cto")
 _mainCam = NodePath("../CameraController")
+_inputManager = NodePath("../InputManagerInstance")
+
+[node name="InputManagerInstance" parent="." instance=ExtResource("3_3702o")]
