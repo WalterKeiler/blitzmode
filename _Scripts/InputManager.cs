@@ -38,10 +38,8 @@ public partial class InputManager : Node
 	
 	public Vector3 GetDirectionalInput()
 	{
-
 		Vector2 input = Input.GetVector("move_right", "move_left", "move_back", "move_forward");
 		
-
 		return new Vector3(input.X,0,input.Y);
 	}
 }
