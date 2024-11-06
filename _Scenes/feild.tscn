@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="1_6652p"]
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="2_23cto"]
 [ext_resource type="PackedScene" uid="uid://cl04xbkb6lkf4" path="res://_Scenes/InputManager.tscn" id="3_3702o"]
+[ext_resource type="Resource" uid="uid://tcnum2x5ch5a" path="res://Resources/Input/Sprint.tres" id="4_wsvc8"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -20,8 +21,6 @@ glow_enabled = true
 [sub_resource type="QuadMesh" id="QuadMesh_7u6ye"]
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_0xxls"]
-
-[sub_resource type="InputEventKey" id="InputEventKey_x2rul"]
 
 [node name="Feild" type="Node3D"]
 
@@ -56,4 +55,4 @@ _mainCam = NodePath("../CameraController")
 _inputManager = NodePath("../InputManagerInstance")
 
 [node name="InputManagerInstance" parent="." instance=ExtResource("3_3702o")]
-_inputCombos = Array[Resource]([SubResource("InputEventKey_x2rul")])
+_inputCombos = Array[Resource]([ExtResource("4_wsvc8")])
