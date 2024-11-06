@@ -3,6 +3,7 @@ using System;
 
 public partial class InputCombo : Resource
 {
-    [Export] public InputEvent[] key;
-    [Export] public int pressCount;
+    [Export] public PlayerActions Action;
+    [Export] public string[] InputActions;
+    [Export] public int PressCount;
 }

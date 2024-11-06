@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public partial class PlayerController : Node3D
 {
@@ -9,7 +10,7 @@ public partial class PlayerController : Node3D
 	[Export] InputManager _inputManager;
 	[Export] public bool isplayerControlled;
 	[Export] public bool isOffence;
-	[Export] public PlayerActions PlayerAction;
+	public List<PlayerActions> PlayerAction;
 
 	Vector3 _moveDirection;
 	float _sprintMultiplier;
@@ -17,6 +18,9 @@ public partial class PlayerController : Node3D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		PlayerAction = new List<PlayerActions>();
+		_inputManager.InputPressAction += DoAction;
+		_inputManager.InputReleaseAction += CancelAction;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -33,14 +37,14 @@ public partial class PlayerController : Node3D
 		Vector3 xDir = Vector3.Zero;
 		Vector3 zDir = Vector3.Zero;
 		
-		if (Input.IsKeyPressed(Key.Shift))
-		{
-			DoAction(PlayerActions.Sprint);
-		}
-		else
-		{
-			CancelAction(PlayerActions.Sprint);
-		}
+		// if (Input.IsKeyPressed(Key.Shift))
+		// {
+		// 	DoAction(PlayerActions.Sprint);
+		// }
+		// else
+		// {
+		// 	CancelAction(PlayerActions.Sprint);
+		// }
 		zDir = inputDir.Z * _mainCam.GetGlobalBasis().Z.Normalized();
 		xDir = inputDir.X * _mainCam.GetGlobalBasis().X.Normalized();
 		_moveDirection = xDir + zDir;
@@ -56,6 +60,9 @@ public partial class PlayerController : Node3D
 
 	public void DoAction(PlayerActions action)
 	{
+		GD.Print("Started: " + action);
+		if(!PlayerAction.Contains(action))
+			PlayerAction.Add(action);
 		switch (action)
 		{
 			case PlayerActions.Sprint : 
@@ -65,6 +72,9 @@ public partial class PlayerController : Node3D
 	}
 	public void CancelAction(PlayerActions action)
 	{
+		GD.Print("Stopped: " + action);
+		if (PlayerAction.Contains(action))
+			PlayerAction.Remove(action);
 		switch (action)
 		{
 			case PlayerActions.Sprint : 

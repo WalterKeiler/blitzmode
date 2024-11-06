@@ -6,7 +6,8 @@ public partial class InputManager : Node
 	[Export] public int PlayerID;
 	[Export] InputCombo[] _inputCombos;
 	
-	public event Action<string> InputAction;
+	public event Action<PlayerActions> InputPressAction;
+	public event Action<PlayerActions> InputReleaseAction;
 	public override void _Ready()
 	{
 	}
@@ -21,43 +22,26 @@ public partial class InputManager : Node
 	{
 		for (int i = 0; i < _inputCombos.Length; i++)
 		{
-			for (int j = 0; j < _inputCombos[i].key.Length; j++)
-				if (_inputCombos[i].key[j].IsPressed())
+			for (int j = 0; j < _inputCombos[i].InputActions.Length; j++)
+			{
+				if (Input.IsActionJustPressed(_inputCombos[i].InputActions[j]))
 				{
-					InputAction?.Invoke(_inputCombos[i].ResourceName);
+					InputPressAction?.Invoke(_inputCombos[i].Action);
 				}
+				if (Input.IsActionJustReleased(_inputCombos[i].InputActions[j]))
+				{
+					InputReleaseAction?.Invoke(_inputCombos[i].Action);
+				}
+			}
 		}
 	}
 	
 	public Vector3 GetDirectionalInput()
 	{
-		Vector3 inputDir = new Vector3();
-		if (Input.IsKeyPressed(Key.W))
-		{
-			inputDir.Z = 1;
-		}
-		else if (Input.IsKeyPressed(Key.S))
-		{
-			inputDir.Z = -1;
-		}
-		else
-		{
-			inputDir.Z = 0;
-		}
-		
-		if (Input.IsKeyPressed(Key.A))
-		{
-			inputDir.X = 1;
-		}
-		else if (Input.IsKeyPressed(Key.D))
-		{
-			inputDir.X = -1;
-		}
-		else
-		{
-			inputDir.X = 0;
-		}
 
-		return inputDir;
+		Vector2 input = Input.GetVector("move_right", "move_left", "move_back", "move_forward");
+		
+
+		return new Vector3(input.X,0,input.Y);
 	}
 }
