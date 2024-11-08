@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://c4884nm7e6oit"]
+[gd_scene load_steps=5 format=3 uid="uid://c4884nm7e6oit"]
 
 [ext_resource type="Script" path="res://_Scripts/PlayerController.cs" id="1_areti"]
+[ext_resource type="Material" uid="uid://k4x7eqdcrbjq" path="res://Materials/TestMat.tres" id="2_tyapl"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ljm3w"]
 
@@ -8,11 +9,14 @@
 
 [node name="Player" type="Node3D"]
 script = ExtResource("1_areti")
+mat = ExtResource("2_tyapl")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
+material_override = ExtResource("2_tyapl")
 mesh = SubResource("CapsuleMesh_ljm3w")
+surface_material_override/0 = ExtResource("2_tyapl")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
 shape = SubResource("CapsuleShape3D_p1g61")

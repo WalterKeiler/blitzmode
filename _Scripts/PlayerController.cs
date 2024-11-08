@@ -10,6 +10,7 @@ public partial class PlayerController : Node3D
 	[Export] InputManager _inputManager;
 	[Export] public bool isplayerControlled;
 	[Export] public bool isOffence;
+	[Export] BaseMaterial3D mat;
 	public List<PlayerActions> PlayerAction;
 
 	Vector3 _moveDirection;
@@ -37,14 +38,6 @@ public partial class PlayerController : Node3D
 		Vector3 xDir = Vector3.Zero;
 		Vector3 zDir = Vector3.Zero;
 		
-		// if (Input.IsKeyPressed(Key.Shift))
-		// {
-		// 	DoAction(PlayerActions.Sprint);
-		// }
-		// else
-		// {
-		// 	CancelAction(PlayerActions.Sprint);
-		// }
 		zDir = inputDir.Z * _mainCam.GetGlobalBasis().Z.Normalized();
 		xDir = inputDir.X * _mainCam.GetGlobalBasis().X.Normalized();
 		_moveDirection = xDir + zDir;
@@ -67,6 +60,9 @@ public partial class PlayerController : Node3D
 		{
 			case PlayerActions.Sprint : 
 				Sprint();
+				break;
+			case PlayerActions.SpinMove :
+				SpinMove();
 				break;
 		}
 	}
@@ -91,6 +87,12 @@ public partial class PlayerController : Node3D
 			return;
 		}
 		_sprintMultiplier = playerStats.Agility;
+	}
+	async void SpinMove()
+	{
+		mat.SetAlbedo(Colors.Red);
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		mat.SetAlbedo(Colors.White);
 	}
 }
 

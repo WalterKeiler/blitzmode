@@ -6,4 +6,4 @@
 script = ExtResource("1_836hm")
 Action = 0
 InputActions = PackedStringArray("Sprint")
-PressCount = 0
+PressCount = 1
