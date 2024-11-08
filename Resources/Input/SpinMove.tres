@@ -7,3 +7,5 @@ script = ExtResource("1_0msh6")
 Action = 1
 InputActions = PackedStringArray("Sprint")
 PressCount = 2
+isOffence = true
+isUniversal = true

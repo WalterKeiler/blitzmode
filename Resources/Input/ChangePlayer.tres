@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://dq1abbnm8n2c2"]
+
+[ext_resource type="Script" path="res://_Scripts/InputCombo.cs" id="1_5rofe"]
+
+[resource]
+script = ExtResource("1_5rofe")
+Action = 8
+InputActions = PackedStringArray("Pass-ChangePlayer")
+PressCount = 1
+isOffence = false
+isUniversal = false

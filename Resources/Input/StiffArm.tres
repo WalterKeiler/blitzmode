@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://ds41fgws8hnvb"]
+
+[ext_resource type="Script" path="res://_Scripts/InputCombo.cs" id="1_1g57k"]
+
+[resource]
+script = ExtResource("1_1g57k")
+Action = 2
+InputActions = PackedStringArray("Action_Button_4")
+PressCount = 1
+isOffence = true
+isUniversal = false

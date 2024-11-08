@@ -107,5 +107,6 @@ public enum PlayerActions
 	Dive,
 	Catch,
 	Throw,
-	Kick
+	Kick,
+	ChangePlayer
 }

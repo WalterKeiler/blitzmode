@@ -8,6 +8,7 @@ public partial class InputManager : Node
 	[Export] public int PlayerID;
 	[Export] InputCombo[] _inputCombos;
 	[Export] float _inputBuffer;
+	[Export] public bool isOffence;
 
 	List<InputCombo> activeInputs;
 	double deltaTime;
@@ -32,7 +33,7 @@ public partial class InputManager : Node
 		{
 			for (int j = 0; j < _inputCombos[i].InputActions.Length; j++)
 			{
-				if (Input.IsActionJustPressed(_inputCombos[i].InputActions[j]))
+				if (Input.IsActionJustPressed(_inputCombos[i].InputActions[j]) && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence))
 				{
 					if(_inputCombos[i].PressCount > 1)
 					{
@@ -51,7 +52,7 @@ public partial class InputManager : Node
 						_inputCombos[i].isActive = true;
 					}
 				}
-				if (Input.IsActionJustReleased(_inputCombos[i].InputActions[j]))
+				if (Input.IsActionJustReleased(_inputCombos[i].InputActions[j]) && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence))
 				{
 					WaitForMoreInput(_inputCombos[i]);
 					if(_inputCombos[i].isActive)
