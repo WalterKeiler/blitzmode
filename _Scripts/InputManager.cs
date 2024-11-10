@@ -43,7 +43,6 @@ public partial class InputManager : Node
 						{
 							InputPressAction?.Invoke(_inputCombos[i].Action);
 							_inputCombos[i].isActive = true;
-							GD.Print("Spin!!!");
 						}
 					}
 					else

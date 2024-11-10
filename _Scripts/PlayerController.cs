@@ -64,6 +64,24 @@ public partial class PlayerController : Node3D
 			case PlayerActions.SpinMove :
 				SpinMove();
 				break;
+			case PlayerActions.Jump :
+				Jump();
+				break;
+			case PlayerActions.StiffArm :
+				StiffArm();
+				break;
+			case PlayerActions.Tackle :
+				Tackle();
+				break;
+			case PlayerActions.Dive :
+				Dive();
+				break;
+			case PlayerActions.Throw :
+				ThrowBall();
+				break;
+			case PlayerActions.ChangePlayer :
+				ChangePlayer();
+				break;
 		}
 	}
 	public void CancelAction(PlayerActions action)
@@ -91,6 +109,42 @@ public partial class PlayerController : Node3D
 	async void SpinMove()
 	{
 		mat.SetAlbedo(Colors.Red);
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		mat.SetAlbedo(Colors.White);
+	}
+	async void Jump()
+	{
+		mat.SetAlbedo(Colors.Blue);
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		mat.SetAlbedo(Colors.White);
+	}
+	async void StiffArm()
+	{
+		mat.SetAlbedo(Colors.Orange);
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		mat.SetAlbedo(Colors.White);
+	}
+	async void Tackle()
+	{
+		mat.SetAlbedo(Colors.Green);
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		mat.SetAlbedo(Colors.White);
+	}
+	async void Dive()
+	{
+		mat.SetAlbedo(Colors.Teal);
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		mat.SetAlbedo(Colors.White);
+	}
+	async void ThrowBall()
+	{
+		mat.SetAlbedo(Colors.Yellow);
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		mat.SetAlbedo(Colors.White);
+	}
+	async void ChangePlayer()
+	{
+		mat.SetAlbedo(Colors.BlanchedAlmond);
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		mat.SetAlbedo(Colors.White);
 	}

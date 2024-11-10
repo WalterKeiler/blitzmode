@@ -4,8 +4,8 @@
 
 [resource]
 script = ExtResource("1_42tly")
-Action = 4
-InputActions = PackedStringArray("Jump-Tackle")
+Action = 6
+InputActions = PackedStringArray("StiffArm-Dive")
 PressCount = 1
 isOffence = false
 isUniversal = false

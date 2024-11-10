@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_1g57k")
 Action = 2
-InputActions = PackedStringArray("Action_Button_4")
+InputActions = PackedStringArray("StiffArm-Dive")
 PressCount = 1
 isOffence = true
 isUniversal = false

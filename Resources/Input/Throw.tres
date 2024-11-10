@@ -4,8 +4,8 @@
 
 [resource]
 script = ExtResource("1_ar332")
-Action = 6
-InputActions = PackedStringArray("StiffArm-Dive")
+Action = 8
+InputActions = PackedStringArray("Pass-ChangePlayer")
 PressCount = 1
-isOffence = false
+isOffence = true
 isUniversal = false

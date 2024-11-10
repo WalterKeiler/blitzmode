@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_5rofe")
-Action = 8
+Action = 10
 InputActions = PackedStringArray("Pass-ChangePlayer")
 PressCount = 1
 isOffence = false
