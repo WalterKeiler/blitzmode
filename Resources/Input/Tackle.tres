@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_0e0at")
 Action = 4
-InputActions = PackedStringArray("Action_Button_2")
+InputActions = PackedStringArray("Jump-Tackle")
 PressCount = 1
 isOffence = false
 isUniversal = false

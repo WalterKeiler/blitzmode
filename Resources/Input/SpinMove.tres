@@ -8,4 +8,4 @@ Action = 1
 InputActions = PackedStringArray("Sprint")
 PressCount = 2
 isOffence = true
-isUniversal = true
+isUniversal = false

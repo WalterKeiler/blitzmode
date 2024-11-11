@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dkddmtmu5c3pb"]
+[gd_scene load_steps=17 format=3 uid="uid://dkddmtmu5c3pb"]
 
 [ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="1_6652p"]
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="2_23cto"]
@@ -10,6 +10,7 @@
 [ext_resource type="Resource" uid="uid://bsm7re1plbrl1" path="res://Resources/Input/Jump.tres" id="8_aedpu"]
 [ext_resource type="Resource" uid="uid://doyaqfc8yadf4" path="res://Resources/Input/Tackle.tres" id="9_2n3my"]
 [ext_resource type="Resource" uid="uid://bx2h0hskxnnli" path="res://Resources/Input/Throw.tres" id="10_dgujd"]
+[ext_resource type="Resource" uid="uid://ds41fgws8hnvb" path="res://Resources/Input/StiffArm.tres" id="11_gk4p0"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -61,5 +62,6 @@ _mainCam = NodePath("../CameraController")
 _inputManager = NodePath("../InputManagerInstance")
 
 [node name="InputManagerInstance" parent="." instance=ExtResource("3_3702o")]
-_inputCombos = Array[Resource]([ExtResource("4_wsvc8"), ExtResource("5_2ysm3"), ExtResource("6_ropgt"), ExtResource("7_v0ma5"), ExtResource("8_aedpu"), ExtResource("9_2n3my"), ExtResource("10_dgujd")])
-_inputBuffer = 0.25
+_inputCombos = Array[Resource]([ExtResource("4_wsvc8"), ExtResource("5_2ysm3"), ExtResource("6_ropgt"), ExtResource("7_v0ma5"), ExtResource("8_aedpu"), ExtResource("9_2n3my"), ExtResource("10_dgujd"), ExtResource("11_gk4p0")])
+_inputBuffer = 0.1
+isOffence = true
