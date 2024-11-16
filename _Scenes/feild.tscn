@@ -1,6 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://dkddmtmu5c3pb"]
+[gd_scene load_steps=19 format=3 uid="uid://dkddmtmu5c3pb"]
 
 [ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="1_6652p"]
+[ext_resource type="Shader" path="res://Shaders/feild.gdshader" id="1_xwgkm"]
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="2_23cto"]
 [ext_resource type="PackedScene" uid="uid://cl04xbkb6lkf4" path="res://_Scenes/InputManager.tscn" id="3_3702o"]
 [ext_resource type="Resource" uid="uid://tcnum2x5ch5a" path="res://Resources/Input/Sprint.tres" id="4_wsvc8"]
@@ -25,7 +26,14 @@ sky = SubResource("Sky_jlrv8")
 tonemap_mode = 2
 glow_enabled = true
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_60eqa"]
+render_priority = 0
+shader = ExtResource("1_xwgkm")
+shader_parameter/lineColor = Color(1, 1, 1, 1)
+shader_parameter/lineWidth = 0.1
+
 [sub_resource type="QuadMesh" id="QuadMesh_7u6ye"]
+material = SubResource("ShaderMaterial_60eqa")
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_0xxls"]
 
