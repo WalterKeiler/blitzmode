@@ -29,7 +29,10 @@ glow_enabled = true
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_60eqa"]
 render_priority = 0
 shader = ExtResource("1_xwgkm")
+shader_parameter/feildColor = Color(0, 0.243137, 0, 1)
 shader_parameter/lineColor = Color(1, 1, 1, 1)
+shader_parameter/yardsLenth = 100
+shader_parameter/yardsWidth = 53
 shader_parameter/lineWidth = 0.1
 
 [sub_resource type="QuadMesh" id="QuadMesh_7u6ye"]
@@ -55,7 +58,7 @@ transform = Transform3D(-1, -6.18172e-08, 6.18172e-08, 0, 0.707107, 0.707107, -8
 transform = Transform3D(2, 0, 0, 0, 2, 7.10543e-15, 0, -7.10543e-15, 2, 0, 0, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
-transform = Transform3D(20, 0, 0, 0, -8.74228e-07, 20, 0, -20, -8.74228e-07, 0, 0, 0)
+transform = Transform3D(100, 0, 0, 0, -2.62268e-06, 0.817, 0, -60, -3.57122e-08, 0, 0, 0)
 mesh = SubResource("QuadMesh_7u6ye")
 skeleton = NodePath("../..")
 

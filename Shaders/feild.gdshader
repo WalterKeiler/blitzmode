@@ -1,6 +1,9 @@
 shader_type spatial;
 
+uniform vec3 feildColor : source_color;
 uniform vec3 lineColor : source_color;
+uniform int yardsLenth;
+uniform int yardsWidth;
 uniform float lineWidth;
 
 varying vec2 worldPos;
@@ -23,18 +26,37 @@ float sdSegment( in vec2 p, in vec2 a, in vec2 b )
     return length( pa - ba*h );
 }
 
+float CreateLines(int interval)
+{
+	float d = 1000000000000.0;
+	
+	for(int i = 0; i <= yardsLenth; i += interval)
+	{
+		float nextDist = sdBox(worldPos,vec2(float(i),10000.0));
+		d = min(d,abs(nextDist));
+	}
+	return d;
+}
+
 void fragment()
 {
-	float d = sdBox(worldPos,vec2(1,10));
+	float fullLines = CreateLines(5);
+	float partialLines = CreateLines(1);
+	float edgeDist = sdBox(worldPos,vec2(float(yardsLenth),float(yardsWidth)));
+	float partialLineBox = sdBox(worldPos,vec2(float(yardsLenth),float(yardsWidth - 5)));
+	
+	vec3 col = (fullLines>0.0) ? vec3(1,1,1) : vec3(0,0,0);
+	
+	col *= step(fullLines,lineWidth);
+	col += step(1,partialLineBox);
+	col *= step(partialLines,lineWidth);
+	col += step(1,edgeDist);
+	col = clamp(col,0,1);
 
-	vec3 col = vec3(1,1,1);
-	//col *= 1.0 - exp(-6.0*abs(d));
-	//col *= 0.8 + 0.2*cos(150.0*d);
-	//col = mix( col, vec3(1.0), 1.0-smoothstep(0.0,0.01,abs(d)) );
-	col *= step(d - lineWidth,1);
-	col *= step(1,d + lineWidth);
+	vec3 lineCol = col * lineColor;
+	vec3 fieldCol = col * feildColor;
 
-	ALBEDO = col * lineColor;
+	ALBEDO = lineCol + feildColor;
 }
 
 //void light() {
