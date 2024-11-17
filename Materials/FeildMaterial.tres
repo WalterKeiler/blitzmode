@@ -1,11 +1,6 @@
-[gd_resource type="ShaderMaterial" load_steps=7 format=3 uid="uid://c40syiclxb6nr"]
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bi2dythq2vfsg"]
 
 [ext_resource type="Shader" path="res://Shaders/feild.gdshader" id="1_6ei5a"]
-[ext_resource type="Texture2D" uid="uid://ismotghafrn" path="res://Materials/Sprites/50YardLine.png" id="2_xe4k1"]
-[ext_resource type="Texture2D" uid="uid://ybucly5lok81" path="res://Materials/Sprites/40YardLine.png" id="3_s5dqa"]
-[ext_resource type="Texture2D" uid="uid://df8pqcvmm06r0" path="res://Materials/Sprites/30YardLine.png" id="4_6tt35"]
-[ext_resource type="Texture2D" uid="uid://6ensxpd73klx" path="res://Materials/Sprites/20YardLine.png" id="5_y44jp"]
-[ext_resource type="Texture2D" uid="uid://d2d8i0gotq2pk" path="res://Materials/Sprites/10YardLine.png" id="6_8cxwp"]
 
 [resource]
 render_priority = 0
@@ -16,8 +11,7 @@ shader_parameter/testPos = PackedVector2Array()
 shader_parameter/arraylength = 10
 shader_parameter/testfloat = 0.19
 shader_parameter/TestYard = 10
-shader_parameter/numberIndent = 5
+shader_parameter/numberIndent = 20
 shader_parameter/yardsLenth = 100
 shader_parameter/yardsWidth = 54
 shader_parameter/lineWidth = 0.1
-shader_parameter/numbers = Array[Texture2D]([ExtResource("2_xe4k1"), ExtResource("3_s5dqa"), ExtResource("4_6tt35"), ExtResource("5_y44jp"), ExtResource("6_8cxwp")])
