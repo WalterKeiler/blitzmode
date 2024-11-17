@@ -12,6 +12,7 @@ shader_parameter/arraylength = 10
 shader_parameter/testfloat = 0.19
 shader_parameter/TestYard = 10
 shader_parameter/numberIndent = 20
+shader_parameter/numberSpacing = 1.5
 shader_parameter/yardsLenth = 100
 shader_parameter/yardsWidth = 54
 shader_parameter/lineWidth = 0.1

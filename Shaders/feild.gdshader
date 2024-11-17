@@ -9,6 +9,7 @@ uniform int arraylength;
 uniform float testfloat;
 uniform int TestYard = 5;
 uniform int numberIndent = 20;
+uniform float numberSpacing = 1.4;
 uniform int yardsLenth = 100;
 uniform int yardsWidth = 54;
 uniform float lineWidth = .1;
@@ -343,28 +344,79 @@ float Nine(vec2 offset, bool inverted)
 
 float DrawNumbers(float xpos, float ypos, float spacing)
 {
-	float b = min(Two(vec2(xpos + spacing,-ypos),false),Zero(vec2(xpos + -spacing,-ypos),false));
-    float b2 = min(Two(vec2(-xpos + spacing,-ypos),false),Zero(vec2(-xpos + -spacing,-ypos),false));
-	float b3 = min(b,b2);
+	float[5] b;
 
-	float t = min(Two(vec2(xpos + -spacing,ypos),true),Zero(vec2(xpos + spacing,ypos),true));
-    float t2 = min(Two(vec2(-xpos + -spacing,ypos),true),Zero(vec2(-xpos + spacing,ypos),true));
-	float t3 = min(t,t2);
+	float[5] t;
 
-	return min(b3,t3);
+	int yard = (yardsLenth / 2) - int(xpos);
+	//yard /= 10;
+	int[5] digits;
+	int digitNum = 0;
+	while (float(yard) > 0.1)
+	{
+	    int digit = yard%10;
+	    yard /= 10;
+	    digits[digitNum] = digit;
+		digitNum++;
+	}
+
+	//digit width * digitNum
+	float width = (spacing * float(digitNum)) - (spacing - 1.15);
+	float space = 0.0 - width / 2.0;
+	for(int i = 0; i <= digitNum; i++)
+	{
+		switch(digits[i])
+		{
+			case 0:
+				//min one side of the feild with the other
+				b[i] = min(Zero(vec2(xpos + space,-ypos),false),Zero(vec2(-xpos + space,-ypos),false));
+				t[i] = min(Zero(vec2(xpos + -space,ypos),true),Zero(vec2(-xpos + -space,ypos),true));
+				break;
+			case 1:
+				b[i] = min(One(vec2(xpos + space,-ypos),false),One(vec2(-xpos + space,-ypos),false));
+				t[i] = min(One(vec2(xpos + -space,ypos),true),One(vec2(-xpos + -space,ypos),true));
+				break;
+			case 2:
+				b[i] = min(Two(vec2(xpos + space,-ypos),false),Two(vec2(-xpos + space,-ypos),false));
+				t[i] = min(Two(vec2(xpos + -space,ypos),true),Two(vec2(-xpos + -space,ypos),true));
+				break;
+			case 3:
+				b[i] = min(Three(vec2(xpos + space,-ypos),false),Three(vec2(-xpos + space,-ypos),false));
+				t[i] = min(Three(vec2(xpos + -space,ypos),true),Three(vec2(-xpos + -space,ypos),true));
+				break;
+			case 4:
+				b[i] = min(Four(vec2(xpos + space,-ypos),false),Four(vec2(-xpos + space,-ypos),false));
+				t[i] = min(Four(vec2(xpos + -space,ypos),true),Four(vec2(-xpos + -space,ypos),true));
+				break;
+			case 5:
+				b[i] = min(Five(vec2(xpos + space,-ypos),false),Five(vec2(-xpos + space,-ypos),false));
+				t[i] = min(Five(vec2(xpos + -space,ypos),true),Five(vec2(-xpos + -space,ypos),true));
+				break;
+		}
+		space += 1.15 + spacing;
+	}
+
+	float d = 1000000000000.0;
+	for(int i = 0; i < digitNum; i++)
+	{
+		float s = min(b[i],t[i]);
+		d = min(d,s);
+	}
+
+	return d;
 }
 
 void fragment()
 {
-	/*
-	float d = min(Three(vec2(1.25,0),false),Zero(vec2(-1.25,0),false));
+/*
+	float d = Five(vec2(0,0),false);
 
 	vec3 col = (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
 
 	vec3 lineCol = col * lineColor;
 	vec3 fieldCol = -col * feildColor;
 	ALBEDO = col;
-	*/
+*/
 
 	float halfWidth = float(yardsWidth) * .5;
 	float halfLength = float(yardsLenth) * .5;
@@ -390,7 +442,7 @@ void fragment()
 	vec3 onEdge = vec3(step(0, partialLineBox + float(numberIndent))).xxx;
 	onEdge *= vec3(step((partialLineBox + float(numberIndent)) - 1.0, 0)).xxx;
 
-	float d = DrawNumbers(float(closestLargeYard) * onTenYard,float(numberIndent),1.4);
+	float d = DrawNumbers(float(closestLargeYard) * onTenYard,float(numberIndent),numberSpacing);
 
 	col += (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
 	col = clamp(col,0,1);
@@ -399,5 +451,4 @@ void fragment()
 	vec3 fieldCol = -col * feildColor;
 
 	ALBEDO = lineCol + feildColor;
-
 }
