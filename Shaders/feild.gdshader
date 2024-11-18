@@ -4,10 +4,6 @@ const int arrayMaxLength = 15;
 
 uniform vec3 feildColor : source_color;
 uniform vec3 lineColor : source_color;
-uniform vec2 testPos[arrayMaxLength];
-uniform int arraylength;
-uniform float testfloat;
-uniform int TestYard = 5;
 uniform int numberIndent = 20;
 uniform float numberSpacing = 1.4;
 uniform int yardsLenth = 100;
@@ -129,10 +125,7 @@ float One(vec2 offset, bool inverted)
 
 	float x = ArrayToSegment(points,5,offset,inverted) - .25;
 
-	float d = x;
-
-	vec3 col = (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
-	return d;
+	return x;
 }
 float Two(vec2 offset, bool inverted)
 {
@@ -154,10 +147,7 @@ float Two(vec2 offset, bool inverted)
 		vec2(.9,1.4)
 	};
 	float x = ArrayToSegment(points,9,offset,inverted) - .25;
-
-	float d = x;
-	vec3 col = (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
-	return d;
+	return x;
 }
 float Three(vec2 offset, bool inverted)
 {
@@ -180,11 +170,7 @@ float Three(vec2 offset, bool inverted)
 	};
 
 	float x = ArrayToSegment(points,15,offset,inverted) - .25;
-
-	float d = x;
-
-	vec3 col = (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
-	return d;
+	return x;
 }
 float Four(vec2 offset, bool inverted)
 {
@@ -206,10 +192,7 @@ float Four(vec2 offset, bool inverted)
 		vec2(15,0)
 	};
 	float x = ArrayToSegment(points,7,offset,inverted) - .25;
-
-	float d = x;
-	vec3 col = (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
-	return d;
+	return x;
 }
 float Five(vec2 offset, bool inverted)
 {
@@ -232,43 +215,40 @@ float Five(vec2 offset, bool inverted)
 	};
 	float x = ArrayToSegment(points,10,offset,inverted) - .25;
 
-	float d = x;
-	vec3 col = (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
-	return d;
+	return x;
 }
 float Six(vec2 offset, bool inverted)
 {
 	vec2[arrayMaxLength] points = {
-		vec2(1,0),
-		vec2(2,0),
-		vec2(3,0),
-		vec2(4,0),
-		vec2(5,0),
-		vec2(6,0),
-		vec2(7,0),
-		vec2(8,0),
-		vec2(9,0),
-		vec2(10,0),
-		vec2(11,0),
-		vec2(12,0),
+		vec2(0.9,-1),
+		vec2(.5,-1.4),
+		vec2(-.5,-1.4),
+		vec2(-0.9,-1),
+		vec2(-0.9,1),
+		vec2(-0.5,1.4),
+		vec2(0.5,1.4),
+		vec2(0.9,1),
+		vec2(.9,0.4),
+		vec2(0.5,0),
+		vec2(-0.5,0),
+		vec2(-0.9,0.4),
 		vec2(13,0),
 		vec2(14,0),
 		vec2(15,0)
 	};
-	float box = sdBox(worldPos, vec2(1,1.5));
-	float x = ArrayToSegment(testPos,arraylength,offset,inverted) - .1;
 
-	float d = x;
-	d *= box;
-	return d;
+	float x = ArrayToSegment(points,12,offset,inverted) - .25;
+
+
+	return x;
 }
 float Seven(vec2 offset, bool inverted)
 {
 	vec2[arrayMaxLength] points = {
-		vec2(1,0),
-		vec2(2,0),
-		vec2(3,0),
-		vec2(4,0),
+		vec2(-.9,-1),
+		vec2(-.9,-1.4),
+		vec2(.9,-1.4),
+		vec2(-0.5,1.4),
 		vec2(5,0),
 		vec2(6,0),
 		vec2(7,0),
@@ -281,65 +261,63 @@ float Seven(vec2 offset, bool inverted)
 		vec2(14,0),
 		vec2(15,0)
 	};
-	float box = sdBox(worldPos, vec2(1,1.5));
-	float x = ArrayToSegment(testPos,arraylength,offset,inverted) - .1;
+	float x = ArrayToSegment(points,4,offset,inverted) - .25;
 
-	float d = x;
-	d *= box;
-	return d;
+	return x;
 }
 float Eight(vec2 offset, bool inverted)
 {
 	vec2[arrayMaxLength] points = {
-		vec2(1,0),
-		vec2(2,0),
-		vec2(3,0),
-		vec2(4,0),
-		vec2(5,0),
-		vec2(6,0),
-		vec2(7,0),
-		vec2(8,0),
-		vec2(9,0),
-		vec2(10,0),
-		vec2(11,0),
-		vec2(12,0),
-		vec2(13,0),
-		vec2(14,0),
-		vec2(15,0)
+		vec2(.5,0),
+		vec2(-.5,0),
+		vec2(-.9,.4),
+		vec2(-.9,1),
+		vec2(-.5,1.4),
+		vec2(.5,1.4),
+		vec2(.9,1),
+		vec2(.9,.4),
+		vec2(.5,0),
+		vec2(.9,-.4),
+		vec2(.9,-1),
+		vec2(.5,-1.4),
+		vec2(-.5,-1.4),
+		vec2(-.9,-1),
+		vec2(-.9,-.4)
 	};
-	float box = sdBox(worldPos, vec2(1,1.5));
-	float x = ArrayToSegment(testPos,arraylength,offset,inverted) - .1;
+	float x = ArrayToSegment(points,15,offset,inverted) - .25;
 
-	float d = x;
-	d *= box;
-	return d;
+	float invert = inverted ? -1.0 : 1.0;
+
+	vec2 pos1 = vec2(-.9,-.4) * invert;
+	vec2 pos2 = vec2(-.5,0) * invert;
+
+	float p = sdSegment(worldPos + offset,pos1,pos2)- .25;
+	x = min(x, p);
+
+	return x;
 }
 float Nine(vec2 offset, bool inverted)
 {
 	vec2[arrayMaxLength] points = {
-		vec2(1,0),
-		vec2(2,0),
-		vec2(3,0),
-		vec2(4,0),
-		vec2(5,0),
-		vec2(6,0),
-		vec2(7,0),
-		vec2(8,0),
-		vec2(9,0),
-		vec2(10,0),
-		vec2(11,0),
-		vec2(12,0),
+		vec2(-.9,1),
+		vec2(-.5,1.4),
+		vec2(.5,1.4),
+		vec2(.9,1),
+		vec2(.9,-1),
+		vec2(.5,-1.4),
+		vec2(-.5,-1.4),
+		vec2(-.9,-1),
+		vec2(-.9,-.4),
+		vec2(-.5,0),
+		vec2(.5,0),
+		vec2(.9,-.4),
 		vec2(13,0),
 		vec2(14,0),
 		vec2(15,0)
 	};
-	float box = sdBox(worldPos, vec2(1,1.5));
-	float x = ArrayToSegment(testPos,arraylength,offset,inverted) - .1;
+	float x = ArrayToSegment(points,12,offset,inverted) - .25;
 
-	float d = x;
-	d *= box;
-	vec3 col = (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
-	return d;
+	return x;
 }
 
 float DrawNumbers(float xpos, float ypos, float spacing)
@@ -392,6 +370,22 @@ float DrawNumbers(float xpos, float ypos, float spacing)
 				b[i] = min(Five(vec2(xpos + space,-ypos),false),Five(vec2(-xpos + space,-ypos),false));
 				t[i] = min(Five(vec2(xpos + -space,ypos),true),Five(vec2(-xpos + -space,ypos),true));
 				break;
+			case 6:
+				b[i] = min(Six(vec2(xpos + space,-ypos),false),Six(vec2(-xpos + space,-ypos),false));
+				t[i] = min(Six(vec2(xpos + -space,ypos),true),Six(vec2(-xpos + -space,ypos),true));
+				break;
+			case 7:
+				b[i] = min(Seven(vec2(xpos + space,-ypos),false),Seven(vec2(-xpos + space,-ypos),false));
+				t[i] = min(Seven(vec2(xpos + -space,ypos),true),Seven(vec2(-xpos + -space,ypos),true));
+				break;
+			case 8:
+				b[i] = min(Eight(vec2(xpos + space,-ypos),false),Eight(vec2(-xpos + space,-ypos),false));
+				t[i] = min(Eight(vec2(xpos + -space,ypos),true),Eight(vec2(-xpos + -space,ypos),true));
+				break;
+			case 9:
+				b[i] = min(Nine(vec2(xpos + space,-ypos),false),Nine(vec2(-xpos + space,-ypos),false));
+				t[i] = min(Nine(vec2(xpos + -space,ypos),true),Nine(vec2(-xpos + -space,ypos),true));
+				break;
 		}
 		space += 1.15 + spacing;
 	}
@@ -408,16 +402,6 @@ float DrawNumbers(float xpos, float ypos, float spacing)
 
 void fragment()
 {
-/*
-	float d = Five(vec2(0,0),false);
-
-	vec3 col = (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
-
-	vec3 lineCol = col * lineColor;
-	vec3 fieldCol = -col * feildColor;
-	ALBEDO = col;
-*/
-
 	float halfWidth = float(yardsWidth) * .5;
 	float halfLength = float(yardsLenth) * .5;
 	int closestLargeYard;
@@ -442,7 +426,7 @@ void fragment()
 	vec3 onEdge = vec3(step(0, partialLineBox + float(numberIndent))).xxx;
 	onEdge *= vec3(step((partialLineBox + float(numberIndent)) - 1.0, 0)).xxx;
 
-	float d = DrawNumbers(float(closestLargeYard) * onTenYard,float(numberIndent),numberSpacing);
+	float d = DrawNumbers(float(closestLargeYard) * onTenYard,halfWidth - float(numberIndent),numberSpacing);
 
 	col += (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
 	col = clamp(col,0,1);
