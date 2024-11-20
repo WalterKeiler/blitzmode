@@ -2,6 +2,7 @@ shader_type spatial;
 
 const int arrayMaxLength = 15;
 
+uniform bool useWorldSpace;
 uniform vec3 feildColor : source_color;
 uniform vec3 lineColor : source_color;
 uniform int numberIndent = 20;
@@ -24,10 +25,13 @@ void vertex()
     g = float(yardsLenth) *0.5;
     h = float(yardsWidth) *0.5;
 
-	fieldPos = vec2( 
+	fieldPos = vec2(
         e + (UV.x - a) * (g - e) / (c - a),
         f + (UV.y - b) * (h - f) / (d - b)
     );
+
+	vec2 worldPos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xz;
+	fieldPos = useWorldSpace? worldPos : fieldPos;
 }
 float smin(float a, float b, float k)
 {
