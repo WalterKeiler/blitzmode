@@ -10,11 +10,24 @@ uniform int yardsLenth = 100;
 uniform int yardsWidth = 54;
 uniform float lineWidth = .1;
 
-varying vec2 worldPos;
+varying vec2 fieldPos;
 
 void vertex()
 {
-	worldPos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xz;
+    float a,b,c,d,e,f,g,h;
+    a = 0.0;
+    b = 0.0;
+    c = 1.0;
+    d = 1.0;
+    e = float(-yardsLenth) *0.5;
+    f = float(-yardsWidth) *0.5;
+    g = float(yardsLenth) *0.5;
+    h = float(yardsWidth) *0.5;
+
+	fieldPos = vec2( 
+        e + (UV.x - a) * (g - e) / (c - a),
+        f + (UV.y - b) * (h - f) / (d - b)
+    );
 }
 float smin(float a, float b, float k)
 {
@@ -47,7 +60,7 @@ float CreateLines(int interval, out int closestYard)
 	int yardIndex = -1;
 	for(int i = 0; i <= yardsLenth / 2; i += interval)
 	{
-		float nextDist = sdBox(worldPos,vec2(float(i),10000.0));
+		float nextDist = sdBox(fieldPos,vec2(float(i),float(yardsWidth)));
 		d = min(d,abs(nextDist));
 
 		if(d == abs(nextDist) && i < yardsLenth / 2) yardIndex = i;
@@ -72,7 +85,7 @@ float ArrayToSegment(vec2[arrayMaxLength] points, int size, vec2 offset, bool in
 		vec2 pos1 = points[i] * invert;
 		vec2 pos2 = points[i+1] * invert;
 
-		float p = sdSegment(worldPos + offset,pos1,pos2);
+		float p = sdSegment(fieldPos + offset,pos1,pos2);
 		d = min(d,p);
 	}
 	return d;
@@ -291,7 +304,7 @@ float Eight(vec2 offset, bool inverted)
 	vec2 pos1 = vec2(-.9,-.4) * invert;
 	vec2 pos2 = vec2(-.5,0) * invert;
 
-	float p = sdSegment(worldPos + offset,pos1,pos2)- .25;
+	float p = sdSegment(fieldPos + offset,pos1,pos2)- .25;
 	x = min(x, p);
 
 	return x;
@@ -410,8 +423,8 @@ void fragment()
 	float fullLines = CreateLines(5, closestLargeYard);
 	float partialLines = CreateLines(1, closestSmallYard);
 
-	float edgeDist = sdBox(worldPos,vec2(halfLength,halfWidth));
-	float partialLineBox = sdBox(worldPos,vec2(halfLength,halfWidth - halfWidth / 10.0));
+	float edgeDist = sdBox(fieldPos,vec2(halfLength,halfWidth));
+	float partialLineBox = sdBox(fieldPos,vec2(halfLength,halfWidth - halfWidth / 10.0));
 
 	vec3 col = (fullLines>0.0) ? vec3(1,1,1) : vec3(0,0,0);
 
