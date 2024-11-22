@@ -5,7 +5,7 @@
 [resource]
 render_priority = 0
 shader = ExtResource("1_6ei5a")
-shader_parameter/useWorldSpace = null
+shader_parameter/useWorldSpace = true
 shader_parameter/feildColor = Color(0, 0.231373, 0, 1)
 shader_parameter/lineColor = Color(1, 1, 1, 1)
 shader_parameter/numberIndent = 10

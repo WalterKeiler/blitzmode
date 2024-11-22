@@ -39,8 +39,8 @@ public partial class PlayerController : Node3D
 		Vector3 xDir = Vector3.Zero;
 		Vector3 zDir = Vector3.Zero;
 		
-		zDir = inputDir.Z * _mainCam.GetGlobalBasis().Z.Normalized();
-		xDir = inputDir.X * _mainCam.GetGlobalBasis().X.Normalized();
+		zDir = inputDir.Z * _mainCam.GetGlobalBasis().X.Normalized();
+		xDir = -inputDir.X * _mainCam.GetGlobalBasis().Z.Normalized();
 		_moveDirection = xDir + zDir;
 		
 		_moveDirection.Y = 0;
