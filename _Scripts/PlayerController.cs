@@ -11,6 +11,9 @@ public partial class PlayerController : Node3D
 	[Export] public bool isplayerControlled;
 	[Export] public bool isOffence;
 	[Export] BaseMaterial3D mat;
+	[Export] private Node3D ball;
+	[Export] Path3D ballPath;
+	[Export] PathFollow3D ballPathFollow;
 	public List<PlayerActions> PlayerAction;
 
 	Vector3 _moveDirection;
@@ -140,7 +143,36 @@ public partial class PlayerController : Node3D
 	async void ThrowBall()
 	{
 		mat.SetAlbedo(Colors.Yellow);
-		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		Vector3 startPoint = Transform.Origin;
+		Vector3 endPoint = Vector3.Zero;
+		Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
+		float distance = startPoint.DistanceTo(endPoint);
+		midPoint.Y = 4;
+		ballPath.Curve.ClearPoints();
+		ballPathFollow.ProgressRatio = 0;
+		
+		ballPath.Curve.AddPoint(startPoint);
+		ballPath.Curve.AddPoint(midPoint);
+		Vector3 inDir = (endPoint - startPoint).Normalized();
+		Vector3 outDir = (endPoint - midPoint).Normalized();
+		ballPath.Curve.SetPointIn(1,  -inDir * distance / 2);
+		ballPath.Curve.SetPointOut(1, inDir * distance / 2);
+		ballPath.Curve.SetPointTilt(1,distance);
+		ballPath.Curve.AddPoint(endPoint);
+		ballPath.Curve.SetPointTilt(2,distance * 2);
+		
+		GD.Print(ballPathFollow.ProgressRatio);
+		
+		var tween = CreateTween();
+		tween.TweenProperty(ballPathFollow, "progress_ratio", 1,
+			 distance * GetProcessDeltaTime() * playerStats.Agility).SetTrans(Tween.TransitionType.Linear);
+		await ToSignal(tween, "finished");
+		ballPathFollow.ProgressRatio = 0;
+		// var yTween = CreateTween();
+		// yTween.TweenProperty(ball, "position:y", 1,
+		// 	distance * GetProcessDeltaTime() * playerStats.Agility).SetTrans(Tween.TransitionType.Linear);
+		// await ToSignal(yTween, "finished");
+		GD.Print("Tween finished.");
 		mat.SetAlbedo(Colors.White);
 	}
 	async void ChangePlayer()

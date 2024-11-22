@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://8p1e2l56d68k"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_klx8s"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ncxdb"]
+albedo_color = Color(0.478431, 0.176471, 0, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_y7jk1"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_gepgj"]
+
+[node name="Ball" type="Node3D"]
+
+[node name="Node3D" type="Node3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, -1.31134e-08, -0.3, 0, 0.3, -1.31134e-08, 0, 0, 0)
+
+[node name="RigidBody3D" type="RigidBody3D" parent="Node3D"]
+visible = false
+sleeping = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/RigidBody3D"]
+visible = false
+shape = SubResource("CapsuleShape3D_klx8s")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D"]
+material_override = SubResource("StandardMaterial3D_ncxdb")
+mesh = SubResource("CapsuleMesh_y7jk1")
+skeleton = NodePath("../RigidBody3D/CollisionShape3D")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D/MeshInstance3D"]
+transform = Transform3D(0.310017, 0, 0, 0, 1, 8.88178e-16, 0, -3.55271e-15, 0.213085, 0, -1.81885e-08, -0.416104)
+mesh = SubResource("BoxMesh_gepgj")
