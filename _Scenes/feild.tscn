@@ -86,10 +86,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 playerStats = ExtResource("2_23cto")
 _mainCam = NodePath("../CameraController")
 _inputManager = NodePath("../InputManagerInstance")
-ball = NodePath("../BallPath/PathFollow3D/Ball")
+ball = NodePath("Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
 throwTargets = [NodePath("../BallTarget1"), NodePath("../BallTarget2"), NodePath("../BallTarget3")]
+
+[node name="Ball" parent="Player" instance=ExtResource("14_mo1nw")]
+transform = Transform3D(-4.37114e-08, -0.624695, -0.780893, 0, 0.780869, -0.624714, 0.999999, -2.73063e-08, -3.41339e-08, 0.1461, 0.19143, 0.678301)
 
 [node name="InputManagerInstance" parent="." instance=ExtResource("3_3702o")]
 _inputCombos = Array[Resource]([ExtResource("4_wsvc8"), ExtResource("5_2ysm3"), ExtResource("6_ropgt"), ExtResource("7_v0ma5"), ExtResource("8_aedpu"), ExtResource("9_2n3my"), ExtResource("10_dgujd"), ExtResource("11_gk4p0")])
@@ -133,7 +136,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1461, 1.19143, 0.678301)
 curve = SubResource("Curve3D_f1ofg")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="BallPath"]
-transform = Transform3D(0.0145392, 0.145559, -0.989269, 0.0983224, 0.984344, 0.146287, 0.995048, -0.0993915, -1.63168e-07, 32.05, 0, 0)
-progress = 33.9036
-
-[node name="Ball" parent="BallPath/PathFollow3D" instance=ExtResource("14_mo1nw")]
+transform = Transform3D(-4.37114e-08, -0.624695, -0.780893, 0, 0.780869, -0.624714, 0.999999, -2.73063e-08, -3.41339e-08, 0, 0, 0)

@@ -147,8 +147,12 @@ public partial class PlayerController : Node3D
 		Vector3 startPoint = Transform.Origin;
 		Vector3 endPoint = Vector3.Zero;
 
+		ball.Reparent(ballPathFollow);
+		ball.Position = Vector3.Zero;
+		ball.Rotation = Vector3.Zero;
+
 		float closest = -100000;
-		
+		Node3D target = null;
 		for (int i = 0; i < throwTargets.Length; i++)
 		{
 			Vector3 dir = throwTargets[i].Position - startPoint;
@@ -158,6 +162,7 @@ public partial class PlayerController : Node3D
 			{
 				closest = dot;
 				endPoint = throwTargets[i].Position;
+				target = throwTargets[i];
 			}
 		}
 		Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
@@ -184,6 +189,8 @@ public partial class PlayerController : Node3D
 			 distance * GetProcessDeltaTime() * playerStats.Agility).SetTrans(Tween.TransitionType.Linear);
 		await ToSignal(tween, "finished");
 		ballPathFollow.ProgressRatio = 0;
+		
+		ball.Reparent(target);
 		// var yTween = CreateTween();
 		// yTween.TweenProperty(ball, "position:y", 1,
 		// 	distance * GetProcessDeltaTime() * playerStats.Agility).SetTrans(Tween.TransitionType.Linear);
