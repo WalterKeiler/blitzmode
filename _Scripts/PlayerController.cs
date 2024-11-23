@@ -155,14 +155,28 @@ public partial class PlayerController : Node3D
 		Node3D target = null;
 		for (int i = 0; i < throwTargets.Length; i++)
 		{
-			Vector3 dir = throwTargets[i].Position - startPoint;
+			Vector3 dir = startPoint.DirectionTo(throwTargets[i].Position);
 			float dot = dir.Dot(_moveDirection);
 
-			if (1 - dot < 1 - closest)
+			if (dot >= closest)
 			{
-				closest = dot;
-				endPoint = throwTargets[i].Position;
-				target = throwTargets[i];
+				GD.Print(dot);
+				if (dot - closest <= .1f)
+				{
+					GD.Print("In Line");
+					if(startPoint.DistanceTo(throwTargets[i].Position) <= startPoint.DistanceTo(endPoint))
+					{
+						closest = dot;
+						endPoint = throwTargets[i].Position;
+						target = throwTargets[i];
+					}
+				}
+				else
+				{
+					closest = dot;
+					endPoint = throwTargets[i].Position;
+					target = throwTargets[i];
+				}
 			}
 		}
 		Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
@@ -174,7 +188,7 @@ public partial class PlayerController : Node3D
 		
 		ballPath.Curve.AddPoint(startPoint);
 		ballPath.Curve.AddPoint(midPoint);
-		Vector3 inDir = (endPoint - startPoint).Normalized();
+		Vector3 inDir = startPoint.DirectionTo(endPoint);
 		
 		ballPath.Curve.SetPointIn(1,  -inDir * distance / 4);
 		ballPath.Curve.SetPointOut(1, inDir * distance / 4);
