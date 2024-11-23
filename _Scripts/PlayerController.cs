@@ -11,9 +11,10 @@ public partial class PlayerController : Node3D
 	[Export] public bool isplayerControlled;
 	[Export] public bool isOffence;
 	[Export] BaseMaterial3D mat;
-	[Export] private Node3D ball;
+	[Export] Node3D ball;
 	[Export] Path3D ballPath;
 	[Export] PathFollow3D ballPathFollow;
+	[Export] private Node3D[] throwTargets;
 	public List<PlayerActions> PlayerAction;
 
 	Vector3 _moveDirection;
@@ -145,21 +146,36 @@ public partial class PlayerController : Node3D
 		mat.SetAlbedo(Colors.Yellow);
 		Vector3 startPoint = Transform.Origin;
 		Vector3 endPoint = Vector3.Zero;
+
+		float closest = -100000;
+		
+		for (int i = 0; i < throwTargets.Length; i++)
+		{
+			Vector3 dir = throwTargets[i].Position - startPoint;
+			float dot = dir.Dot(_moveDirection);
+
+			if (1 - dot < 1 - closest)
+			{
+				closest = dot;
+				endPoint = throwTargets[i].Position;
+			}
+		}
 		Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
+
 		float distance = startPoint.DistanceTo(endPoint);
-		midPoint.Y = 4;
+		midPoint.Y = .1f * distance;
 		ballPath.Curve.ClearPoints();
 		ballPathFollow.ProgressRatio = 0;
 		
 		ballPath.Curve.AddPoint(startPoint);
 		ballPath.Curve.AddPoint(midPoint);
 		Vector3 inDir = (endPoint - startPoint).Normalized();
-		Vector3 outDir = (endPoint - midPoint).Normalized();
-		ballPath.Curve.SetPointIn(1,  -inDir * distance / 2);
-		ballPath.Curve.SetPointOut(1, inDir * distance / 2);
+		
+		ballPath.Curve.SetPointIn(1,  -inDir * distance / 4);
+		ballPath.Curve.SetPointOut(1, inDir * distance / 4);
 		ballPath.Curve.SetPointTilt(1,distance);
 		ballPath.Curve.AddPoint(endPoint);
-		ballPath.Curve.SetPointTilt(2,distance * 2);
+		ballPath.Curve.SetPointTilt(2,distance * 2 - 1.25f);
 		
 		GD.Print(ballPathFollow.ProgressRatio);
 		

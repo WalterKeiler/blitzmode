@@ -7,9 +7,10 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_p1g61"]
 
-[node name="Player" type="Node3D"]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("throwTargets")]
 script = ExtResource("1_areti")
 mat = ExtResource("2_tyapl")
+throwTargets = []
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 
