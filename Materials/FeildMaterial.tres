@@ -10,6 +10,6 @@ shader_parameter/feildColor = Color(0, 0.231373, 0, 1)
 shader_parameter/lineColor = Color(1, 1, 1, 1)
 shader_parameter/numberIndent = 10
 shader_parameter/numberSpacing = 1.5
-shader_parameter/yardsLenth = 180
+shader_parameter/yardsLenth = 200
 shader_parameter/yardsWidth = 53
 shader_parameter/lineWidth = 0.1

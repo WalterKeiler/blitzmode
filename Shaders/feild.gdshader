@@ -1,6 +1,7 @@
 shader_type spatial;
+#include "res://Shaders/SDFFunctions.gdshaderinc"
 
-const int arrayMaxLength = 15;
+//const int arrayMaxLength = 15;
 
 uniform bool useWorldSpace;
 uniform vec3 feildColor : source_color;
@@ -33,67 +34,6 @@ void vertex()
 	vec2 worldPos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xz;
 	fieldPos = useWorldSpace? worldPos : fieldPos;
 }
-float smin(float a, float b, float k)
-{
-    float h = max(k - abs(a - b), 0.0) / k;
-    return min(a, b) - h * h * k * (1.0 / 4.0);
-}
-float sdBox( in vec2 p, in vec2 b )
-{
-    vec2 d = abs(p)-b;
-    return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
-}
-float sdSegment( in vec2 p, in vec2 a, in vec2 b )
-{
-    vec2 pa = p-a, ba = b-a;
-    float h = clamp( dot(pa,ba)/dot(ba,ba), 0.0, 1.0 );
-    return length( pa - ba*h );
-}
-float sdOrientedBox( in vec2 p, in vec2 a, in vec2 b, float th )
-{
-    float l = length(b-a);
-    vec2  d = (b-a)/l;
-    vec2  q = (p-(a+b)*0.5);
-          q = mat2(vec2(d.x,-d.y),vec2(d.y,d.x))*q;
-          q = abs(q)-vec2(l,th)*0.5;
-    return length(max(q,0.0)) + min(max(q.x,q.y),0.0);
-}
-float CreateLines(int interval, out int closestYard)
-{
-	float d = 1000000000000.0;
-	int yardIndex = -1;
-	for(int i = 0; i <= yardsLenth / 2; i += interval)
-	{
-		float nextDist = sdBox(fieldPos,vec2(float(i),float(yardsWidth)));
-		d = min(d,abs(nextDist));
-
-		if(d == abs(nextDist) && i < yardsLenth / 2) yardIndex = i;
-	}
-
-	closestYard = yardIndex;
-
-	return d;
-}
-
-float dot2(vec2 input)
-{
-	return dot(input,input);
-}
-
-float ArrayToSegment(vec2[arrayMaxLength] points, int size, vec2 offset, bool inverted)
-{
-	float d = 1000000000000.0;
-	float invert = inverted ? -1.0 : 1.0;
-	for(int i = 0; i < size - 1; i++)
-	{
-		vec2 pos1 = points[i] * invert;
-		vec2 pos2 = points[i+1] * invert;
-
-		float p = sdSegment(fieldPos + offset,pos1,pos2);
-		d = min(d,p);
-	}
-	return d;
-}
 
 float Zero(vec2 offset, bool inverted)
 {
@@ -114,7 +54,7 @@ float Zero(vec2 offset, bool inverted)
 		vec2(14,0),
 		vec2(15,0)
 	};
-	float x = ArrayToSegment(points,9,offset,inverted) - .25;
+	float x = ArrayToSegment(fieldPos,points,9,offset,inverted) - .25;
 
 	float d = x;
 	vec3 col = (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
@@ -140,7 +80,7 @@ float One(vec2 offset, bool inverted)
 		vec2(15,0)
 	};
 
-	float x = ArrayToSegment(points,5,offset,inverted) - .25;
+	float x = ArrayToSegment(fieldPos,points,5,offset,inverted) - .25;
 
 	return x;
 }
@@ -163,7 +103,7 @@ float Two(vec2 offset, bool inverted)
 		vec2(.9,1.4),
 		vec2(.9,1.4)
 	};
-	float x = ArrayToSegment(points,9,offset,inverted) - .25;
+	float x = ArrayToSegment(fieldPos,points,9,offset,inverted) - .25;
 	return x;
 }
 float Three(vec2 offset, bool inverted)
@@ -186,7 +126,7 @@ float Three(vec2 offset, bool inverted)
 		vec2(-.9,.8)
 	};
 
-	float x = ArrayToSegment(points,15,offset,inverted) - .25;
+	float x = ArrayToSegment(fieldPos,points,15,offset,inverted) - .25;
 	return x;
 }
 float Four(vec2 offset, bool inverted)
@@ -208,7 +148,7 @@ float Four(vec2 offset, bool inverted)
 		vec2(14,0),
 		vec2(15,0)
 	};
-	float x = ArrayToSegment(points,7,offset,inverted) - .25;
+	float x = ArrayToSegment(fieldPos,points,7,offset,inverted) - .25;
 	return x;
 }
 float Five(vec2 offset, bool inverted)
@@ -230,7 +170,7 @@ float Five(vec2 offset, bool inverted)
 		vec2(14,0),
 		vec2(15,0)
 	};
-	float x = ArrayToSegment(points,10,offset,inverted) - .25;
+	float x = ArrayToSegment(fieldPos,points,10,offset,inverted) - .25;
 
 	return x;
 }
@@ -254,7 +194,7 @@ float Six(vec2 offset, bool inverted)
 		vec2(15,0)
 	};
 
-	float x = ArrayToSegment(points,12,offset,inverted) - .25;
+	float x = ArrayToSegment(fieldPos,points,12,offset,inverted) - .25;
 
 
 	return x;
@@ -278,7 +218,7 @@ float Seven(vec2 offset, bool inverted)
 		vec2(14,0),
 		vec2(15,0)
 	};
-	float x = ArrayToSegment(points,4,offset,inverted) - .25;
+	float x = ArrayToSegment(fieldPos,points,4,offset,inverted) - .25;
 
 	return x;
 }
@@ -301,7 +241,7 @@ float Eight(vec2 offset, bool inverted)
 		vec2(-.9,-1),
 		vec2(-.9,-.4)
 	};
-	float x = ArrayToSegment(points,15,offset,inverted) - .25;
+	float x = ArrayToSegment(fieldPos,points,15,offset,inverted) - .25;
 
 	float invert = inverted ? -1.0 : 1.0;
 
@@ -332,7 +272,7 @@ float Nine(vec2 offset, bool inverted)
 		vec2(14,0),
 		vec2(15,0)
 	};
-	float x = ArrayToSegment(points,12,offset,inverted) - .25;
+	float x = ArrayToSegment(fieldPos,points,12,offset,inverted) - .25;
 
 	return x;
 }
@@ -356,14 +296,15 @@ float DrawNumbers(float xpos, float ypos, float spacing)
 	}
 
 	//digit width * digitNum
-	float width = (spacing * float(digitNum)) - (spacing - 1.15);
-	float space = 0.0 - width / 2.0;
+	float width = float(digitNum) * (spacing + 1.15) - spacing;
+	// added half of a digit to account for the digit being cetered in the middle
+	float space = 0.575 - width / 2.0;
 	for(int i = 0; i <= digitNum; i++)
 	{
 		switch(digits[i])
 		{
 			case 0:
-				//min one side of the feild with the other
+				//min one side of the field with the other
 				b[i] = min(Zero(vec2(xpos + space,-ypos),false),Zero(vec2(-xpos + space,-ypos),false));
 				t[i] = min(Zero(vec2(xpos + -space,ypos),true),Zero(vec2(-xpos + -space,ypos),true));
 				break;
@@ -424,8 +365,8 @@ void fragment()
 	int closestLargeYard;
 	int closestSmallYard;
 
-	float fullLines = CreateLines(5, closestLargeYard);
-	float partialLines = CreateLines(1, closestSmallYard);
+	float fullLines = CreateLines(fieldPos,yardsLenth,yardsWidth,5, closestLargeYard);
+	float partialLines = CreateLines(fieldPos,yardsLenth,yardsWidth,1, closestSmallYard);
 
 	float edgeDist = sdBox(fieldPos,vec2(halfLength,halfWidth));
 	float partialLineBox = sdBox(fieldPos,vec2(halfLength,halfWidth - halfWidth / 10.0));
