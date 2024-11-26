@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dkddmtmu5c3pb"]
+[gd_scene load_steps=27 format=3 uid="uid://dkddmtmu5c3pb"]
 
 [ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="1_6652p"]
 [ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="1_c7hut"]
@@ -14,6 +14,7 @@
 [ext_resource type="Resource" uid="uid://bx2h0hskxnnli" path="res://Resources/Input/Throw.tres" id="10_dgujd"]
 [ext_resource type="Resource" uid="uid://ds41fgws8hnvb" path="res://Resources/Input/StiffArm.tres" id="11_gk4p0"]
 [ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/ball.tscn" id="14_mo1nw"]
+[ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/Linebacker.tres" id="15_klgl0"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -81,15 +82,16 @@ skeleton = NodePath("../..")
 transform = Transform3D(1, 0, 0, 0, 1, -3.55271e-15, 0, 3.55271e-15, 1, 0, 0, 0)
 shape = SubResource("WorldBoundaryShape3D_0xxls")
 
-[node name="Player" parent="." node_paths=PackedStringArray("_mainCam", "_inputManager", "ball", "ballPath", "ballPathFollow", "throwTargets") instance=ExtResource("1_6652p")]
+[node name="Player" parent="." node_paths=PackedStringArray("_mainCam", "inputManager", "ball", "ballPath", "ballPathFollow", "throwTargets") instance=ExtResource("1_6652p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+playerID = 0
 playerStats = ExtResource("2_23cto")
 _mainCam = NodePath("../CameraController")
-_inputManager = NodePath("../InputManagerInstance")
+inputManager = NodePath("../InputManagerInstance")
 ball = NodePath("Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
-throwTargets = [NodePath("../BallTarget1"), NodePath("../BallTarget2"), NodePath("../BallTarget3")]
+throwTargets = [NodePath("../Player2")]
 
 [node name="Ball" parent="Player" instance=ExtResource("14_mo1nw")]
 transform = Transform3D(-4.37114e-08, -0.624695, -0.780893, 0, 0.780869, -0.624714, 0.999999, -2.73063e-08, -3.41339e-08, 0.1461, 0.19143, 0.678301)
@@ -101,6 +103,7 @@ isOffence = true
 
 [node name="BallTarget3" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.5923, 0, -14.768)
+visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="BallTarget3"]
 material_override = SubResource("StandardMaterial3D_s1jxh")
@@ -112,6 +115,7 @@ shape = SubResource("CylinderShape3D_ii54q")
 
 [node name="BallTarget2" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.539, 0, 0)
+visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="BallTarget2"]
 material_override = SubResource("StandardMaterial3D_hosuo")
@@ -122,6 +126,7 @@ shape = SubResource("CylinderShape3D_ii54q")
 
 [node name="BallTarget1" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.236, 0, 0)
+visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="BallTarget1"]
 material_override = SubResource("StandardMaterial3D_f5yob")
@@ -137,3 +142,12 @@ curve = SubResource("Curve3D_f1ofg")
 
 [node name="PathFollow3D" type="PathFollow3D" parent="BallPath"]
 transform = Transform3D(-4.37113e-08, -0.624695, -0.780893, 0, 0.780869, -0.624714, 0.999999, -2.73063e-08, -3.41339e-08, 0, 0, 0)
+
+[node name="Player2" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow", "throwTargets") instance=ExtResource("1_6652p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5749, 1, 6.49671)
+playerStats = ExtResource("15_klgl0")
+_mainCam = NodePath("../CameraController")
+ball = NodePath("../Player/Ball")
+ballPath = NodePath("../BallPath")
+ballPathFollow = NodePath("../BallPath/PathFollow3D")
+throwTargets = [NodePath("../Player")]

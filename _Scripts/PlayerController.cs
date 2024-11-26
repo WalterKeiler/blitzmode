@@ -4,10 +4,11 @@ using System.Collections.Generic;
 
 public partial class PlayerController : Node3D
 {
+	[Export] public int playerID = -1;
 	[Export] public PlayerStats playerStats;
 	[Export(PropertyHint.Range, "0,1,")] float _PlayersprintAmount = 1;
 	[Export] Node3D _mainCam;
-	[Export] InputManager _inputManager;
+	[Export] public InputManager inputManager;
 	[Export] public bool isplayerControlled;
 	[Export] public bool isOffence;
 	[Export] BaseMaterial3D mat;
@@ -25,8 +26,8 @@ public partial class PlayerController : Node3D
 	{
 		GD.Print(mat.ResourceName);
 		PlayerAction = new List<PlayerActions>();
-		_inputManager.InputPressAction += DoAction;
-		_inputManager.InputReleaseAction += CancelAction;
+		InputManager.InputPressAction += DoAction;
+		InputManager.InputReleaseAction += CancelAction;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -38,8 +39,9 @@ public partial class PlayerController : Node3D
 	
 	void GetInput()
 	{
-
-		Vector3 inputDir = _inputManager.GetDirectionalInput();
+		if (playerID == -1) return;
+		
+		Vector3 inputDir = inputManager.GetDirectionalInput();
 		Vector3 xDir = Vector3.Zero;
 		Vector3 zDir = Vector3.Zero;
 		
@@ -56,8 +58,11 @@ public partial class PlayerController : Node3D
 		Translate(_moveDirection * (float)delta * (playerStats.Speed + _sprintMultiplier));
 	}
 
-	public void DoAction(PlayerActions action)
+	public void DoAction(PlayerActions action, int calledPlayerId)
 	{
+		if(playerID != calledPlayerId) return;
+		
+		
 		GD.Print("Started: " + action);
 		if(!PlayerAction.Contains(action))
 			PlayerAction.Add(action);
@@ -89,8 +94,10 @@ public partial class PlayerController : Node3D
 				break;
 		}
 	}
-	public void CancelAction(PlayerActions action)
+	public void CancelAction(PlayerActions action, int calledPlayerId)
 	{
+		if(playerID != calledPlayerId) return;
+		
 		GD.Print("Stopped: " + action);
 		if (PlayerAction.Contains(action))
 			PlayerAction.Remove(action);
@@ -182,7 +189,7 @@ public partial class PlayerController : Node3D
 		Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
 
 		float distance = startPoint.DistanceTo(endPoint);
-		midPoint.Y = .1f * distance;
+		midPoint.Y = Mathf.Clamp(.1f * distance, midPoint.Y, 10);
 		ballPath.Curve.ClearPoints();
 		ballPathFollow.ProgressRatio = 0;
 		
@@ -205,10 +212,16 @@ public partial class PlayerController : Node3D
 		ballPathFollow.ProgressRatio = 0;
 		
 		ball.Reparent(target);
-		// var yTween = CreateTween();
-		// yTween.TweenProperty(ball, "position:y", 1,
-		// 	distance * GetProcessDeltaTime() * playerStats.Agility).SetTrans(Tween.TransitionType.Linear);
-		// await ToSignal(yTween, "finished");
+		
+		PlayerController otherPlayer = target as PlayerController;
+		if (otherPlayer != null)
+		{
+			otherPlayer.playerID = playerID;
+			otherPlayer.inputManager = inputManager;
+			playerID = -1;
+			_moveDirection = Vector3.Zero;
+		}
+		
 		GD.Print("Tween finished.");
 		mat.SetAlbedo(Colors.White);
 	}
