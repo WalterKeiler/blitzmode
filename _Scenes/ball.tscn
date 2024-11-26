@@ -1,9 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://8p1e2l56d68k"]
+[gd_scene load_steps=6 format=3 uid="uid://8p1e2l56d68k"]
+
+[ext_resource type="Shader" path="res://Shaders/Ball.gdshader" id="1_m8w14"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_klx8s"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ncxdb"]
-albedo_color = Color(0.478431, 0.176471, 0, 1)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0b4qm"]
+render_priority = 0
+shader = ExtResource("1_m8w14")
+shader_parameter/useWorldSpace = null
+shader_parameter/ballColor = Color(0.34902, 0.121569, 0.0784314, 1)
+shader_parameter/lineColor = Color(1, 1, 1, 1)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_y7jk1"]
 
@@ -21,11 +27,12 @@ sleeping = true
 shape = SubResource("CapsuleShape3D_klx8s")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 3.55271e-15, 0, -3.55271e-15, 1, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_ncxdb")
+transform = Transform3D(0.999999, 0, 0, 0, -0.999999, 8.74227e-08, 0, -8.74227e-08, -0.999999, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_0b4qm")
 mesh = SubResource("CapsuleMesh_y7jk1")
 skeleton = NodePath("../RigidBody3D/CollisionShape3D")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D/MeshInstance3D"]
 transform = Transform3D(0.310017, 0, 0, 0, 1, 8.88178e-16, 0, -3.55271e-15, 0.213085, 0, -1.81885e-08, -0.416104)
+visible = false
 mesh = SubResource("BoxMesh_gepgj")

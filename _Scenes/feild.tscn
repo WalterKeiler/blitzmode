@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://dkddmtmu5c3pb"]
+[gd_scene load_steps=22 format=3 uid="uid://dkddmtmu5c3pb"]
 
 [ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="1_6652p"]
 [ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="1_c7hut"]
@@ -33,19 +33,6 @@ glow_enabled = true
 material = ExtResource("1_c7hut")
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_0xxls"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s1jxh"]
-albedo_color = Color(0, 0, 1, 1)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_oyjpm"]
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_ii54q"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hosuo"]
-albedo_color = Color(0, 1, 0, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f5yob"]
-albedo_color = Color(1, 0, 0, 1)
 
 [sub_resource type="Curve3D" id="Curve3D_f1ofg"]
 _data = {
@@ -100,41 +87,6 @@ transform = Transform3D(-4.37114e-08, -0.624695, -0.780893, 0, 0.780869, -0.6247
 _inputCombos = Array[Resource]([ExtResource("4_wsvc8"), ExtResource("5_2ysm3"), ExtResource("6_ropgt"), ExtResource("7_v0ma5"), ExtResource("8_aedpu"), ExtResource("9_2n3my"), ExtResource("10_dgujd"), ExtResource("11_gk4p0")])
 _inputBuffer = 0.1
 isOffence = true
-
-[node name="BallTarget3" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.5923, 0, -14.768)
-visible = false
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="BallTarget3"]
-material_override = SubResource("StandardMaterial3D_s1jxh")
-mesh = SubResource("CylinderMesh_oyjpm")
-skeleton = NodePath("../../BallTarget2")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BallTarget3"]
-shape = SubResource("CylinderShape3D_ii54q")
-
-[node name="BallTarget2" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.539, 0, 0)
-visible = false
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="BallTarget2"]
-material_override = SubResource("StandardMaterial3D_hosuo")
-mesh = SubResource("CylinderMesh_oyjpm")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BallTarget2"]
-shape = SubResource("CylinderShape3D_ii54q")
-
-[node name="BallTarget1" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.236, 0, 0)
-visible = false
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="BallTarget1"]
-material_override = SubResource("StandardMaterial3D_f5yob")
-mesh = SubResource("CylinderMesh_oyjpm")
-skeleton = NodePath("../..")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BallTarget1"]
-shape = SubResource("CylinderShape3D_ii54q")
 
 [node name="BallPath" type="Path3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1461, 1.19143, 0.678301)
