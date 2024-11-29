@@ -127,7 +127,12 @@ public partial class PlayerController : Node3D
 	async void Jump()
 	{
 		mat.SetAlbedo(Colors.Blue);
-		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		var tween = CreateTween();
+		tween.TweenProperty(GetNode("."), "position:y", 3,
+			30 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+		tween.Chain().TweenProperty(GetNode("."), "position:y", 1,
+			20 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
+		await ToSignal(tween, "finished");
 		mat.SetAlbedo(Colors.White);
 	}
 	async void StiffArm()

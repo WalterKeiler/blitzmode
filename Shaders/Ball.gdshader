@@ -24,7 +24,7 @@ void fragment()
 	start = vec2(0.5,0.3);
 	end = vec2(0.5, .7);
 	d = sdSegment(UV, start, end) -0.01;
-	
+
 	for (int i = 0; i < lace_count; i++)
 	{
 		d = min(
@@ -36,6 +36,6 @@ void fragment()
 			)-0.01
 		);
 	}
-	
+
 	ALBEDO = (d<0.0) ? lineColor : ballColor;
 }
