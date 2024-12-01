@@ -130,9 +130,12 @@ public partial class PlayerController : Node3D
 		var tween = CreateTween();
 		tween.TweenProperty(GetNode("."), "position:y", 3,
 			30 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
-		tween.Chain().TweenProperty(GetNode("."), "position:y", 1,
-			20 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
 		await ToSignal(tween, "finished");
+		await ToSignal(GetTree().CreateTimer(.05), "timeout");
+		var tween2 = CreateTween();
+		tween2.TweenProperty(GetNode("."), "position:y", 1,
+			20 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
+		await ToSignal(tween2, "finished");
 		mat.SetAlbedo(Colors.White);
 	}
 	async void StiffArm()
