@@ -1,6 +1,8 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Godot.Collections;
 
 public partial class PlayerController : Node3D
 {
@@ -12,12 +14,14 @@ public partial class PlayerController : Node3D
 	[Export] public bool isplayerControlled;
 	[Export] public bool isOffence;
 	[Export] BaseMaterial3D mat;
+	[Export] Area3D tackleBox;
 	[Export] Node3D ball;
 	[Export] Path3D ballPath;
 	[Export] PathFollow3D ballPathFollow;
 	[Export] private Node3D[] throwTargets;
 	public List<PlayerActions> PlayerAction;
 
+	bool canTakeInput = true;
 	Vector3 _moveDirection;
 	float _sprintMultiplier;
 	
@@ -39,7 +43,7 @@ public partial class PlayerController : Node3D
 	
 	void GetInput()
 	{
-		if (playerID == -1) return;
+		if (playerID == -1 || !canTakeInput) return;
 		
 		Vector3 inputDir = inputManager.GetDirectionalInput();
 		Vector3 xDir = Vector3.Zero;
@@ -126,7 +130,9 @@ public partial class PlayerController : Node3D
 	}
 	async void Jump()
 	{
+		if(tackleBox.GetOverlappingAreas().Count > 1) return;
 		mat.SetAlbedo(Colors.Blue);
+		canTakeInput = false;
 		var tween = CreateTween();
 		tween.TweenProperty(GetNode("."), "position:y", 3,
 			30 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
@@ -136,6 +142,7 @@ public partial class PlayerController : Node3D
 		tween2.TweenProperty(GetNode("."), "position:y", 1,
 			20 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
 		await ToSignal(tween2, "finished");
+		canTakeInput = true;
 		mat.SetAlbedo(Colors.White);
 	}
 	async void StiffArm()
@@ -147,6 +154,21 @@ public partial class PlayerController : Node3D
 	async void Tackle()
 	{
 		mat.SetAlbedo(Colors.Green);
+		bool hasTackleTarget = false;
+		PlayerController tackleTarget = null;
+		Area3D[] overlapping = tackleBox.GetOverlappingAreas().ToArray();
+		GD.Print(overlapping.Length);
+		for (int i = 0; i < overlapping.Length; i++)
+		{
+			PlayerController ctlr =  (PlayerController) overlapping[i].GetParent();
+			if (ctlr.isOffence)
+			{
+				hasTackleTarget = true;
+				tackleTarget = ctlr;
+			}
+		}
+		if (hasTackleTarget)
+			GD.Print("Tackled");
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		mat.SetAlbedo(Colors.White);
 	}
