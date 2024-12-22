@@ -203,9 +203,9 @@ public partial class PlayerController : Node3D
 		if(PlayerAction.Contains(PlayerActions.Dive)) return;
 		mat.SetAlbedo(Colors.Teal);
 		float diveHeight = 1.25f;
+		canTakeInput = false;
 		
 		PlayerController tackleTarget = GetNearestPlayer(nearbyPayersBox, true);
-		canTakeInput = false;
 		Vector3 diveDirection = _moveDirection;
 		if(tackleTarget != null)
 		{
@@ -219,6 +219,8 @@ public partial class PlayerController : Node3D
 			diveDirection = GlobalPosition.DirectionTo(tackleTarget.GlobalPosition).Normalized();
 		}
 		
+		_moveDirection = Vector3.Zero;
+		
 		var tween = CreateTween();
 		tween.SetParallel(true);
 		tween.TweenProperty(GetNode("."), "position:y", diveHeight,
@@ -231,6 +233,7 @@ public partial class PlayerController : Node3D
 			20 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
 		await ToSignal(tween, "finished");
 		
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		canTakeInput = true;
 		
 		mat.SetAlbedo(Colors.White);
