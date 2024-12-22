@@ -15,11 +15,14 @@ public partial class PlayerController : Node3D
 	[Export] public bool isOffence;
 	[Export] BaseMaterial3D mat;
 	[Export] Area3D tackleBox;
+	[Export] Area3D nearbyPayersBox;
+	[Export] Area3D allPayersBox;
 	[Export] Node3D ball;
 	[Export] Path3D ballPath;
 	[Export] PathFollow3D ballPathFollow;
 	[Export] private Node3D[] throwTargets;
 	public List<PlayerActions> PlayerAction;
+	public bool HasBall;
 
 	bool canTakeInput = true;
 	Vector3 _moveDirection;
@@ -39,6 +42,9 @@ public partial class PlayerController : Node3D
 	{
 		GetInput();
 		Move(delta);
+		
+		if (ball.GetParent() == this && !HasBall) HasBall = true;
+		else if (HasBall) HasBall = false;
 	}
 	
 	void GetInput()
@@ -62,14 +68,32 @@ public partial class PlayerController : Node3D
 		Translate(_moveDirection * (float)delta * (playerStats.Speed + _sprintMultiplier));
 	}
 
+	PlayerController GetNearestPlayer(Area3D area, bool prioritizeBall = false)
+	{
+		PlayerController tackleTarget = null;
+		Area3D[] overlapping = area.GetOverlappingAreas().ToArray();
+		float minDistance = float.MaxValue;
+		for (int i = 0; i < overlapping.Length; i++)
+		{
+			PlayerController ctlr =  (PlayerController) overlapping[i].GetParent();
+			float currentDistance = ctlr.GlobalPosition.DistanceTo(GlobalPosition);
+			if (ctlr.isOffence != isOffence && currentDistance <= minDistance)
+			{
+				tackleTarget = ctlr;
+				minDistance = currentDistance;
+				if(ctlr.HasBall && prioritizeBall) break;
+			}
+		}
+
+		return tackleTarget;
+	}
+	
 	public void DoAction(PlayerActions action, int calledPlayerId)
 	{
 		if(playerID != calledPlayerId) return;
 		
 		
 		GD.Print("Started: " + action);
-		if(!PlayerAction.Contains(action))
-			PlayerAction.Add(action);
 		switch (action)
 		{
 			case PlayerActions.Sprint : 
@@ -97,14 +121,14 @@ public partial class PlayerController : Node3D
 				ChangePlayer();
 				break;
 		}
+		if(!PlayerAction.Contains(action))
+			PlayerAction.Add(action);
 	}
 	public void CancelAction(PlayerActions action, int calledPlayerId)
 	{
 		if(playerID != calledPlayerId) return;
 		
 		GD.Print("Stopped: " + action);
-		if (PlayerAction.Contains(action))
-			PlayerAction.Remove(action);
 		switch (action)
 		{
 			case PlayerActions.Sprint : 
@@ -121,67 +145,104 @@ public partial class PlayerController : Node3D
 			return;
 		}
 		_sprintMultiplier = playerStats.Agility;
+		if (PlayerAction.Contains(PlayerActions.Sprint))
+			PlayerAction.Remove(PlayerActions.Sprint);
 	}
 	async void SpinMove()
 	{
+		if(PlayerAction.Contains(PlayerActions.SpinMove)) return;
 		mat.SetAlbedo(Colors.Red);
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		mat.SetAlbedo(Colors.White);
+		if (PlayerAction.Contains(PlayerActions.SpinMove))
+			PlayerAction.Remove(PlayerActions.SpinMove);
 	}
 	async void Jump()
 	{
-		if(tackleBox.GetOverlappingAreas().Count > 1) return;
+		if(PlayerAction.Contains(PlayerActions.Jump)) return;
+		//if(tackleBox.GetOverlappingAreas().Count > 1) return;
+		float jumpHeight = 3;
 		mat.SetAlbedo(Colors.Blue);
 		canTakeInput = false;
 		var tween = CreateTween();
-		tween.TweenProperty(GetNode("."), "position:y", 3,
+		tween.TweenProperty(GetNode("."), "position:y", jumpHeight,
 			30 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
-		await ToSignal(tween, "finished");
-		await ToSignal(GetTree().CreateTimer(.05), "timeout");
-		var tween2 = CreateTween();
-		tween2.TweenProperty(GetNode("."), "position:y", 1,
+		tween.Chain().TweenProperty(GetNode("."), "position:y", jumpHeight, .05f);
+		tween.Chain().TweenProperty(GetNode("."), "position:y", 1,
 			20 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
-		await ToSignal(tween2, "finished");
+		await ToSignal(tween, "finished");
+		
 		canTakeInput = true;
 		mat.SetAlbedo(Colors.White);
+		if (PlayerAction.Contains(PlayerActions.Jump))
+			PlayerAction.Remove(PlayerActions.Jump);
 	}
 	async void StiffArm()
 	{
+		if(PlayerAction.Contains(PlayerActions.StiffArm)) return;
 		mat.SetAlbedo(Colors.Orange);
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		mat.SetAlbedo(Colors.White);
+		if (PlayerAction.Contains(PlayerActions.StiffArm))
+			PlayerAction.Remove(PlayerActions.StiffArm);
 	}
 	async void Tackle()
 	{
+		if(PlayerAction.Contains(PlayerActions.Tackle)) return;
 		mat.SetAlbedo(Colors.Green);
-		bool hasTackleTarget = false;
-		PlayerController tackleTarget = null;
-		Area3D[] overlapping = tackleBox.GetOverlappingAreas().ToArray();
-		GD.Print(overlapping.Length);
-		for (int i = 0; i < overlapping.Length; i++)
-		{
-			PlayerController ctlr =  (PlayerController) overlapping[i].GetParent();
-			if (ctlr.isOffence)
-			{
-				hasTackleTarget = true;
-				tackleTarget = ctlr;
-			}
-		}
-		if (hasTackleTarget)
+		PlayerController tackleTarget = GetNearestPlayer(tackleBox, true);
+		if (tackleTarget != null)
 			GD.Print("Tackled");
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		mat.SetAlbedo(Colors.White);
+		if (PlayerAction.Contains(PlayerActions.Tackle))
+			PlayerAction.Remove(PlayerActions.Tackle);
 	}
 	async void Dive()
 	{
+		if(PlayerAction.Contains(PlayerActions.Dive)) return;
 		mat.SetAlbedo(Colors.Teal);
-		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		float diveHeight = 1.25f;
+		
+		PlayerController tackleTarget = GetNearestPlayer(nearbyPayersBox, true);
+		canTakeInput = false;
+		Vector3 diveDirection = _moveDirection;
+		if(tackleTarget != null)
+		{
+			diveDirection = _moveDirection.Dot(GlobalPosition.DirectionTo(tackleTarget.GlobalPosition)) > .25f ?
+				GlobalPosition.DirectionTo(tackleTarget.GlobalPosition).Normalized() : _moveDirection;
+		}
+
+		if (diveDirection == Vector3.Zero)
+		{
+			tackleTarget = GetNearestPlayer(allPayersBox);
+			diveDirection = GlobalPosition.DirectionTo(tackleTarget.GlobalPosition).Normalized();
+		}
+		
+		var tween = CreateTween();
+		tween.SetParallel(true);
+		tween.TweenProperty(GetNode("."), "position:y", diveHeight,
+			30 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+		tween.TweenProperty(GetNode("."), "position", GlobalPosition + (diveDirection * 3),
+			30 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+		tween.Chain().TweenProperty(GetNode("."), "position:y", diveHeight,
+			.05f).SetTrans(Tween.TransitionType.Sine);
+		tween.Chain().TweenProperty(GetNode("."), "position:y", 1,
+			20 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
+		await ToSignal(tween, "finished");
+		
+		canTakeInput = true;
+		
 		mat.SetAlbedo(Colors.White);
+		if (PlayerAction.Contains(PlayerActions.Dive))
+			PlayerAction.Remove(PlayerActions.Dive);
 	}
 	async void ThrowBall()
 	{
+		if(PlayerAction.Contains(PlayerActions.Throw)) return;
+		
 		mat.SetAlbedo(Colors.Yellow);
-		Vector3 startPoint = Transform.Origin;
+		Vector3 startPoint = GlobalPosition;
 		Vector3 endPoint = Vector3.Zero;
 
 		ball.Reparent(ballPathFollow);
@@ -192,7 +253,7 @@ public partial class PlayerController : Node3D
 		Node3D target = null;
 		for (int i = 0; i < throwTargets.Length; i++)
 		{
-			Vector3 dir = startPoint.DirectionTo(throwTargets[i].Position);
+			Vector3 dir = startPoint.DirectionTo(throwTargets[i].GlobalPosition);
 			float dot = dir.Dot(_moveDirection);
 
 			if (dot >= closest)
@@ -201,21 +262,22 @@ public partial class PlayerController : Node3D
 				if (dot - closest <= .1f)
 				{
 					GD.Print("In Line");
-					if(startPoint.DistanceTo(throwTargets[i].Position) <= startPoint.DistanceTo(endPoint))
+					if(startPoint.DistanceTo(throwTargets[i].GlobalPosition) <= startPoint.DistanceTo(endPoint))
 					{
 						closest = dot;
-						endPoint = throwTargets[i].Position;
+						endPoint = throwTargets[i].GlobalPosition;
 						target = throwTargets[i];
 					}
 				}
 				else
 				{
 					closest = dot;
-					endPoint = throwTargets[i].Position;
+					endPoint = throwTargets[i].GlobalPosition;
 					target = throwTargets[i];
 				}
 			}
 		}
+		
 		Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
 
 		float distance = startPoint.DistanceTo(endPoint);
@@ -239,10 +301,6 @@ public partial class PlayerController : Node3D
 		tween.TweenProperty(ballPathFollow, "progress_ratio", 1,
 			 distance * GetProcessDeltaTime() * playerStats.Agility).SetTrans(Tween.TransitionType.Linear);
 		await ToSignal(tween, "finished");
-		ballPathFollow.ProgressRatio = 0;
-		
-		ball.Reparent(target);
-		
 		PlayerController otherPlayer = target as PlayerController;
 		if (otherPlayer != null)
 		{
@@ -252,14 +310,23 @@ public partial class PlayerController : Node3D
 			_moveDirection = Vector3.Zero;
 		}
 		
+		ballPathFollow.ProgressRatio = 0;
+		
+		ball.Reparent(target);
+		
 		GD.Print("Tween finished.");
 		mat.SetAlbedo(Colors.White);
+		if (PlayerAction.Contains(PlayerActions.Throw))
+			PlayerAction.Remove(PlayerActions.Throw);
 	}
 	async void ChangePlayer()
 	{
+		if(PlayerAction.Contains(PlayerActions.ChangePlayer)) return;
 		mat.SetAlbedo(Colors.BlanchedAlmond);
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		mat.SetAlbedo(Colors.White);
+		if (PlayerAction.Contains(PlayerActions.ChangePlayer))
+			PlayerAction.Remove(PlayerActions.ChangePlayer);
 	}
 }
 

@@ -10,13 +10,15 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_krlwx"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_l6q3d"]
-height = 0.594223
-radius = 1.41531
+height = 2.83541
+radius = 300.679
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("tackleBox", "throwTargets")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("tackleBox", "nearbyPayersBox", "allPayersBox", "throwTargets")]
 script = ExtResource("1_areti")
 mat = ExtResource("2_tyapl")
 tackleBox = NodePath("TackleBox")
+nearbyPayersBox = NodePath("NearbyPayersBox")
+allPayersBox = NodePath("AllPlayersBox")
 throwTargets = []
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
@@ -41,4 +43,18 @@ collision_layer = 2
 collision_mask = 4
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TackleBox"]
+shape = SubResource("CylinderShape3D_l6q3d")
+
+[node name="NearbyPayersBox" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NearbyPayersBox"]
+shape = SubResource("CylinderShape3D_l6q3d")
+
+[node name="AllPlayersBox" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AllPlayersBox"]
 shape = SubResource("CylinderShape3D_l6q3d")
