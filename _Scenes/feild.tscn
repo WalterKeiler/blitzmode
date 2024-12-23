@@ -75,6 +75,7 @@ playerID = 0
 playerStats = ExtResource("2_23cto")
 _mainCam = NodePath("../CameraController")
 inputManager = NodePath("../InputManagerInstance")
+isOffence = true
 ball = NodePath("Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")

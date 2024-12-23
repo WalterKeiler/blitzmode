@@ -68,24 +68,62 @@ public partial class PlayerController : Node3D
 		Translate(_moveDirection * (float)delta * (playerStats.Speed + _sprintMultiplier));
 	}
 
-	PlayerController GetNearestPlayer(Area3D area, bool prioritizeBall = false)
+	PlayerController GetNearestPlayer(Area3D area, bool sameTeam, bool prioritizeBall = false)
 	{
-		PlayerController tackleTarget = null;
+		PlayerController target = null;
 		Area3D[] overlapping = area.GetOverlappingAreas().ToArray();
 		float minDistance = float.MaxValue;
 		for (int i = 0; i < overlapping.Length; i++)
 		{
 			PlayerController ctlr =  (PlayerController) overlapping[i].GetParent();
 			float currentDistance = ctlr.GlobalPosition.DistanceTo(GlobalPosition);
-			if (ctlr.isOffence != isOffence && currentDistance <= minDistance)
+			if((sameTeam && ctlr.isOffence == isOffence) || (!sameTeam && ctlr.isOffence != isOffence))
 			{
-				tackleTarget = ctlr;
-				minDistance = currentDistance;
-				if(ctlr.HasBall && prioritizeBall) break;
+				if (currentDistance <= minDistance)
+				{
+					target = ctlr;
+					minDistance = currentDistance;
+					if (ctlr.HasBall && prioritizeBall) break;
+				}
 			}
 		}
 
-		return tackleTarget;
+		return target;
+	}
+	
+	PlayerController GetNearestPlayerToBall(Area3D area, bool sameTeam)
+	{
+		PlayerController target = null;
+		Area3D[] overlapping = area.GetOverlappingAreas().ToArray();
+		float minDistance = float.MaxValue;
+		for (int i = 0; i < overlapping.Length; i++)
+		{
+			PlayerController ctlr =  (PlayerController) overlapping[i].GetParent();
+			if(ctlr == this) continue;
+			float currentDistance = ctlr.GlobalPosition.DistanceTo(ball.GlobalPosition);
+			if((sameTeam && ctlr.isOffence == isOffence) || (!sameTeam && ctlr.isOffence != isOffence))
+			{
+				if (currentDistance <= minDistance)
+				{
+					target = ctlr;
+					minDistance = currentDistance;
+				}
+			}
+		}
+
+		return target;
+	}
+
+	void ChangePlayer(PlayerController otherPlayer)
+	{
+		if (otherPlayer != null && otherPlayer != this)
+		{
+			otherPlayer.playerID = playerID;
+			otherPlayer.inputManager = inputManager;
+			otherPlayer.PlayerAction = PlayerAction;
+			playerID = -1;
+			_moveDirection = Vector3.Zero;
+		}
 	}
 	
 	public void DoAction(PlayerActions action, int calledPlayerId)
@@ -190,7 +228,7 @@ public partial class PlayerController : Node3D
 	{
 		if(PlayerAction.Contains(PlayerActions.Tackle)) return;
 		mat.SetAlbedo(Colors.Green);
-		PlayerController tackleTarget = GetNearestPlayer(tackleBox, true);
+		PlayerController tackleTarget = GetNearestPlayer(tackleBox, false, true);
 		if (tackleTarget != null)
 			GD.Print("Tackled");
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
@@ -205,7 +243,7 @@ public partial class PlayerController : Node3D
 		float diveHeight = 1.25f;
 		canTakeInput = false;
 		
-		PlayerController tackleTarget = GetNearestPlayer(nearbyPayersBox, true);
+		PlayerController tackleTarget = GetNearestPlayer(nearbyPayersBox, false, true);
 		Vector3 diveDirection = _moveDirection;
 		if(tackleTarget != null)
 		{
@@ -215,7 +253,7 @@ public partial class PlayerController : Node3D
 
 		if (diveDirection == Vector3.Zero)
 		{
-			tackleTarget = GetNearestPlayer(allPayersBox);
+			tackleTarget = GetNearestPlayer(allPayersBox, false);
 			diveDirection = GlobalPosition.DirectionTo(tackleTarget.GlobalPosition).Normalized();
 		}
 		
@@ -305,13 +343,7 @@ public partial class PlayerController : Node3D
 			 distance * GetProcessDeltaTime() * playerStats.Agility).SetTrans(Tween.TransitionType.Linear);
 		await ToSignal(tween, "finished");
 		PlayerController otherPlayer = target as PlayerController;
-		if (otherPlayer != null)
-		{
-			otherPlayer.playerID = playerID;
-			otherPlayer.inputManager = inputManager;
-			playerID = -1;
-			_moveDirection = Vector3.Zero;
-		}
+		ChangePlayer(otherPlayer);
 		
 		ballPathFollow.ProgressRatio = 0;
 		
@@ -326,7 +358,10 @@ public partial class PlayerController : Node3D
 	{
 		if(PlayerAction.Contains(PlayerActions.ChangePlayer)) return;
 		mat.SetAlbedo(Colors.BlanchedAlmond);
-		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		PlayerController otherPlayer = GetNearestPlayerToBall(allPayersBox, true);
+		ChangePlayer(otherPlayer);
+		
+		await ToSignal(GetTree().CreateTimer(.25f), "timeout");
 		mat.SetAlbedo(Colors.White);
 		if (PlayerAction.Contains(PlayerActions.ChangePlayer))
 			PlayerAction.Remove(PlayerActions.ChangePlayer);
