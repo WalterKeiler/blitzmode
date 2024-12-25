@@ -35,6 +35,11 @@ public partial class PlayerController : Node3D
 		PlayerAction = new List<PlayerActions>();
 		InputManager.InputPressAction += DoAction;
 		InputManager.InputReleaseAction += CancelAction;
+		if (inputManager != null)
+		{
+			isOffence = inputManager.isOffence;
+			playerID = inputManager.PlayerID;
+		}
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -219,7 +224,9 @@ public partial class PlayerController : Node3D
 	{
 		if(PlayerAction.Contains(PlayerActions.StiffArm)) return;
 		mat.SetAlbedo(Colors.Orange);
+		tackleBox.Monitorable = false;
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		tackleBox.Monitorable = true;
 		mat.SetAlbedo(Colors.White);
 		if (PlayerAction.Contains(PlayerActions.StiffArm))
 			PlayerAction.Remove(PlayerActions.StiffArm);
