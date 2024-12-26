@@ -164,8 +164,8 @@ public partial class PlayerController : Node3D
 				ChangePlayer();
 				break;
 		}
-		if(!PlayerAction.Contains(action))
-			PlayerAction.Add(action);
+		//if(!PlayerAction.Contains(action))
+		//	PlayerAction.Add(action);
 	}
 	public void CancelAction(PlayerActions action, int calledPlayerId)
 	{
@@ -193,7 +193,16 @@ public partial class PlayerController : Node3D
 	}
 	async void SpinMove()
 	{
+		if(PlayerAction.Contains(PlayerActions.Jump) || PlayerAction.Contains(PlayerActions.StiffArm))
+		{
+			if(PlayerAction.Contains(PlayerActions.SpinMove))
+				PlayerAction.Remove(PlayerActions.SpinMove);
+			return;
+		}
 		if(PlayerAction.Contains(PlayerActions.SpinMove)) return;
+		
+		PlayerAction.Add(PlayerActions.SpinMove);
+		
 		mat.SetAlbedo(Colors.Red);
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		mat.SetAlbedo(Colors.White);
@@ -202,8 +211,17 @@ public partial class PlayerController : Node3D
 	}
 	async void Jump()
 	{
+		if(PlayerAction.Contains(PlayerActions.SpinMove) || PlayerAction.Contains(PlayerActions.StiffArm))
+		{
+			if(PlayerAction.Contains(PlayerActions.Jump))
+				PlayerAction.Remove(PlayerActions.Jump);
+			return;
+		}
 		if(PlayerAction.Contains(PlayerActions.Jump)) return;
 		//if(tackleBox.GetOverlappingAreas().Count > 1) return;
+		
+		PlayerAction.Add(PlayerActions.Jump);
+		
 		float jumpHeight = 3;
 		mat.SetAlbedo(Colors.Blue);
 		canTakeInput = false;
@@ -222,7 +240,16 @@ public partial class PlayerController : Node3D
 	}
 	async void StiffArm()
 	{
+		if(PlayerAction.Contains(PlayerActions.Jump) || PlayerAction.Contains(PlayerActions.SpinMove))
+		{
+			if(PlayerAction.Contains(PlayerActions.StiffArm))
+				PlayerAction.Remove(PlayerActions.StiffArm);
+			return;
+		}
 		if(PlayerAction.Contains(PlayerActions.StiffArm)) return;
+		
+		PlayerAction.Add(PlayerActions.StiffArm);
+		
 		mat.SetAlbedo(Colors.Orange);
 		tackleBox.Monitorable = false;
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
@@ -234,6 +261,9 @@ public partial class PlayerController : Node3D
 	async void Tackle()
 	{
 		if(PlayerAction.Contains(PlayerActions.Tackle)) return;
+		
+		PlayerAction.Add(PlayerActions.Tackle);
+		
 		mat.SetAlbedo(Colors.Green);
 		PlayerController tackleTarget = GetNearestPlayer(tackleBox, false, true);
 		if (tackleTarget != null)
@@ -246,6 +276,9 @@ public partial class PlayerController : Node3D
 	async void Dive()
 	{
 		if(PlayerAction.Contains(PlayerActions.Dive)) return;
+		
+		PlayerAction.Add(PlayerActions.Dive);
+		
 		mat.SetAlbedo(Colors.Teal);
 		float diveHeight = 1.25f;
 		canTakeInput = false;
@@ -287,7 +320,15 @@ public partial class PlayerController : Node3D
 	}
 	async void ThrowBall()
 	{
+		if(PlayerAction.Contains(PlayerActions.SpinMove) || PlayerAction.Contains(PlayerActions.StiffArm))
+		{
+			if(PlayerAction.Contains(PlayerActions.Throw))
+				PlayerAction.Remove(PlayerActions.Throw);
+			return;
+		}
 		if(PlayerAction.Contains(PlayerActions.Throw)) return;
+		
+		PlayerAction.Add(PlayerActions.Throw);
 		
 		mat.SetAlbedo(Colors.Yellow);
 		Vector3 startPoint = GlobalPosition;
@@ -364,6 +405,9 @@ public partial class PlayerController : Node3D
 	async void ChangePlayer()
 	{
 		if(PlayerAction.Contains(PlayerActions.ChangePlayer)) return;
+		
+		PlayerAction.Add(PlayerActions.ChangePlayer);
+		
 		mat.SetAlbedo(Colors.BlanchedAlmond);
 		PlayerController otherPlayer = GetNearestPlayerToBall(allPayersBox, true);
 		ChangePlayer(otherPlayer);

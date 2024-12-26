@@ -87,6 +87,7 @@ transform = Transform3D(-4.37114e-08, -0.624695, -0.780893, 0, 0.780869, -0.6247
 [node name="InputManagerInstance" parent="." instance=ExtResource("3_3702o")]
 _inputCombos = Array[Resource]([ExtResource("4_wsvc8"), ExtResource("5_2ysm3"), ExtResource("6_ropgt"), ExtResource("7_v0ma5"), ExtResource("8_aedpu"), ExtResource("9_2n3my"), ExtResource("10_dgujd"), ExtResource("11_gk4p0")])
 _inputBuffer = 0.1
+isOffence = true
 
 [node name="BallPath" type="Path3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1461, 1.19143, 0.678301)
