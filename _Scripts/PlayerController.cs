@@ -16,11 +16,11 @@ public partial class PlayerController : Node3D
 	[Export] BaseMaterial3D mat;
 	[Export] Area3D tackleBox;
 	[Export] Area3D nearbyPayersBox;
-	[Export] Area3D allPayersBox;
 	[Export] Node3D ball;
 	[Export] Path3D ballPath;
 	[Export] PathFollow3D ballPathFollow;
-	[Export] private Node3D[] throwTargets;
+	List<Node3D> PlayersOnTeam;
+	List<Node3D> PlayersNotOnTeam;
 	public List<PlayerActions> PlayerAction;
 	public bool HasBall;
 
@@ -28,10 +28,11 @@ public partial class PlayerController : Node3D
 	Vector3 _moveDirection;
 	float _sprintMultiplier;
 	
+	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		GD.Print(mat.ResourceName);
+		//GD.Print(mat.ResourceName);
 		PlayerAction = new List<PlayerActions>();
 		InputManager.InputPressAction += DoAction;
 		InputManager.InputReleaseAction += CancelAction;
@@ -39,6 +40,26 @@ public partial class PlayerController : Node3D
 		{
 			isOffence = inputManager.isOffence;
 			playerID = inputManager.PlayerID;
+		}
+
+		PlayerController[] players = GetParent().GetChildren().OfType<PlayerController>().ToArray();
+		PlayersOnTeam = new List<Node3D>();
+		PlayersNotOnTeam = new List<Node3D>();
+		
+		if (players != null)
+		{
+			for (int i = 0; i < players.Length; i++)
+			{
+				if (players[i].isOffence == isOffence && players[i] != this)
+				{
+					GD.Print(players[i].Name);
+					PlayersOnTeam.Add(players[i]);
+				}
+				else if(players[i].isOffence != isOffence && players[i] != this)
+				{
+					PlayersNotOnTeam.Add(players[i]);
+				}
+			}
 		}
 	}
 
@@ -72,7 +93,13 @@ public partial class PlayerController : Node3D
 		_moveDirection.Normalized();
 		Translate(_moveDirection * (float)delta * (playerStats.Speed + _sprintMultiplier));
 	}
-
+/// <summary>
+/// Use when searching with collisions
+/// </summary>
+/// <param name="area"></param>
+/// <param name="sameTeam"></param>
+/// <param name="prioritizeBall"></param>
+/// <returns></returns>
 	PlayerController GetNearestPlayer(Area3D area, bool sameTeam, bool prioritizeBall = false)
 	{
 		PlayerController target = null;
@@ -95,24 +122,49 @@ public partial class PlayerController : Node3D
 
 		return target;
 	}
-	
-	PlayerController GetNearestPlayerToBall(Area3D area, bool sameTeam)
+	/// <summary>
+	/// Use when searching all players for closest one
+	/// </summary>
+	/// <param name="sameTeam"></param>
+	/// <param name="prioritizeBall"></param>
+	/// <returns></returns>
+	PlayerController GetNearestPlayer(bool sameTeam, bool prioritizeBall = false)
 	{
 		PlayerController target = null;
-		Area3D[] overlapping = area.GetOverlappingAreas().ToArray();
+		List<Node3D> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
 		float minDistance = float.MaxValue;
-		for (int i = 0; i < overlapping.Length; i++)
+		for (int i = 0; i < playersToSearch.Count; i++)
 		{
-			PlayerController ctlr =  (PlayerController) overlapping[i].GetParent();
+			PlayerController ctlr =  (PlayerController) playersToSearch[i];
+			float currentDistance = ctlr.GlobalPosition.DistanceTo(GlobalPosition);
+			
+			if (currentDistance <= minDistance)
+			{
+				target = ctlr;
+				minDistance = currentDistance;
+				if (ctlr.HasBall && prioritizeBall) break;
+			}
+		}
+
+		return target;
+	}
+	
+	PlayerController GetNearestPlayerToBall(bool sameTeam)
+	{
+		PlayerController target = null;
+
+		List<Node3D> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
+		
+		float minDistance = float.MaxValue;
+		for (int i = 0; i < playersToSearch.Count; i++)
+		{
+			PlayerController ctlr =  (PlayerController) playersToSearch[i];
 			if(ctlr == this) continue;
 			float currentDistance = ctlr.GlobalPosition.DistanceTo(ball.GlobalPosition);
-			if((sameTeam && ctlr.isOffence == isOffence) || (!sameTeam && ctlr.isOffence != isOffence))
+			if (currentDistance <= minDistance)
 			{
-				if (currentDistance <= minDistance)
-				{
-					target = ctlr;
-					minDistance = currentDistance;
-				}
+				target = ctlr;
+				minDistance = currentDistance;
 			}
 		}
 
@@ -293,7 +345,7 @@ public partial class PlayerController : Node3D
 
 		if (diveDirection == Vector3.Zero)
 		{
-			tackleTarget = GetNearestPlayer(allPayersBox, false);
+			tackleTarget = GetNearestPlayer(false);
 			diveDirection = GlobalPosition.DirectionTo(tackleTarget.GlobalPosition).Normalized();
 		}
 		
@@ -340,9 +392,9 @@ public partial class PlayerController : Node3D
 
 		float closest = -100000;
 		Node3D target = null;
-		for (int i = 0; i < throwTargets.Length; i++)
+		for (int i = 0; i < PlayersOnTeam.Count; i++)
 		{
-			Vector3 dir = startPoint.DirectionTo(throwTargets[i].GlobalPosition);
+			Vector3 dir = startPoint.DirectionTo(PlayersOnTeam[i].GlobalPosition);
 			float dot = dir.Dot(_moveDirection);
 
 			if (dot >= closest)
@@ -351,18 +403,18 @@ public partial class PlayerController : Node3D
 				if (dot - closest <= .1f)
 				{
 					GD.Print("In Line");
-					if(startPoint.DistanceTo(throwTargets[i].GlobalPosition) <= startPoint.DistanceTo(endPoint))
+					if(startPoint.DistanceTo(PlayersOnTeam[i].GlobalPosition) <= startPoint.DistanceTo(endPoint))
 					{
 						closest = dot;
-						endPoint = throwTargets[i].GlobalPosition;
-						target = throwTargets[i];
+						endPoint = PlayersOnTeam[i].GlobalPosition;
+						target = PlayersOnTeam[i];
 					}
 				}
 				else
 				{
 					closest = dot;
-					endPoint = throwTargets[i].GlobalPosition;
-					target = throwTargets[i];
+					endPoint = PlayersOnTeam[i].GlobalPosition;
+					target = PlayersOnTeam[i];
 				}
 			}
 		}
@@ -409,7 +461,7 @@ public partial class PlayerController : Node3D
 		PlayerAction.Add(PlayerActions.ChangePlayer);
 		
 		mat.SetAlbedo(Colors.BlanchedAlmond);
-		PlayerController otherPlayer = GetNearestPlayerToBall(allPayersBox, true);
+		PlayerController otherPlayer = GetNearestPlayerToBall(true);
 		ChangePlayer(otherPlayer);
 		
 		await ToSignal(GetTree().CreateTimer(.25f), "timeout");

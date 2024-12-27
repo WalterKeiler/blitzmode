@@ -1,20 +1,20 @@
 [gd_scene load_steps=22 format=3 uid="uid://dkddmtmu5c3pb"]
 
-[ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="1_6652p"]
-[ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="1_c7hut"]
-[ext_resource type="Script" path="res://_Scripts/CameraController.cs" id="1_o0wdg"]
-[ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="2_23cto"]
-[ext_resource type="PackedScene" uid="uid://cl04xbkb6lkf4" path="res://_Scenes/InputManager.tscn" id="3_3702o"]
-[ext_resource type="Resource" uid="uid://tcnum2x5ch5a" path="res://Resources/Input/Sprint.tres" id="4_wsvc8"]
-[ext_resource type="Resource" uid="uid://bduqn4upev1j5" path="res://Resources/Input/SpinMove.tres" id="5_2ysm3"]
-[ext_resource type="Resource" uid="uid://dq1abbnm8n2c2" path="res://Resources/Input/ChangePlayer.tres" id="6_ropgt"]
-[ext_resource type="Resource" uid="uid://bkmyjysofqm7m" path="res://Resources/Input/Dive.tres" id="7_v0ma5"]
-[ext_resource type="Resource" uid="uid://bsm7re1plbrl1" path="res://Resources/Input/Jump.tres" id="8_aedpu"]
-[ext_resource type="Resource" uid="uid://doyaqfc8yadf4" path="res://Resources/Input/Tackle.tres" id="9_2n3my"]
-[ext_resource type="Resource" uid="uid://bx2h0hskxnnli" path="res://Resources/Input/Throw.tres" id="10_dgujd"]
-[ext_resource type="Resource" uid="uid://ds41fgws8hnvb" path="res://Resources/Input/StiffArm.tres" id="11_gk4p0"]
-[ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/ball.tscn" id="14_mo1nw"]
-[ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/Linebacker.tres" id="15_klgl0"]
+[ext_resource type="Script" path="res://_Scripts/CameraController.cs" id="1_nb8lh"]
+[ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="2_acjaa"]
+[ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/Player.tscn" id="3_jke3i"]
+[ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="4_fuj64"]
+[ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/Ball.tscn" id="5_weq6n"]
+[ext_resource type="PackedScene" uid="uid://cl04xbkb6lkf4" path="res://_Scenes/InputManager.tscn" id="6_rn8ec"]
+[ext_resource type="Resource" uid="uid://tcnum2x5ch5a" path="res://Resources/Input/Sprint.tres" id="7_5jy3s"]
+[ext_resource type="Resource" uid="uid://bduqn4upev1j5" path="res://Resources/Input/SpinMove.tres" id="8_cy3xd"]
+[ext_resource type="Resource" uid="uid://dq1abbnm8n2c2" path="res://Resources/Input/ChangePlayer.tres" id="9_y1vnq"]
+[ext_resource type="Resource" uid="uid://bkmyjysofqm7m" path="res://Resources/Input/Dive.tres" id="10_ekhn6"]
+[ext_resource type="Resource" uid="uid://bsm7re1plbrl1" path="res://Resources/Input/Jump.tres" id="11_1quqr"]
+[ext_resource type="Resource" uid="uid://doyaqfc8yadf4" path="res://Resources/Input/Tackle.tres" id="12_2ifbs"]
+[ext_resource type="Resource" uid="uid://bx2h0hskxnnli" path="res://Resources/Input/Throw.tres" id="13_anypg"]
+[ext_resource type="Resource" uid="uid://ds41fgws8hnvb" path="res://Resources/Input/StiffArm.tres" id="14_bggh7"]
+[ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/Linebacker.tres" id="15_321t8"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -30,7 +30,7 @@ tonemap_mode = 2
 glow_enabled = true
 
 [sub_resource type="QuadMesh" id="QuadMesh_7u6ye"]
-material = ExtResource("1_c7hut")
+material = ExtResource("2_acjaa")
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_0xxls"]
 
@@ -41,7 +41,7 @@ _data = {
 }
 point_count = 3
 
-[node name="Feild" type="Node3D"]
+[node name="Field" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ysj40")
@@ -50,7 +50,7 @@ environment = SubResource("Environment_ysj40")
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 10, 0)
 
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("target")]
-script = ExtResource("1_o0wdg")
+script = ExtResource("1_nb8lh")
 target = NodePath("../Player/Ball")
 cameraMoveSpeed = 15.0
 
@@ -69,25 +69,23 @@ skeleton = NodePath("../..")
 transform = Transform3D(1, 0, 0, 0, 1, -3.55271e-15, 0, 3.55271e-15, 1, 0, 0, 0)
 shape = SubResource("WorldBoundaryShape3D_0xxls")
 
-[node name="Player" parent="." node_paths=PackedStringArray("_mainCam", "inputManager", "ball", "ballPath", "ballPathFollow", "throwTargets") instance=ExtResource("1_6652p")]
+[node name="Player" parent="." node_paths=PackedStringArray("_mainCam", "inputManager", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 playerID = 0
-playerStats = ExtResource("2_23cto")
+playerStats = ExtResource("4_fuj64")
 _mainCam = NodePath("../CameraController")
 inputManager = NodePath("../InputManagerInstance")
 isOffence = true
 ball = NodePath("Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
-throwTargets = [NodePath("../Player2"), NodePath("../Player3"), NodePath("../Player4")]
 
-[node name="Ball" parent="Player" instance=ExtResource("14_mo1nw")]
+[node name="Ball" parent="Player" instance=ExtResource("5_weq6n")]
 transform = Transform3D(-4.37114e-08, -0.624695, -0.780893, 0, 0.780869, -0.624714, 0.999999, -2.73063e-08, -3.41339e-08, 0.1461, 0.19143, 0.678301)
 
-[node name="InputManagerInstance" parent="." instance=ExtResource("3_3702o")]
-_inputCombos = Array[Resource]([ExtResource("4_wsvc8"), ExtResource("5_2ysm3"), ExtResource("6_ropgt"), ExtResource("7_v0ma5"), ExtResource("8_aedpu"), ExtResource("9_2n3my"), ExtResource("10_dgujd"), ExtResource("11_gk4p0")])
+[node name="InputManagerInstance" parent="." instance=ExtResource("6_rn8ec")]
+_inputCombos = Array[Resource]([ExtResource("7_5jy3s"), ExtResource("8_cy3xd"), ExtResource("9_y1vnq"), ExtResource("10_ekhn6"), ExtResource("11_1quqr"), ExtResource("12_2ifbs"), ExtResource("13_anypg"), ExtResource("14_bggh7")])
 _inputBuffer = 0.1
-isOffence = true
 
 [node name="BallPath" type="Path3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1461, 1.19143, 0.678301)
@@ -96,32 +94,28 @@ curve = SubResource("Curve3D_f1ofg")
 [node name="PathFollow3D" type="PathFollow3D" parent="BallPath"]
 transform = Transform3D(-4.37113e-08, -0.624695, -0.780893, 0, 0.780869, -0.624714, 0.999999, -2.73063e-08, -3.41339e-08, 0, 0, 0)
 
-[node name="Player4" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow", "throwTargets") instance=ExtResource("1_6652p")]
+[node name="Player4" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.714, 1, -8.386)
-playerStats = ExtResource("15_klgl0")
+playerStats = ExtResource("15_321t8")
 _mainCam = NodePath("../CameraController")
 isOffence = true
 ball = NodePath("../Player/Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
-throwTargets = [NodePath("../Player"), NodePath("../Player3"), NodePath("../Player2")]
 
-[node name="Player3" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow", "throwTargets") instance=ExtResource("1_6652p")]
+[node name="Player3" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35.67, 1, -13.452)
-playerStats = ExtResource("15_klgl0")
+playerStats = ExtResource("15_321t8")
 _mainCam = NodePath("../CameraController")
 isOffence = true
 ball = NodePath("../Player/Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
-throwTargets = [NodePath("../Player"), NodePath("../Player2"), NodePath("../Player4")]
 
-[node name="Player2" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow", "throwTargets") instance=ExtResource("1_6652p")]
+[node name="Player2" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5749, 1, 6.49671)
-playerStats = ExtResource("15_klgl0")
+playerStats = ExtResource("15_321t8")
 _mainCam = NodePath("../CameraController")
-isOffence = true
 ball = NodePath("../Player/Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
-throwTargets = [NodePath("../Player"), NodePath("../Player3"), NodePath("../Player4")]

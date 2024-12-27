@@ -13,13 +13,11 @@
 height = 2.83541
 radius = 300.679
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("tackleBox", "nearbyPayersBox", "allPayersBox", "throwTargets")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("tackleBox", "nearbyPayersBox")]
 script = ExtResource("1_areti")
 mat = ExtResource("2_tyapl")
 tackleBox = NodePath("TackleBox")
 nearbyPayersBox = NodePath("NearbyPayersBox")
-allPayersBox = NodePath("AllPlayersBox")
-throwTargets = []
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 
