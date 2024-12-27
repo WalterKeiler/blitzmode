@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot.Collections;
+using Array = System.Array;
 
 public partial class PlayerController : Node3D
 {
@@ -232,6 +233,26 @@ public partial class PlayerController : Node3D
 		}
 	}
 
+	bool CanDoAction(PlayerActions action, PlayerActions[] restrictions)
+	{
+		
+		foreach (PlayerActions restriction in restrictions)
+		{
+			if (PlayerAction.Contains(restriction))
+			{
+				if (PlayerAction.Contains(action))
+					PlayerAction.Remove(action);
+				return false;
+			}
+		}
+		
+		
+		if(PlayerAction.Contains(action)) return false;
+		
+		PlayerAction.Add(action);
+		return true;
+	}
+	
 	void Sprint(bool stopAction = false)
 	{
 		if (stopAction)
@@ -245,15 +266,13 @@ public partial class PlayerController : Node3D
 	}
 	async void SpinMove()
 	{
-		if(PlayerAction.Contains(PlayerActions.Jump) || PlayerAction.Contains(PlayerActions.StiffArm))
+		PlayerActions[] restrictions =
 		{
-			if(PlayerAction.Contains(PlayerActions.SpinMove))
-				PlayerAction.Remove(PlayerActions.SpinMove);
-			return;
-		}
-		if(PlayerAction.Contains(PlayerActions.SpinMove)) return;
+			PlayerActions.Jump,
+			PlayerActions.StiffArm
+		};
+		if(!CanDoAction(PlayerActions.SpinMove, restrictions)) return;
 		
-		PlayerAction.Add(PlayerActions.SpinMove);
 		
 		mat.SetAlbedo(Colors.Red);
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
@@ -263,16 +282,16 @@ public partial class PlayerController : Node3D
 	}
 	async void Jump()
 	{
-		if(PlayerAction.Contains(PlayerActions.SpinMove) || PlayerAction.Contains(PlayerActions.StiffArm))
+		PlayerActions[] restrictions =
 		{
-			if(PlayerAction.Contains(PlayerActions.Jump))
-				PlayerAction.Remove(PlayerActions.Jump);
-			return;
-		}
-		if(PlayerAction.Contains(PlayerActions.Jump)) return;
-		//if(tackleBox.GetOverlappingAreas().Count > 1) return;
+			PlayerActions.SpinMove,
+			PlayerActions.StiffArm,
+			PlayerActions.Tackle,
+			PlayerActions.Dive
+		};
+		if(!CanDoAction(PlayerActions.Jump, restrictions)) return;
 		
-		PlayerAction.Add(PlayerActions.Jump);
+		//if(tackleBox.GetOverlappingAreas().Count > 1) return;
 		
 		float jumpHeight = 3;
 		mat.SetAlbedo(Colors.Blue);
@@ -292,15 +311,12 @@ public partial class PlayerController : Node3D
 	}
 	async void StiffArm()
 	{
-		if(PlayerAction.Contains(PlayerActions.Jump) || PlayerAction.Contains(PlayerActions.SpinMove))
+		PlayerActions[] restrictions =
 		{
-			if(PlayerAction.Contains(PlayerActions.StiffArm))
-				PlayerAction.Remove(PlayerActions.StiffArm);
-			return;
-		}
-		if(PlayerAction.Contains(PlayerActions.StiffArm)) return;
-		
-		PlayerAction.Add(PlayerActions.StiffArm);
+			PlayerActions.Jump,
+			PlayerActions.SpinMove
+		};
+		if(!CanDoAction(PlayerActions.StiffArm, restrictions)) return;
 		
 		mat.SetAlbedo(Colors.Orange);
 		tackleBox.Monitorable = false;
@@ -312,9 +328,12 @@ public partial class PlayerController : Node3D
 	}
 	async void Tackle()
 	{
-		if(PlayerAction.Contains(PlayerActions.Tackle)) return;
-		
-		PlayerAction.Add(PlayerActions.Tackle);
+		PlayerActions[] restrictions =
+		{
+			PlayerActions.Jump,
+			PlayerActions.Dive
+		};
+		if(!CanDoAction(PlayerActions.Tackle, restrictions)) return;
 		
 		mat.SetAlbedo(Colors.Green);
 		PlayerController tackleTarget = GetNearestPlayer(tackleBox, false, true);
@@ -327,9 +346,12 @@ public partial class PlayerController : Node3D
 	}
 	async void Dive()
 	{
-		if(PlayerAction.Contains(PlayerActions.Dive)) return;
-		
-		PlayerAction.Add(PlayerActions.Dive);
+		PlayerActions[] restrictions =
+		{
+			PlayerActions.Jump,
+			PlayerActions.Tackle
+		};
+		if(!CanDoAction(PlayerActions.Dive, restrictions)) return;
 		
 		mat.SetAlbedo(Colors.Teal);
 		float diveHeight = 1.25f;
@@ -372,15 +394,12 @@ public partial class PlayerController : Node3D
 	}
 	async void ThrowBall()
 	{
-		if(PlayerAction.Contains(PlayerActions.SpinMove) || PlayerAction.Contains(PlayerActions.StiffArm))
+		PlayerActions[] restrictions =
 		{
-			if(PlayerAction.Contains(PlayerActions.Throw))
-				PlayerAction.Remove(PlayerActions.Throw);
-			return;
-		}
-		if(PlayerAction.Contains(PlayerActions.Throw)) return;
-		
-		PlayerAction.Add(PlayerActions.Throw);
+			PlayerActions.SpinMove,
+			PlayerActions.StiffArm
+		};
+		if(!CanDoAction(PlayerActions.Throw, restrictions)) return;
 		
 		mat.SetAlbedo(Colors.Yellow);
 		Vector3 startPoint = GlobalPosition;
@@ -456,9 +475,8 @@ public partial class PlayerController : Node3D
 	}
 	async void ChangePlayer()
 	{
-		if(PlayerAction.Contains(PlayerActions.ChangePlayer)) return;
-		
-		PlayerAction.Add(PlayerActions.ChangePlayer);
+		PlayerActions[] restrictions = Array.Empty<PlayerActions>();
+		if(!CanDoAction(PlayerActions.ChangePlayer, restrictions)) return;
 		
 		mat.SetAlbedo(Colors.BlanchedAlmond);
 		PlayerController otherPlayer = GetNearestPlayerToBall(true);
