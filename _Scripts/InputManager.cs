@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class InputManager : Node
 {
@@ -10,6 +11,8 @@ public partial class InputManager : Node
 	[Export] float _inputBuffer;
 	[Export] public bool isOffence;
 
+	bool isFirstController;
+	
 	List<InputCombo> activeInputs;
 	double deltaTime;
 	
@@ -18,6 +21,9 @@ public partial class InputManager : Node
 	public override void _Ready()
 	{
 		activeInputs = new List<InputCombo>();
+		isFirstController = (PlayerID == 1);
+		
+		GD.Print(Input.GetConnectedJoypads().Count);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -69,8 +75,41 @@ public partial class InputManager : Node
 	
 	public Vector3 GetDirectionalInput()
 	{
+		bool canMove = false;
+		foreach (var right in InputMap.ActionGetEvents("move_right"))
+		{
+			if (right.Device == PlayerID)
+			{
+				canMove = true;
+				break;
+			}
+		}
+		foreach (var right in InputMap.ActionGetEvents("move_left"))
+		{
+			if (right.Device == PlayerID)
+			{
+				canMove = true;
+				break;
+			}
+		}
+		foreach (var right in InputMap.ActionGetEvents("move_back"))
+		{
+			if (right.Device == PlayerID)
+			{
+				canMove = true;
+				break;
+			}
+		}
+		foreach (var right in InputMap.ActionGetEvents("move_forward"))
+		{
+			if (right.Device == PlayerID)
+			{
+				canMove = true;
+				break;
+			}
+		}
+		if(!canMove) return Vector3.Zero;
 		Vector2 input = Input.GetVector("move_right", "move_left", "move_back", "move_forward");
-		
 		return new Vector3(input.X,0,input.Y);
 	}
 }

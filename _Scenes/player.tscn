@@ -49,10 +49,3 @@ collision_mask = 4
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NearbyPayersBox"]
 shape = SubResource("CylinderShape3D_l6q3d")
-
-[node name="AllPlayersBox" type="Area3D" parent="."]
-collision_layer = 2
-collision_mask = 4
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="AllPlayersBox"]
-shape = SubResource("CylinderShape3D_l6q3d")
