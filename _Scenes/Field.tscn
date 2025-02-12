@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://_Scripts/CameraController.cs" id="1_nb8lh"]
 [ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="2_acjaa"]
-[ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/Player.tscn" id="3_jke3i"]
+[ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="3_jke3i"]
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="4_fuj64"]
-[ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/Ball.tscn" id="5_weq6n"]
+[ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/ball.tscn" id="5_weq6n"]
 [ext_resource type="PackedScene" uid="uid://cl04xbkb6lkf4" path="res://_Scenes/InputManager.tscn" id="6_rn8ec"]
 [ext_resource type="Resource" uid="uid://tcnum2x5ch5a" path="res://Resources/Input/Sprint.tres" id="7_5jy3s"]
 [ext_resource type="Resource" uid="uid://bduqn4upev1j5" path="res://Resources/Input/SpinMove.tres" id="8_cy3xd"]
@@ -88,12 +88,6 @@ _inputCombos = Array[Resource]([ExtResource("7_5jy3s"), ExtResource("8_cy3xd"), 
 _inputBuffer = 0.1
 isOffence = true
 
-[node name="InputManagerInstance2" parent="." instance=ExtResource("6_rn8ec")]
-PlayerID = 1
-_inputCombos = Array[Resource]([ExtResource("7_5jy3s"), ExtResource("8_cy3xd"), ExtResource("9_y1vnq"), ExtResource("10_ekhn6"), ExtResource("11_1quqr"), ExtResource("12_2ifbs"), ExtResource("13_anypg"), ExtResource("14_bggh7")])
-_inputBuffer = 0.1
-isOffence = true
-
 [node name="BallPath" type="Path3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1461, 1.19143, 0.678301)
 curve = SubResource("Curve3D_f1ofg")
@@ -103,10 +97,9 @@ transform = Transform3D(-4.37113e-08, -0.624695, -0.780893, 0, 0.780869, -0.6247
 
 [node name="Player4" parent="." node_paths=PackedStringArray("_mainCam", "inputManager", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.714, 1, -8.386)
-playerID = 1
 playerStats = ExtResource("15_321t8")
 _mainCam = NodePath("../CameraController")
-inputManager = NodePath("../InputManagerInstance2")
+inputManager = NodePath("")
 isOffence = true
 ball = NodePath("../Player/Ball")
 ballPath = NodePath("../BallPath")
