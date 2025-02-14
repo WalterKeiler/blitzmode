@@ -12,6 +12,7 @@ public partial class PlayerController : Node3D
 	[Export(PropertyHint.Range, "0,1,")] float _PlayersprintAmount = 1;
 	[Export] Node3D _mainCam;
 	[Export] public InputManager inputManager;
+	[Export] public AIManager aiManager;
 	[Export] public bool isplayerControlled;
 	[Export] public bool isOffence;
 	[Export] BaseMaterial3D mat;
