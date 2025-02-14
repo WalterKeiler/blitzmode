@@ -90,19 +90,27 @@ public partial class PlayerController : Node3D
 		_moveDirection.Y = 0;
 	}
 
+	public void GetInput(Vector3 direction)
+	{
+		if (playerID != -1 || !canTakeInput) return;
+		_moveDirection = direction.Normalized();
+		
+		_moveDirection.Y = 0;
+	}
+
 	void Move(double delta)
 	{
 		_moveDirection.Normalized();
 		Translate(_moveDirection * (float)delta * (playerStats.Speed + _sprintMultiplier));
 	}
-/// <summary>
-/// Use when searching with collisions
-/// </summary>
-/// <param name="area"></param>
-/// <param name="sameTeam"></param>
-/// <param name="prioritizeBall"></param>
-/// <returns></returns>
-	PlayerController GetNearestPlayer(Area3D area, bool sameTeam, bool prioritizeBall = false)
+	/// <summary>
+	/// Use when searching with collisions
+	/// </summary>
+	/// <param name="area"></param>
+	/// <param name="sameTeam"></param>
+	/// <param name="prioritizeBall"></param>
+	/// <returns></returns>
+	public PlayerController GetNearestPlayer(Area3D area, bool sameTeam, bool prioritizeBall = false)
 	{
 		PlayerController target = null;
 		Area3D[] overlapping = area.GetOverlappingAreas().ToArray();
@@ -130,7 +138,7 @@ public partial class PlayerController : Node3D
 	/// <param name="sameTeam"></param>
 	/// <param name="prioritizeBall"></param>
 	/// <returns></returns>
-	PlayerController GetNearestPlayer(bool sameTeam, bool prioritizeBall = false)
+	public PlayerController GetNearestPlayer(bool sameTeam, bool prioritizeBall = false)
 	{
 		PlayerController target = null;
 		List<Node3D> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
@@ -150,8 +158,7 @@ public partial class PlayerController : Node3D
 
 		return target;
 	}
-	
-	PlayerController GetNearestPlayerToBall(bool sameTeam)
+	public PlayerController GetNearestPlayerToBall(bool sameTeam)
 	{
 		PlayerController target = null;
 
