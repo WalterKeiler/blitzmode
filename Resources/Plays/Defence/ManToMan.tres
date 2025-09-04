@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="Play" load_steps=6 format=3 uid="uid://cu8kg5n6okpmp"]
+
+[ext_resource type="Script" path="res://_Scripts/Resources/PlayerDataDefence.cs" id="1_6u8c1"]
+[ext_resource type="Script" path="res://_Scripts/Resources/Play.cs" id="1_g7x5f"]
+
+[sub_resource type="Resource" id="Resource_fo2q7"]
+script = ExtResource("1_6u8c1")
+IsPlayer = false
+followPlayer = 0.5
+coverZone = 0.0
+rushBall = 0.5
+Position = Vector2(0, 0)
+
+[sub_resource type="Resource" id="Resource_jjkup"]
+script = ExtResource("1_6u8c1")
+IsPlayer = true
+followPlayer = 0.0
+coverZone = 0.0
+rushBall = 1.0
+Position = Vector2(0, 5)
+
+[sub_resource type="Resource" id="Resource_n2mmf"]
+script = ExtResource("1_6u8c1")
+IsPlayer = false
+followPlayer = 1.0
+coverZone = 0.0
+rushBall = 0.0
+Position = Vector2(10, 0)
+
+[resource]
+script = ExtResource("1_g7x5f")
+IsOffence = false
+PlayerDataOffence = null
+PlayerDataDefence = Array[Object]([SubResource("Resource_fo2q7"), SubResource("Resource_jjkup"), SubResource("Resource_n2mmf")])

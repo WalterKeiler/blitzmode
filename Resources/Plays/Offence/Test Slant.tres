@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="Play" load_steps=8 format=3 uid="uid://bqhd65la5qphp"]
+
+[ext_resource type="Script" path="res://_Scripts/Resources/PlayerDataOffence.cs" id="1_ruvtc"]
+[ext_resource type="Script" path="res://_Scripts/Resources/Route.cs" id="2_a416i"]
+[ext_resource type="Script" path="res://_Scripts/Resources/Play.cs" id="3_7u1eb"]
+
+[sub_resource type="Resource" id="Resource_u2nh1"]
+script = ExtResource("1_ruvtc")
+IsPlayer = false
+IsBlocker = true
+Position = Vector2(0, 0)
+
+[sub_resource type="Resource" id="Resource_ydei4"]
+script = ExtResource("1_ruvtc")
+IsPlayer = true
+IsBlocker = false
+Position = Vector2(0, -5)
+
+[sub_resource type="Resource" id="Resource_vaa4w"]
+script = ExtResource("2_a416i")
+targetPoints = PackedVector3Array(5, 0, 0, 5, 0, 0, 0, 0, 20)
+
+[sub_resource type="Resource" id="Resource_m5ewl"]
+script = ExtResource("1_ruvtc")
+IsPlayer = false
+IsBlocker = false
+Route = SubResource("Resource_vaa4w")
+Position = Vector2(10, 0)
+
+[resource]
+script = ExtResource("3_7u1eb")
+IsOffence = true
+PlayerDataOffence = Array[Object]([SubResource("Resource_u2nh1"), SubResource("Resource_ydei4"), SubResource("Resource_m5ewl")])
+PlayerDataDefence = null

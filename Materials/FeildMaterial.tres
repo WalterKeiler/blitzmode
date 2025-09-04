@@ -1,19 +1,19 @@
 [gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bi2dythq2vfsg"]
 
-[ext_resource type="Shader" path="res://Shaders/feild.gdshader" id="1_6ei5a"]
+[ext_resource type="Shader" path="res://Shaders/field.gdshader" id="1_5vsit"]
 
 [resource]
 render_priority = 0
-shader = ExtResource("1_6ei5a")
+shader = ExtResource("1_5vsit")
 shader_parameter/useWorldSpace = true
-shader_parameter/feildColor = Color(0, 0.231373, 0, 1)
+shader_parameter/fieldColor = Color(0, 0.411765, 0, 1)
 shader_parameter/lineColor = Color(1, 1, 1, 1)
-shader_parameter/lineOfScrimageColor = Color(0.161333, 0, 0.88, 1)
+shader_parameter/lineOfScrimmageColor = Color(0, 0.720126, 0.774425, 1)
 shader_parameter/firstDownColor = Color(1, 0.67451, 0, 1)
-shader_parameter/lineOfScrimage = 5.0
+shader_parameter/lineOfScrimmage = 20.0
 shader_parameter/firstDownLine = 20.0
 shader_parameter/numberIndent = 10
 shader_parameter/numberSpacing = 1.5
-shader_parameter/yardsLenth = 200
+shader_parameter/yardsLength = 100
 shader_parameter/yardsWidth = 54
 shader_parameter/lineWidth = 0.1

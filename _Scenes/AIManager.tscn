@@ -1,7 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bcvn8oaccgme4"]
+[gd_scene load_steps=2 format=3 uid="uid://bph8u704hl88n"]
 
 [ext_resource type="Script" path="res://_Scripts/AIManager.cs" id="1_3xwfm"]
 
 [node name="AIManager" type="Node"]
 script = ExtResource("1_3xwfm")
-followRoute = 1.0

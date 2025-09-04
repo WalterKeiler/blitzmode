@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://_Scripts/PlayerController.cs" id="1_areti"]
 [ext_resource type="Material" uid="uid://k4x7eqdcrbjq" path="res://Materials/TestMat.tres" id="2_tyapl"]
-[ext_resource type="PackedScene" uid="uid://bcvn8oaccgme4" path="res://_Scenes/AIManager.tscn" id="3_hud2f"]
+[ext_resource type="PackedScene" uid="uid://bph8u704hl88n" path="res://_Scenes/AIManager.tscn" id="3_hud2f"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ljm3w"]
 
@@ -14,8 +14,9 @@
 height = 2.83541
 radius = 300.679
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("tackleBox", "nearbyPayersBox")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("aiManager", "tackleBox", "nearbyPayersBox")]
 script = ExtResource("1_areti")
+aiManager = NodePath("AIManager")
 mat = ExtResource("2_tyapl")
 tackleBox = NodePath("TackleBox")
 nearbyPayersBox = NodePath("NearbyPayersBox")

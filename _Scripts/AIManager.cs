@@ -25,6 +25,7 @@ public partial class AIManager : Node
     public override void _Ready()
     {
         player = (PlayerController)GetParent();
+        player.aiManager = this;
         isOffence = player.isOffence;
         currentRoute = new Route(new[]
         {
@@ -118,29 +119,5 @@ public partial class AIManager : Node
             return Vector3.Zero;
         }
         return player.GlobalPosition.DirectionTo(nearestPlayer);
-    }
-}
-
-public class Route
-{
-    public Vector3[] targetPoints;
-    public int currentIndex;
-
-    public Route(Vector3[] targetPoints)
-    {
-        this.targetPoints = targetPoints;
-        currentIndex = 0;
-    }
-}
-
-public class Zone
-{
-    public Vector3 center;
-    public float radius;
-
-    public Zone(Vector3 center, float radius)
-    {
-        this.center = center;
-        this.radius = radius;
     }
 }

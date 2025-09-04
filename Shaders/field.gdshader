@@ -4,15 +4,15 @@ shader_type spatial;
 //const int arrayMaxLength = 15;
 
 uniform bool useWorldSpace;
-uniform vec3 feildColor : source_color;
+uniform vec3 fieldColor : source_color;
 uniform vec3 lineColor : source_color;
-uniform vec3 lineOfScrimageColor : source_color;
+uniform vec3 lineOfScrimmageColor : source_color;
 uniform vec3 firstDownColor : source_color;
-uniform float lineOfScrimage = 20;
+uniform float lineOfScrimmage = 20;
 uniform float firstDownLine = 20;
 uniform int numberIndent = 20;
 uniform float numberSpacing = 1.4;
-uniform int yardsLenth = 100;
+uniform int yardsLength = 100;
 uniform int yardsWidth = 54;
 uniform float lineWidth = .1;
 
@@ -25,9 +25,9 @@ void vertex()
     b = 0.0;
     c = 1.0;
     d = 1.0;
-    e = float(-yardsLenth) *0.5;
+    e = float(-yardsLength) *0.5;
     f = float(-yardsWidth) *0.5;
-    g = float(yardsLenth) *0.5;
+    g = float(yardsLength) *0.5;
     h = float(yardsWidth) *0.5;
 
 	fieldPos = vec2(
@@ -287,7 +287,7 @@ float DrawNumbers(float xpos, float ypos, float spacing)
 
 	float[5] t;
 
-	int yard = (yardsLenth / 2) - int(xpos);
+	int yard = (yardsLength / 2) - int(xpos);
 	//yard /= 10;
 	int[5] digits;
 	int digitNum = 0;
@@ -365,27 +365,27 @@ float DrawNumbers(float xpos, float ypos, float spacing)
 void fragment()
 {
 	float halfWidth = float(yardsWidth) * .5;
-	float halfLength = float(yardsLenth) * .5;
+	float halfLength = float(yardsLength) * .5;
 	int closestLargeYard;
 	int closestSmallYard;
 
-	float fullLines = CreateLines(fieldPos,yardsLenth,yardsWidth,5, closestLargeYard);
-	float partialLines = CreateLines(fieldPos,yardsLenth,yardsWidth,1, closestSmallYard);
+	float fullLines = CreateLines(fieldPos,yardsLength,yardsWidth,5, closestLargeYard);
+	float partialLines = CreateLines(fieldPos,yardsLength,yardsWidth,1, closestSmallYard);
 
 	float edgeDist = sdBox(fieldPos,vec2(halfLength,halfWidth));
 	float partialLineBox = sdBox(fieldPos,vec2(halfLength,halfWidth - halfWidth / 10.0));
 
-	float los = sdSegment(fieldPos, vec2(lineOfScrimage, float(yardsWidth)), vec2(lineOfScrimage, -float(yardsWidth)))-0.10;
+	float los = sdSegment(fieldPos, vec2(lineOfScrimmage, float(yardsWidth)), vec2(lineOfScrimmage, -float(yardsWidth)))-0.10;
 	float fd = sdSegment(fieldPos, vec2(firstDownLine, float(yardsWidth)), vec2(firstDownLine, -float(yardsWidth)))-0.10;
 
 	vec3 losVec = (los<0.0) ? vec3(1,1,1) : vec3(0,0,0);
 	losVec -= step(1,edgeDist);
-	
+
 	vec3 fdVec = (fd<0.0) ? vec3(1,1,1) : vec3(0,0,0);
 	fdVec -= step(1,edgeDist);
 
 	vec3 col = (fullLines>0.0) ? vec3(1,1,1) : vec3(0,0,0);
-	
+
 	col *= step(fullLines,lineWidth);
 	col += step(1,partialLineBox);
 	col *= step(partialLines,lineWidth);
@@ -400,7 +400,7 @@ void fragment()
 	float d = DrawNumbers(float(closestLargeYard) * onTenYard,halfWidth - float(numberIndent),numberSpacing);
 
 	col += (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
-	
+
 	losVec = clamp(losVec,0,1);
 	fdVec = clamp(fdVec,0,1);
 	col = clamp(col,0,1);
@@ -409,14 +409,14 @@ void fragment()
 	col -= fdVec;
 
 	col = clamp(col,0,1);
-	
+
 	vec3 lineCol = col * lineColor;
-	vec3 fieldCol = -col * feildColor;
-	vec3 losCol = losVec * lineOfScrimageColor;
+	vec3 fieldCol = -col * fieldColor;
+	vec3 losCol = losVec * lineOfScrimmageColor;
 	vec3 fdCol = fdVec * firstDownColor;
 
-	vec3 finalCol = lineCol + feildColor + losCol + fdCol;
-	
+	vec3 finalCol = lineCol + fieldColor + losCol + fdCol;
+
 	finalCol = clamp(finalCol,0,1);
 
 	ALBEDO = finalCol;
