@@ -65,7 +65,7 @@ public partial class AIManager : Node
             followPlayer *= 1;
             coverZone *= 1;
             rushBall *= 1;
-            finalDir = CoverZone();
+            finalDir = ((FollowPlayer() * followPlayer) + (CoverZone() * coverZone) + (RushBall() * rushBall)).Normalized();
         }
 
         player.GetInput(finalDir);
@@ -114,6 +114,15 @@ public partial class AIManager : Node
     Vector3 FollowPlayer()
     {
         Vector3 nearestPlayer = player.GetNearestPlayer(false).GlobalPosition;
+        if (player.GlobalPosition.DistanceTo(nearestPlayer) < 1.5f)
+        {
+            return Vector3.Zero;
+        }
+        return player.GlobalPosition.DirectionTo(nearestPlayer);
+    }
+    Vector3 RushBall()
+    {
+        Vector3 nearestPlayer = player.GetNearestPlayerToBall(false).GlobalPosition;
         if (player.GlobalPosition.DistanceTo(nearestPlayer) < 1.5f)
         {
             return Vector3.Zero;

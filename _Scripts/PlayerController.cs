@@ -26,13 +26,14 @@ public partial class PlayerController : Node3D
 	public List<PlayerActions> PlayerAction;
 	public bool HasBall;
 
+	private bool init = false;
 	bool canTakeInput = true;
 	Vector3 _moveDirection;
 	float _sprintMultiplier;
 	
 	
 	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	public void Init()
 	{
 		//GD.Print(mat.ResourceName);
 		PlayerAction = new List<PlayerActions>();
@@ -63,11 +64,13 @@ public partial class PlayerController : Node3D
 				}
 			}
 		}
+		init = true;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		if(!init) return;
 		GetInput();
 		Move(delta);
 		

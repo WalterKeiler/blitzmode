@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlayerStats" load_steps=2 format=3 uid="uid://c3iwmer7t8bnr"]
+
+[ext_resource type="Script" path="res://_Scripts/Resources/PlayerStats.cs" id="1_4aym1"]
+
+[resource]
+script = ExtResource("1_4aym1")
+Speed = 8.0
+Endurance = 5.0
+Strength = 2.0
+Catching = 8.0
+Agility = 4.0

@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dkddmtmu5c3pb"]
+[gd_scene load_steps=26 format=3 uid="uid://dkddmtmu5c3pb"]
 
 [ext_resource type="Script" path="res://_Scripts/CameraController.cs" id="1_nb8lh"]
 [ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="2_acjaa"]
@@ -18,6 +18,7 @@
 [ext_resource type="Resource" uid="uid://bx2h0hskxnnli" path="res://Resources/Input/Throw.tres" id="13_anypg"]
 [ext_resource type="Resource" uid="uid://ds41fgws8hnvb" path="res://Resources/Input/StiffArm.tres" id="14_bggh7"]
 [ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/Linebacker.tres" id="15_321t8"]
+[ext_resource type="Resource" uid="uid://c3iwmer7t8bnr" path="res://Resources/Stats/Players/WideReceiver.tres" id="19_i6mor"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -55,19 +56,20 @@ transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 
 
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("target")]
 script = ExtResource("1_nb8lh")
-target = NodePath("../O1/Ball")
+target = NodePath("../O2/Ball")
 cameraMoveSpeed = 15.0
 
 [node name="Camera3D" type="Camera3D" parent="CameraController"]
 transform = Transform3D(-4.37114e-08, 0.707107, -0.707107, 0, 0.707107, 0.707107, 1, 3.09086e-08, -3.09086e-08, -10, 8, 0)
 
-[node name="FieldManager" type="Node" parent="." node_paths=PackedStringArray("fieldMesh")]
+[node name="FieldManager" type="Node" parent="." node_paths=PackedStringArray("fieldMesh", "playerInputManagers")]
 script = ExtResource("2_mpaqs")
-fieldLength = 640
+fieldLength = 200
 OffencePlay = ExtResource("3_ivai1")
 DefencePlay = ExtResource("4_5m5ee")
 fieldMaterial = ExtResource("2_acjaa")
 fieldMesh = NodePath("FieldGeo/MeshInstance3D")
+playerInputManagers = [NodePath("../InputManagerInstance")]
 
 [node name="FieldGeo" type="StaticBody3D" parent="FieldManager"]
 transform = Transform3D(1, 0, 0, 0, 1, 3.55271e-15, 0, -3.55271e-15, 1, 0, 0, 0)
@@ -93,35 +95,33 @@ curve = SubResource("Curve3D_f1ofg")
 [node name="PathFollow3D" type="PathFollow3D" parent="BallPath"]
 transform = Transform3D(-4.37113e-08, -0.624695, -0.780893, 0, 0.780869, -0.624714, 0.999999, -2.73063e-08, -3.41339e-08, 0, 0, 0)
 
-[node name="O1" parent="." node_paths=PackedStringArray("_mainCam", "inputManager", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
+[node name="O1" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-playerID = 0
+playerStats = ExtResource("15_321t8")
+_mainCam = NodePath("../CameraController")
+isOffence = true
+ball = NodePath("../O2/Ball")
+ballPath = NodePath("../BallPath")
+ballPathFollow = NodePath("../BallPath/PathFollow3D")
+
+[node name="O2" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.714, 1, -8.386)
 playerStats = ExtResource("4_fuj64")
 _mainCam = NodePath("../CameraController")
-inputManager = NodePath("../InputManagerInstance")
 isOffence = true
 ball = NodePath("Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
 
-[node name="Ball" parent="O1" instance=ExtResource("5_weq6n")]
-transform = Transform3D(-4.37114e-08, -0.624695, -0.780893, 0, 0.780869, -0.624714, 0.999999, -2.73063e-08, -3.41339e-08, 0.1461, 0.19143, 0.678301)
-
-[node name="O2" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44.714, 1, -8.386)
-playerStats = ExtResource("15_321t8")
-_mainCam = NodePath("../CameraController")
-isOffence = true
-ball = NodePath("../O1/Ball")
-ballPath = NodePath("../BallPath")
-ballPathFollow = NodePath("../BallPath/PathFollow3D")
+[node name="Ball" parent="O2" instance=ExtResource("5_weq6n")]
+transform = Transform3D(-4.37114e-08, -0.624695, -0.780893, 0, 0.780869, -0.624714, 0.999999, -2.73063e-08, -3.41339e-08, 0.15, 0.19, 0.7)
 
 [node name="O3" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35.67, 1, -13.452)
-playerStats = ExtResource("15_321t8")
+playerStats = ExtResource("19_i6mor")
 _mainCam = NodePath("../CameraController")
 isOffence = true
-ball = NodePath("../O1/Ball")
+ball = NodePath("../O2/Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
 
@@ -129,22 +129,22 @@ ballPathFollow = NodePath("../BallPath/PathFollow3D")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5749, 1, 6.49671)
 playerStats = ExtResource("15_321t8")
 _mainCam = NodePath("../CameraController")
-ball = NodePath("../O1/Ball")
+ball = NodePath("../O2/Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
 
 [node name="D2" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5749, 1, 6.49671)
-playerStats = ExtResource("15_321t8")
+playerStats = ExtResource("4_fuj64")
 _mainCam = NodePath("../CameraController")
-ball = NodePath("../O1/Ball")
+ball = NodePath("../O2/Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
 
 [node name="D3" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5749, 1, 6.49671)
-playerStats = ExtResource("15_321t8")
+playerStats = ExtResource("19_i6mor")
 _mainCam = NodePath("../CameraController")
-ball = NodePath("../O1/Ball")
+ball = NodePath("../O2/Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
