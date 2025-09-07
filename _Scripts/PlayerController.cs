@@ -18,9 +18,11 @@ public partial class PlayerController : Node3D
 	[Export] BaseMaterial3D mat;
 	[Export] Area3D tackleBox;
 	[Export] Area3D nearbyPayersBox;
-	[Export] Node3D ball;
+	[Export] Ball ball;
 	[Export] Path3D ballPath;
 	[Export] PathFollow3D ballPathFollow;
+	[Export] bool debugMode;
+	
 	List<Node3D> PlayersOnTeam;
 	List<Node3D> PlayersNotOnTeam;
 	public List<PlayerActions> PlayerAction;
@@ -30,8 +32,13 @@ public partial class PlayerController : Node3D
 	bool canTakeInput = true;
 	Vector3 _moveDirection;
 	float _sprintMultiplier;
-	
-	
+
+	public override void _Ready()
+	{
+		base._Ready();
+		Init();
+	}
+
 	// Called when the node enters the scene tree for the first time.
 	public void Init()
 	{
@@ -416,12 +423,12 @@ public partial class PlayerController : Node3D
 		Vector3 startPoint = GlobalPosition;
 		Vector3 endPoint = Vector3.Zero;
 
-		ball.Reparent(ballPathFollow);
-		ball.Position = Vector3.Zero;
-		ball.Rotation = Vector3.Zero;
+		// ball.Reparent(ballPathFollow);
+		// ball.Position = Vector3.Zero;
+		// ball.Rotation = Vector3.Zero;
 
 		float closest = -100000;
-		Node3D target = null;
+		PlayerController target = null;
 		for (int i = 0; i < PlayersOnTeam.Count; i++)
 		{
 			Vector3 dir = startPoint.DirectionTo(PlayersOnTeam[i].GlobalPosition);
@@ -437,21 +444,43 @@ public partial class PlayerController : Node3D
 					{
 						closest = dot;
 						endPoint = PlayersOnTeam[i].GlobalPosition;
-						target = PlayersOnTeam[i];
+						target = (PlayerController)PlayersOnTeam[i];
 					}
 				}
 				else
 				{
 					closest = dot;
 					endPoint = PlayersOnTeam[i].GlobalPosition;
-					target = PlayersOnTeam[i];
+					target = (PlayerController)PlayersOnTeam[i];
 				}
 			}
 		}
+		float distance = startPoint.DistanceTo(endPoint);
+		float throwSpeed = playerStats.Agility * 2;// * (float)GetProcessDeltaTime();// * distance;
+
+		MeshInstance3D testMesh = new MeshInstance3D();
+		testMesh.Mesh = new BoxMesh();
+		testMesh.MaterialOverride = new Material();
+		testMesh.Position = endPoint;
+		GetTree().Root.AddChild(testMesh);
+			
+		if(target.aiManager.currentRoute != null)
+			endPoint = target.aiManager.currentRoute.GetThrowToPoint(endPoint, GlobalPosition
+				, target.playerStats.Speed * (float)GetProcessDeltaTime(), ref throwSpeed);
+		GD.Print(endPoint);
+
+		ball.Reparent(GetTree().Root);
+		
+		ball.startPoint = startPoint;
+		ball.endPoint = endPoint;
+		ball.ballSpeed = throwSpeed;
+		ball.isThrown = true;
+		
+		/*
+		distance = startPoint.DistanceTo(endPoint);
 		
 		Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
-
-		float distance = startPoint.DistanceTo(endPoint);
+		
 		midPoint.Y = Mathf.Clamp(.1f * distance, midPoint.Y, 10);
 		ballPath.Curve.ClearPoints();
 		ballPathFollow.ProgressRatio = 0;
@@ -470,9 +499,9 @@ public partial class PlayerController : Node3D
 		
 		var tween = CreateTween();
 		tween.TweenProperty(ballPathFollow, "progress_ratio", 1,
-			 distance * GetProcessDeltaTime() * playerStats.Agility).SetTrans(Tween.TransitionType.Linear);
+			 throwSpeed * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Linear);
 		await ToSignal(tween, "finished");
-		PlayerController otherPlayer = target as PlayerController;
+		PlayerController otherPlayer = target;
 		ChangePlayer(otherPlayer);
 		
 		ballPathFollow.ProgressRatio = 0;
@@ -481,6 +510,7 @@ public partial class PlayerController : Node3D
 		
 		GD.Print("Tween finished.");
 		mat.SetAlbedo(Colors.White);
+		*/
 		if (PlayerAction.Contains(PlayerActions.Throw))
 			PlayerAction.Remove(PlayerActions.Throw);
 	}

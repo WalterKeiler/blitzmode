@@ -1,13 +1,13 @@
-[gd_scene load_steps=26 format=3 uid="uid://dkddmtmu5c3pb"]
+[gd_scene load_steps=28 format=3 uid="uid://dkddmtmu5c3pb"]
 
 [ext_resource type="Script" path="res://_Scripts/CameraController.cs" id="1_nb8lh"]
 [ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="2_acjaa"]
 [ext_resource type="Script" path="res://_Scripts/FieldManager.cs" id="2_mpaqs"]
 [ext_resource type="Resource" uid="uid://bqhd65la5qphp" path="res://Resources/Plays/Offence/Test Slant.tres" id="3_ivai1"]
-[ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/Player.tscn" id="3_jke3i"]
+[ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="3_jke3i"]
 [ext_resource type="Resource" uid="uid://cu8kg5n6okpmp" path="res://Resources/Plays/Defence/ManToMan.tres" id="4_5m5ee"]
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="4_fuj64"]
-[ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/Ball.tscn" id="5_weq6n"]
+[ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/ball.tscn" id="5_weq6n"]
 [ext_resource type="PackedScene" uid="uid://cl04xbkb6lkf4" path="res://_Scenes/InputManager.tscn" id="6_rn8ec"]
 [ext_resource type="Resource" uid="uid://tcnum2x5ch5a" path="res://Resources/Input/Sprint.tres" id="7_5jy3s"]
 [ext_resource type="Resource" uid="uid://bduqn4upev1j5" path="res://Resources/Input/SpinMove.tres" id="8_cy3xd"]
@@ -19,17 +19,19 @@
 [ext_resource type="Resource" uid="uid://ds41fgws8hnvb" path="res://Resources/Input/StiffArm.tres" id="14_bggh7"]
 [ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/Linebacker.tres" id="15_321t8"]
 [ext_resource type="Resource" uid="uid://c3iwmer7t8bnr" path="res://Resources/Stats/Players/WideReceiver.tres" id="19_i6mor"]
+[ext_resource type="Script" path="res://_Scripts/Ball.cs" id="19_y16el"]
+[ext_resource type="Material" uid="uid://vhdvvh37vs3y" path="res://Materials/DefenceMat.tres" id="21_7v1hi"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
 ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
 
-[sub_resource type="Sky" id="Sky_jlrv8"]
+[sub_resource type="Sky" id="Sky_ppmuy"]
 sky_material = SubResource("ProceduralSkyMaterial_sbqmv")
 
 [sub_resource type="Environment" id="Environment_ysj40"]
 background_mode = 2
-sky = SubResource("Sky_jlrv8")
+sky = SubResource("Sky_ppmuy")
 tonemap_mode = 2
 glow_enabled = true
 
@@ -115,6 +117,7 @@ ballPathFollow = NodePath("../BallPath/PathFollow3D")
 
 [node name="Ball" parent="O2" instance=ExtResource("5_weq6n")]
 transform = Transform3D(-4.37114e-08, -0.624695, -0.780893, 0, 0.780869, -0.624714, 0.999999, -2.73063e-08, -3.41339e-08, 0.15, 0.19, 0.7)
+script = ExtResource("19_y16el")
 
 [node name="O3" parent="." node_paths=PackedStringArray("_mainCam", "ball", "ballPath", "ballPathFollow") instance=ExtResource("3_jke3i")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -35.67, 1, -13.452)
@@ -129,6 +132,7 @@ ballPathFollow = NodePath("../BallPath/PathFollow3D")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5749, 1, 6.49671)
 playerStats = ExtResource("15_321t8")
 _mainCam = NodePath("../CameraController")
+mat = ExtResource("21_7v1hi")
 ball = NodePath("../O2/Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
@@ -137,6 +141,7 @@ ballPathFollow = NodePath("../BallPath/PathFollow3D")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5749, 1, 6.49671)
 playerStats = ExtResource("4_fuj64")
 _mainCam = NodePath("../CameraController")
+mat = ExtResource("21_7v1hi")
 ball = NodePath("../O2/Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")
@@ -145,6 +150,7 @@ ballPathFollow = NodePath("../BallPath/PathFollow3D")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5749, 1, 6.49671)
 playerStats = ExtResource("19_i6mor")
 _mainCam = NodePath("../CameraController")
+mat = ExtResource("21_7v1hi")
 ball = NodePath("../O2/Ball")
 ballPath = NodePath("../BallPath")
 ballPathFollow = NodePath("../BallPath/PathFollow3D")

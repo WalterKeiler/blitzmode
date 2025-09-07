@@ -15,11 +15,11 @@ public partial class AIManager : Node
     [Export(PropertyHint.Range, "0,1,")] public float coverZone;
     [Export(PropertyHint.Range, "0,1,")] public float rushBall;
 
-    public Route currentRoute;
+    [Export] public Route currentRoute;
     public Zone currentZone;
 
     public PlayerController targetPlayer;
-    
+    public bool init = false;
     private PlayerController player;
     
     public override void _Ready()
@@ -27,19 +27,12 @@ public partial class AIManager : Node
         player = (PlayerController)GetParent();
         player.aiManager = this;
         isOffence = player.isOffence;
-        currentRoute = new Route(new[]
-        {
-            new Vector3(0, 0, 20),
-            new Vector3(20, 0, 20),
-            new Vector3(30, 0, 10),
-            new Vector3(30, 0, 0),
-            new Vector3(20, 0, -10)
-        });
         currentZone = new Zone(new Vector3(15, 0, -10), 10);
     }
     
     public override void _Process(double delta)
     {
+        if(!init) return;
         Vector3 finalDir = Vector3.Zero;
         if(isOffence)
         {
@@ -73,15 +66,17 @@ public partial class AIManager : Node
 
     Vector3 FollowRoute()
     {
+        if (currentRoute == null) return player.GlobalPosition;
         if(currentRoute.currentIndex >= currentRoute.targetPoints.Length)
         {
-            followRoute = 0;
-            findOpenSpace = 1;
+            //followRoute = 0;
+            //findOpenSpace = 1;
             return Vector3.Zero;
         }
         if (player.GlobalPosition.DistanceTo(currentRoute.targetPoints[currentRoute.currentIndex]) < 1.5f)
         {
             currentRoute.currentIndex++;
+            GD.Print("Moving to next Index: " + currentRoute.currentIndex);
         }
         return currentRoute.currentIndex >= currentRoute.targetPoints.Length ? Vector3.Zero : player.GlobalPosition.DirectionTo(currentRoute.targetPoints[currentRoute.currentIndex]);
     }

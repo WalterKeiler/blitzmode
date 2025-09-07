@@ -57,7 +57,11 @@ public partial class FieldManager : Node
 					players[i].inputManager = null;
 					players[i].isPlayerControlled = false;
 					if(play.Route != null)
+					{
+						play.Route.currentIndex = 0;
 						players[i].aiManager.currentRoute = (Route)play.Route.Duplicate();
+					}
+					players[i].aiManager.init = true;
 				}
 				else
 				{
@@ -79,6 +83,7 @@ public partial class FieldManager : Node
 					players[i].aiManager.rushBall = play.rushBall;
 					players[i].inputManager = null;
 					players[i].isPlayerControlled = false;
+					players[i].aiManager.init = true;
 				}
 				else
 				{
