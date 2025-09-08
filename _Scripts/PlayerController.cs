@@ -410,7 +410,7 @@ public partial class PlayerController : Node3D
 		if (PlayerAction.Contains(PlayerActions.Dive))
 			PlayerAction.Remove(PlayerActions.Dive);
 	}
-	async void ThrowBall()
+	void ThrowBall()
 	{
 		PlayerActions[] restrictions =
 		{
@@ -418,7 +418,7 @@ public partial class PlayerController : Node3D
 			PlayerActions.StiffArm
 		};
 		if(!CanDoAction(PlayerActions.Throw, restrictions)) return;
-		
+	
 		mat.SetAlbedo(Colors.Yellow);
 		Vector3 startPoint = GlobalPosition;
 		Vector3 endPoint = Vector3.Zero;
@@ -456,7 +456,7 @@ public partial class PlayerController : Node3D
 			}
 		}
 		float distance = startPoint.DistanceTo(endPoint);
-		float throwSpeed = playerStats.Agility * 2;// * (float)GetProcessDeltaTime();// * distance;
+		float throwSpeed = playerStats.Agility * (float)GetProcessDeltaTime();// * distance;
 
 		MeshInstance3D testMesh = new MeshInstance3D();
 		testMesh.Mesh = new BoxMesh();
@@ -511,8 +511,8 @@ public partial class PlayerController : Node3D
 		GD.Print("Tween finished.");
 		mat.SetAlbedo(Colors.White);
 		*/
-		if (PlayerAction.Contains(PlayerActions.Throw))
-			PlayerAction.Remove(PlayerActions.Throw);
+		//if (PlayerAction.Contains(PlayerActions.Throw))
+		//	PlayerAction.Remove(PlayerActions.Throw);
 	}
 	async void ChangePlayer()
 	{

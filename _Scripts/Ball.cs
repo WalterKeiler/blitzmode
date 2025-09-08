@@ -20,7 +20,7 @@ public partial class Ball : Node3D
     {
         Vector3 moveDirection = CalculateBallDirection();
         if(GlobalPosition.Y > 0)
-            GlobalPosition += moveDirection * (float)delta * ballSpeed;
+            GlobalPosition += moveDirection * ballSpeed;
     }
     
     public Vector3 CalculateBallDirection()
