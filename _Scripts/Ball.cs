@@ -3,6 +3,8 @@ using System;
 
 public partial class Ball : Node3D
 {
+    public const float BALLHEIGHTMULTIPLIER = .5f;
+    
     public float ballSpeed;
     public Vector3 startPoint;
     public Vector3 endPoint;
@@ -27,7 +29,7 @@ public partial class Ball : Node3D
     {
         Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
         float distance = startPoint.DistanceTo(endPoint);
-        midPoint.Y = Mathf.Clamp(.5f * distance, 1, 10);
+        midPoint.Y = Mathf.Clamp(BALLHEIGHTMULTIPLIER * distance, 1, 10);
         Vector3 upDir = startPoint.DirectionTo(midPoint);
         Vector3 downDir = midPoint.DirectionTo(endPoint);
 

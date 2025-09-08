@@ -42,14 +42,14 @@ public partial class Route : Resource
     public Vector3 GetThrowToPoint(float distance, Vector3 receiverPos, Vector3 qbPos, float receiverSpeed, ref float ballSpeed)
     {
         if (currentIndex > targetPoints.Length) return receiverPos;
-        float d = qbPos.DistanceTo(receiverPos) + Mathf.Clamp(.5f * distance, 1, 10);
+        float d = qbPos.DistanceTo(receiverPos) + Mathf.Clamp(Ball.BALLHEIGHTMULTIPLIER * distance, 1, 10);
         float time = d / (ballSpeed);
 
         //time *= delta;
         
         Vector3 targetPos = GetPointByLength(receiverPos, time * receiverSpeed);
         distance = qbPos.DistanceTo(targetPos);
-        float neededSpeed = (distance + Mathf.Clamp(.075f * distance, 1, 10)) / time;
+        float neededSpeed = (distance + Mathf.Clamp((Ball.BALLHEIGHTMULTIPLIER / ((2.0f / 3) * 10)) * distance, 1, 10)) / time;
         ballSpeed = neededSpeed;
         targetPos.Y = 1;
         return targetPos;

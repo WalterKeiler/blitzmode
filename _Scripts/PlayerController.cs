@@ -32,7 +32,10 @@ public partial class PlayerController : Node3D
 	bool canTakeInput = true;
 	Vector3 _moveDirection;
 	float _sprintMultiplier;
+	private PlayerController throwTarget;
 
+	private Node3D debugBox;
+	
 	public override void _Ready()
 	{
 		base._Ready();
@@ -55,6 +58,9 @@ public partial class PlayerController : Node3D
 		PlayerController[] players = GetParent().GetChildren().OfType<PlayerController>().ToArray();
 		PlayersOnTeam = new List<Node3D>();
 		PlayersNotOnTeam = new List<Node3D>();
+		_moveDirection = Vector3.Zero;
+		
+		
 		
 		if (players != null)
 		{
@@ -81,7 +87,59 @@ public partial class PlayerController : Node3D
 		GetInput();
 		Move(delta);
 		
-		if (ball.GetParent() == this && !HasBall) HasBall = true;
+		if (ball.GetParent() == this)// && !HasBall)
+		{
+
+			if (debugBox == null)
+			{
+				MeshInstance3D testMesh = new MeshInstance3D();
+				testMesh.Mesh = new BoxMesh();
+				testMesh.MaterialOverride = new Material();
+				testMesh.Position = Vector3.Zero;
+				GetParent().AddChild(testMesh);
+				debugBox = testMesh;
+			}
+			
+			float closest = -100000;
+			PlayerController target = null;
+			Vector3 endPoint = Vector3.Zero;
+			for (int i = 0; i < PlayersOnTeam.Count; i++)
+			{
+				if(_moveDirection == Vector3.Zero && throwTarget != null) break;
+				if(!((PlayerController)PlayersOnTeam[i]).playerStats.canBeThrowTarget) continue;
+				Vector3 dir = GlobalPosition.DirectionTo(PlayersOnTeam[i].GlobalPosition);
+				float dot = dir.Dot(_moveDirection);
+
+				if (dot >= closest)
+				{
+					//GD.Print(dot);
+					if (dot - closest <= .1f)
+					{
+						//GD.Print("In Line");
+						if(GlobalPosition.DistanceTo(PlayersOnTeam[i].GlobalPosition) <= GlobalPosition.DistanceTo(endPoint))
+						{
+							closest = dot;
+							endPoint = PlayersOnTeam[i].GlobalPosition;
+							target = (PlayerController)PlayersOnTeam[i];
+						}
+					}
+					else
+					{
+						closest = dot;
+						endPoint = PlayersOnTeam[i].GlobalPosition;
+						target = (PlayerController)PlayersOnTeam[i];
+					}
+				}
+			}
+
+			if (throwTarget != target)
+			{
+				throwTarget = target;
+			}
+			if(throwTarget != null)
+				debugBox.GlobalPosition = throwTarget.GlobalPosition;
+			HasBall = true;
+		}
 		else if (HasBall) HasBall = false;
 	}
 	
@@ -421,52 +479,25 @@ public partial class PlayerController : Node3D
 	
 		mat.SetAlbedo(Colors.Yellow);
 		Vector3 startPoint = GlobalPosition;
-		Vector3 endPoint = Vector3.Zero;
+		Vector3 endPoint = throwTarget.GlobalPosition;
 
 		// ball.Reparent(ballPathFollow);
 		// ball.Position = Vector3.Zero;
 		// ball.Rotation = Vector3.Zero;
 
-		float closest = -100000;
-		PlayerController target = null;
-		for (int i = 0; i < PlayersOnTeam.Count; i++)
-		{
-			Vector3 dir = startPoint.DirectionTo(PlayersOnTeam[i].GlobalPosition);
-			float dot = dir.Dot(_moveDirection);
-
-			if (dot >= closest)
-			{
-				GD.Print(dot);
-				if (dot - closest <= .1f)
-				{
-					GD.Print("In Line");
-					if(startPoint.DistanceTo(PlayersOnTeam[i].GlobalPosition) <= startPoint.DistanceTo(endPoint))
-					{
-						closest = dot;
-						endPoint = PlayersOnTeam[i].GlobalPosition;
-						target = (PlayerController)PlayersOnTeam[i];
-					}
-				}
-				else
-				{
-					closest = dot;
-					endPoint = PlayersOnTeam[i].GlobalPosition;
-					target = (PlayerController)PlayersOnTeam[i];
-				}
-			}
-		}
+		
 		float distance = startPoint.DistanceTo(endPoint);
 		float throwSpeed = playerStats.Agility * (float)GetProcessDeltaTime() * 2;// * distance;
-
+		/*
 		MeshInstance3D testMesh = new MeshInstance3D();
 		testMesh.Mesh = new BoxMesh();
 		testMesh.MaterialOverride = new Material();
 		testMesh.Position = endPoint;
 		GetTree().Root.AddChild(testMesh);
-			
-		if(target.aiManager.currentRoute != null)
-			endPoint = target.aiManager.currentRoute.GetThrowToPoint(distance,endPoint, GlobalPosition
-				, target.playerStats.Speed * (float)GetProcessDeltaTime(), ref throwSpeed);
+		*/
+		if(throwTarget.aiManager.currentRoute != null)
+			endPoint = throwTarget.aiManager.currentRoute.GetThrowToPoint(distance,endPoint, GlobalPosition
+				, throwTarget.playerStats.Speed * (float)GetProcessDeltaTime(), ref throwSpeed);
 		GD.Print(endPoint);
 		GD.Print("Speed: " + throwSpeed * (float)GetProcessDeltaTime());
 
