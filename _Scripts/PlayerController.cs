@@ -456,7 +456,7 @@ public partial class PlayerController : Node3D
 			}
 		}
 		float distance = startPoint.DistanceTo(endPoint);
-		float throwSpeed = playerStats.Agility * (float)GetProcessDeltaTime();// * distance;
+		float throwSpeed = playerStats.Agility * (float)GetProcessDeltaTime() * 2;// * distance;
 
 		MeshInstance3D testMesh = new MeshInstance3D();
 		testMesh.Mesh = new BoxMesh();
@@ -465,15 +465,16 @@ public partial class PlayerController : Node3D
 		GetTree().Root.AddChild(testMesh);
 			
 		if(target.aiManager.currentRoute != null)
-			endPoint = target.aiManager.currentRoute.GetThrowToPoint(endPoint, GlobalPosition
+			endPoint = target.aiManager.currentRoute.GetThrowToPoint((float)GetProcessDeltaTime(),endPoint, GlobalPosition
 				, target.playerStats.Speed * (float)GetProcessDeltaTime(), ref throwSpeed);
 		GD.Print(endPoint);
+		GD.Print("Speed: " + throwSpeed * (float)GetProcessDeltaTime());
 
 		ball.Reparent(GetTree().Root);
 		
 		ball.startPoint = startPoint;
 		ball.endPoint = endPoint;
-		ball.ballSpeed = throwSpeed;
+		ball.ballSpeed = throwSpeed;// * (float)GetProcessDeltaTime();
 		ball.isThrown = true;
 		
 		/*
