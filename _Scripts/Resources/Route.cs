@@ -37,42 +37,19 @@ public partial class Route : Resource
         }
 
         return targetPoints[^1];
-        /*
-        float distanceFromLastPoint =
-            targetPoints[Math.Clamp(currentIndex - 1, 0, int.MaxValue)].DistanceTo(currentPos);
-        float pastLength = 0;
-        for (int i = 0; i < currentIndex - 1; i++)
-        {
-            pastLength += targetPoints[i].DistanceTo(targetPoints[i + 1]);
-        }
-
-        float totalLength = pastLength + distanceFromLastPoint + length;
-        for (int i = 1; i < targetPoints.Length; i++)
-        {
-            float dist = targetPoints[i].DistanceTo(targetPoints[Math.Clamp(i - 1, 0, int.MaxValue)]);
-
-            totalLength -= dist;
-
-            if (totalLength <= 0)
-            {
-                return targetPoints[i - 1].Lerp(targetPoints[i], Math.Abs(totalLength) / dist);
-            }
-        }
-
-        return targetPoints[^1];
-        */
     }
     
-    public Vector3 GetThrowToPoint(float delta, Vector3 receiverPos, Vector3 qbPos, float receiverSpeed, ref float ballSpeed)
+    public Vector3 GetThrowToPoint(float distance, Vector3 receiverPos, Vector3 qbPos, float receiverSpeed, ref float ballSpeed)
     {
         if (currentIndex > targetPoints.Length) return receiverPos;
-        
-        float time = qbPos.DistanceTo(receiverPos) / ballSpeed;
+        float d = qbPos.DistanceTo(receiverPos) + Mathf.Clamp(.5f * distance, 1, 10);
+        float time = d / (ballSpeed);
 
         //time *= delta;
         
         Vector3 targetPos = GetPointByLength(receiverPos, time * receiverSpeed);
-        float neededSpeed = (qbPos.DistanceTo(targetPos)) / time;
+        distance = qbPos.DistanceTo(targetPos);
+        float neededSpeed = (distance + Mathf.Clamp(.075f * distance, 1, 10)) / time;
         ballSpeed = neededSpeed;
         targetPos.Y = 1;
         return targetPos;

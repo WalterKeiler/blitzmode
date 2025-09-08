@@ -465,7 +465,7 @@ public partial class PlayerController : Node3D
 		GetTree().Root.AddChild(testMesh);
 			
 		if(target.aiManager.currentRoute != null)
-			endPoint = target.aiManager.currentRoute.GetThrowToPoint((float)GetProcessDeltaTime(),endPoint, GlobalPosition
+			endPoint = target.aiManager.currentRoute.GetThrowToPoint(distance,endPoint, GlobalPosition
 				, target.playerStats.Speed * (float)GetProcessDeltaTime(), ref throwSpeed);
 		GD.Print(endPoint);
 		GD.Print("Speed: " + throwSpeed * (float)GetProcessDeltaTime());
