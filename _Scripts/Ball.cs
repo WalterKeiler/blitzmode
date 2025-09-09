@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public partial class Ball : Node3D
 {
@@ -11,6 +12,10 @@ public partial class Ball : Node3D
     public float ballSpeed;
     public Vector3 startPoint;
     public Vector3 endPoint;
+
+    private BallCatchData bestOption;
+    
+    public List<BallCatchData> catchOptions;
     public override void _Ready()
     {
         Instance = this;
@@ -30,6 +35,21 @@ public partial class Ball : Node3D
         if(GlobalPosition.Y > 0)
             GlobalPosition += moveDirection * ballSpeed;
     }
+
+    public void ResetCatchData()
+    {
+        catchOptions = new List<BallCatchData>();
+    }
+    
+    public void AddCatchOption(BallCatchData data)
+    {
+        catchOptions.Add(data);
+    }
+
+    public void EvaluateCatchOptions()
+    {
+        
+    }
     
     public Vector3 CalculateBallDirection()
     {
@@ -46,6 +66,15 @@ public partial class Ball : Node3D
 
         return dir.Normalized();
     }
+}
+
+public class BallCatchData
+{
+    public PlayerController Player;
+    public float CatchPriority;
+    public float DistanceToTarget;
+    public float DistanceToBall;
+    public float BallDot;
 }
 
 public enum BallState

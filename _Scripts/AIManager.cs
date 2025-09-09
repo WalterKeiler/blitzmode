@@ -73,8 +73,16 @@ public partial class AIManager : Node
 
     void CheckForCatch()
     {
-        float distance = ball.GlobalPosition.DistanceTo(player.GlobalPosition);
+        float distanceToBall = ball.GlobalPosition.DistanceTo(player.GlobalPosition);
+        float distanceToTarget = ball.endPoint.DistanceTo(player.GlobalPosition);
         float dot = player.GetGlobalBasis().Z.Dot(ball.GlobalPosition.DirectionTo(player.GlobalPosition));
+
+        float catchRadius = 3;
+
+        if (distanceToBall <= catchRadius)
+        {
+            
+        }
     }
     
     Vector3 FollowRoute()

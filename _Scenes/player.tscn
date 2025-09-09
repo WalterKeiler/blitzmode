@@ -14,12 +14,10 @@
 height = 2.83541
 radius = 300.679
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("aiManager", "tackleBox", "nearbyPayersBox")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("aiManager")]
 script = ExtResource("1_areti")
 aiManager = NodePath("AIManager")
 mat = ExtResource("2_tyapl")
-tackleBox = NodePath("TackleBox")
-nearbyPayersBox = NodePath("NearbyPayersBox")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 

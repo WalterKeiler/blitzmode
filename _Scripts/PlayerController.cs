@@ -514,6 +514,7 @@ public partial class PlayerController : Node3D
 		ball.endPoint = endPoint;
 		ball.ballSpeed = throwSpeed;// * (float)GetProcessDeltaTime();
 		ball.ballState = BallState.Thrown;
+		ball.ResetCatchData();
 		
 		
 		//if (PlayerAction.Contains(PlayerActions.Throw))
