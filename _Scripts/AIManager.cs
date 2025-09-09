@@ -21,6 +21,7 @@ public partial class AIManager : Node
     public PlayerController targetPlayer;
     public bool init = false;
     private PlayerController player;
+    private Ball ball;
     
     public override void _Ready()
     {
@@ -28,6 +29,7 @@ public partial class AIManager : Node
         player.aiManager = this;
         isOffence = player.isOffence;
         currentZone = new Zone(new Vector3(15, 0, -10), 10);
+        ball = Ball.Instance;
     }
     
     public override void _Process(double delta)
@@ -61,9 +63,20 @@ public partial class AIManager : Node
             finalDir = ((FollowPlayer() * followPlayer) + (CoverZone() * coverZone) + (RushBall() * rushBall)).Normalized();
         }
 
+        if (Ball.Instance.ballState == BallState.Thrown)
+        {
+            CheckForCatch();
+        }
+        
         player.GetInput(finalDir);
     }
 
+    void CheckForCatch()
+    {
+        float distance = ball.GlobalPosition.DistanceTo(player.GlobalPosition);
+        float dot = player.GetGlobalBasis().Z.Dot(ball.GlobalPosition.DirectionTo(player.GlobalPosition));
+    }
+    
     Vector3 FollowRoute()
     {
         if (currentRoute == null) return player.GlobalPosition;

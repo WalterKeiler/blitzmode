@@ -16,12 +16,12 @@ public partial class PlayerController : Node3D
 	[Export] public bool isPlayerControlled;
 	[Export] public bool isOffence;
 	[Export] BaseMaterial3D mat;
-	[Export] Area3D tackleBox;
-	[Export] Area3D nearbyPayersBox;
-	[Export] Ball ball;
-	[Export] Path3D ballPath;
-	[Export] PathFollow3D ballPathFollow;
 	[Export] bool debugMode;
+	
+	Area3D tackleBox;
+	Area3D nearbyPayersBox;
+	Area3D CatchZone;
+	Ball ball;
 	
 	List<Node3D> PlayersOnTeam;
 	List<Node3D> PlayersNotOnTeam;
@@ -40,6 +40,9 @@ public partial class PlayerController : Node3D
 	{
 		base._Ready();
 		Init();
+		
+		tackleBox = GetNode<Area3D>("TackleBox");
+		nearbyPayersBox = GetNode<Area3D>("NearbyPayersBox");
 	}
 
 	// Called when the node enters the scene tree for the first time.
@@ -60,7 +63,7 @@ public partial class PlayerController : Node3D
 		PlayersNotOnTeam = new List<Node3D>();
 		_moveDirection = Vector3.Zero;
 		
-		
+		ball = Ball.Instance;
 		
 		if (players != null)
 		{
@@ -89,58 +92,62 @@ public partial class PlayerController : Node3D
 		
 		if (ball.GetParent() == this)// && !HasBall)
 		{
+			SelectThrowTarget();
+			HasBall = true;
+		}
+		else if (HasBall) HasBall = false;
+	}
 
-			if (debugBox == null)
-			{
-				MeshInstance3D testMesh = new MeshInstance3D();
-				testMesh.Mesh = new BoxMesh();
-				testMesh.MaterialOverride = new Material();
-				testMesh.Position = Vector3.Zero;
-				GetParent().AddChild(testMesh);
-				debugBox = testMesh;
-			}
-			
-			float closest = -100000;
-			PlayerController target = null;
-			Vector3 endPoint = Vector3.Zero;
-			for (int i = 0; i < PlayersOnTeam.Count; i++)
-			{
-				if(_moveDirection == Vector3.Zero && throwTarget != null) break;
-				if(!((PlayerController)PlayersOnTeam[i]).playerStats.canBeThrowTarget) continue;
-				Vector3 dir = GlobalPosition.DirectionTo(PlayersOnTeam[i].GlobalPosition);
-				float dot = dir.Dot(_moveDirection);
+	void SelectThrowTarget()
+	{
+		if (debugBox == null)
+		{
+			MeshInstance3D testMesh = new MeshInstance3D();
+			testMesh.Mesh = new BoxMesh();
+			testMesh.MaterialOverride = new Material();
+			testMesh.Position = Vector3.Zero;
+			GetParent().AddChild(testMesh);
+			debugBox = testMesh;
+		}
+		
+		float closest = -100000;
+		PlayerController target = null;
+		Vector3 endPoint = Vector3.Zero;
+		for (int i = 0; i < PlayersOnTeam.Count; i++)
+		{
+			if(_moveDirection == Vector3.Zero && throwTarget != null) break;
+			if(!((PlayerController)PlayersOnTeam[i]).playerStats.canBeThrowTarget) continue;
+			Vector3 dir = GlobalPosition.DirectionTo(PlayersOnTeam[i].GlobalPosition);
+			float dot = dir.Dot(_moveDirection);
 
-				if (dot >= closest)
+			if (dot >= closest)
+			{
+				//GD.Print(dot);
+				if (dot - closest <= .1f)
 				{
-					//GD.Print(dot);
-					if (dot - closest <= .1f)
-					{
-						//GD.Print("In Line");
-						if(GlobalPosition.DistanceTo(PlayersOnTeam[i].GlobalPosition) <= GlobalPosition.DistanceTo(endPoint))
-						{
-							closest = dot;
-							endPoint = PlayersOnTeam[i].GlobalPosition;
-							target = (PlayerController)PlayersOnTeam[i];
-						}
-					}
-					else
+					//GD.Print("In Line");
+					if(GlobalPosition.DistanceTo(PlayersOnTeam[i].GlobalPosition) <= GlobalPosition.DistanceTo(endPoint))
 					{
 						closest = dot;
 						endPoint = PlayersOnTeam[i].GlobalPosition;
 						target = (PlayerController)PlayersOnTeam[i];
 					}
 				}
+				else
+				{
+					closest = dot;
+					endPoint = PlayersOnTeam[i].GlobalPosition;
+					target = (PlayerController)PlayersOnTeam[i];
+				}
 			}
-
-			if (throwTarget != target)
-			{
-				throwTarget = target;
-			}
-			if(throwTarget != null)
-				debugBox.GlobalPosition = throwTarget.GlobalPosition;
-			HasBall = true;
 		}
-		else if (HasBall) HasBall = false;
+
+		if (throwTarget != target)
+		{
+			throwTarget = target;
+		}
+		if(throwTarget != null)
+			debugBox.GlobalPosition = throwTarget.GlobalPosition;
 	}
 	
 	void GetInput()
@@ -506,43 +513,9 @@ public partial class PlayerController : Node3D
 		ball.startPoint = startPoint;
 		ball.endPoint = endPoint;
 		ball.ballSpeed = throwSpeed;// * (float)GetProcessDeltaTime();
-		ball.isThrown = true;
+		ball.ballState = BallState.Thrown;
 		
-		/*
-		distance = startPoint.DistanceTo(endPoint);
 		
-		Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
-		
-		midPoint.Y = Mathf.Clamp(.1f * distance, midPoint.Y, 10);
-		ballPath.Curve.ClearPoints();
-		ballPathFollow.ProgressRatio = 0;
-		
-		ballPath.Curve.AddPoint(startPoint);
-		ballPath.Curve.AddPoint(midPoint);
-		Vector3 inDir = startPoint.DirectionTo(endPoint);
-		
-		ballPath.Curve.SetPointIn(1,  -inDir * distance / 4);
-		ballPath.Curve.SetPointOut(1, inDir * distance / 4);
-		ballPath.Curve.SetPointTilt(1,distance);
-		ballPath.Curve.AddPoint(endPoint);
-		ballPath.Curve.SetPointTilt(2,distance * 2 - 1.25f);
-		
-		GD.Print(ballPathFollow.ProgressRatio);
-		
-		var tween = CreateTween();
-		tween.TweenProperty(ballPathFollow, "progress_ratio", 1,
-			 throwSpeed * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Linear);
-		await ToSignal(tween, "finished");
-		PlayerController otherPlayer = target;
-		ChangePlayer(otherPlayer);
-		
-		ballPathFollow.ProgressRatio = 0;
-		
-		ball.Reparent(target);
-		
-		GD.Print("Tween finished.");
-		mat.SetAlbedo(Colors.White);
-		*/
 		//if (PlayerAction.Contains(PlayerActions.Throw))
 		//	PlayerAction.Remove(PlayerActions.Throw);
 	}

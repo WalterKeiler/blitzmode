@@ -4,15 +4,21 @@ using System;
 public partial class Ball : Node3D
 {
     public const float BALLHEIGHTMULTIPLIER = .5f;
+
+    public static Ball Instance { get; private set; }
     
+    public BallState ballState;
     public float ballSpeed;
     public Vector3 startPoint;
     public Vector3 endPoint;
-    public bool isThrown;
+    public override void _Ready()
+    {
+        Instance = this;
+    }
     
     public override void _Process(double delta)
     {
-        if (isThrown)
+        if (ballState == BallState.Thrown)
         {
             Move(delta);
         }
@@ -40,4 +46,12 @@ public partial class Ball : Node3D
 
         return dir.Normalized();
     }
+}
+
+public enum BallState
+{
+    Held,
+    Thrown,
+    Free,
+    Fumbled
 }

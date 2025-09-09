@@ -21,6 +21,7 @@ shader_parameter/lineColor = Color(1, 1, 1, 1)
 transform = Transform3D(0.3, 0, 0, 0, -1.31134e-08, -0.3, 0, 0.3, -1.31134e-08, 0, 0, 0)
 
 [node name="RigidBody3D" type="RigidBody3D" parent="Node3D"]
+collision_layer = 9
 sleeping = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/RigidBody3D"]
