@@ -81,7 +81,13 @@ public partial class AIManager : Node
 
         if (distanceToBall <= catchRadius)
         {
-            
+            BallCatchData data = new BallCatchData();
+            data.Player = player;
+            data.BallDot = dot;
+            data.DistanceToBall = distanceToBall;
+            data.DistanceToTarget = distanceToTarget;
+            data.CatchPriority = player.playerStats.Catching;
+            ball.AddCatchOption(data);
         }
     }
     

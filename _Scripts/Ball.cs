@@ -44,11 +44,16 @@ public partial class Ball : Node3D
     public void AddCatchOption(BallCatchData data)
     {
         catchOptions.Add(data);
+        EvaluateCatchOptions();
     }
 
     public void EvaluateCatchOptions()
     {
-        
+        BallCatchData bestPick = catchOptions[0];
+        foreach (var data in catchOptions)
+        {
+            
+        }
     }
     
     public Vector3 CalculateBallDirection()
