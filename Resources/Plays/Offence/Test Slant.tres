@@ -7,6 +7,7 @@
 [sub_resource type="Resource" id="Resource_u2nh1"]
 script = ExtResource("1_ruvtc")
 IsPlayer = false
+StartsWithBall = false
 followRoute = 0.0
 findOpenSpace = 0.0
 block = 1.0
@@ -15,6 +16,7 @@ Position = Vector2(0, 0)
 [sub_resource type="Resource" id="Resource_ydei4"]
 script = ExtResource("1_ruvtc")
 IsPlayer = true
+StartsWithBall = true
 followRoute = 0.0
 findOpenSpace = 0.0
 block = 0.0
@@ -28,6 +30,7 @@ currentIndex = 0
 [sub_resource type="Resource" id="Resource_m5ewl"]
 script = ExtResource("1_ruvtc")
 IsPlayer = false
+StartsWithBall = false
 followRoute = 1.0
 findOpenSpace = 0.0
 block = 0.0

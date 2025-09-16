@@ -5,6 +5,8 @@ using System.Linq;
 
 public partial class FieldManager : Node
 {
+	public static FieldManager Instance { get; private set; }
+	
 	[Export] public int fieldLength = 100;
 	[Export] public int fieldWidth = 53;
 	[Export] int EndzoneDepth = 30;
@@ -24,6 +26,8 @@ public partial class FieldManager : Node
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		Instance = this;
+		
 		PlaneMesh m = (PlaneMesh)fieldMesh.Mesh;
 		var mat = m.GetMaterial();
 		((ShaderMaterial)mat).SetShaderParameter("yardsLength", fieldLength);
@@ -49,6 +53,12 @@ public partial class FieldManager : Node
 				Vector2 pos = OffencePlay.PlayerDataOffence[o].Position;
 				players[i].Position = new Vector3(pos.Y, 1, pos.X);
 				GD.Print(players[i].Name +" : " + play.IsPlayer);
+				if(play.StartsWithBall)
+				{
+					players[i].HasBall = true;
+					players[i].CanThrow = true;
+					players[i].AddChild(Ball.Instance);
+				}
 				if(!play.IsPlayer)
 				{
 					players[i].aiManager.block = play.block;

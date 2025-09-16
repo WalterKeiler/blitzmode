@@ -38,15 +38,14 @@ size = Vector2(100, 60)
 
 [node name="ThrowTest" type="Node3D"]
 
-[node name="O1" parent="." node_paths=PackedStringArray("_mainCam", "ball") instance=ExtResource("1_w60kg")]
+[node name="O1" parent="." node_paths=PackedStringArray("_mainCam") instance=ExtResource("1_w60kg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.6349, 1, 0)
 playerStats = ExtResource("2_jhevr")
 _mainCam = NodePath("../CameraController")
 isOffence = true
-ball = NodePath("../O2/Ball")
 debugMode = true
 
-[node name="O2" parent="." node_paths=PackedStringArray("_mainCam", "inputManager", "ball") instance=ExtResource("1_w60kg")]
+[node name="O2" parent="." node_paths=PackedStringArray("_mainCam", "inputManager") instance=ExtResource("1_w60kg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 playerID = 0
 playerStats = ExtResource("5_6sy8j")
@@ -54,7 +53,6 @@ _mainCam = NodePath("../CameraController")
 inputManager = NodePath("../InputManagerInstance")
 isPlayerControlled = true
 isOffence = true
-ball = NodePath("Ball")
 debugMode = true
 
 [node name="Ball" parent="O2" instance=ExtResource("3_mxk2o")]

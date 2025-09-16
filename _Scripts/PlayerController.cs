@@ -28,6 +28,8 @@ public partial class PlayerController : Node3D
 	public List<PlayerActions> PlayerAction;
 	public bool HasBall;
 
+	public bool CanThrow;
+	
 	private bool init = false;
 	bool canTakeInput = true;
 	Vector3 _moveDirection;
@@ -90,7 +92,7 @@ public partial class PlayerController : Node3D
 		GetInput();
 		Move(delta);
 		
-		if (ball.GetParent() == this)// && !HasBall)
+		if (CanThrow && ball.GetParent() == this)// && !HasBall)
 		{
 			SelectThrowTarget();
 			HasBall = true;
@@ -255,7 +257,7 @@ public partial class PlayerController : Node3D
 		return target;
 	}
 
-	void ChangePlayer(PlayerController otherPlayer)
+	public void ChangePlayer(PlayerController otherPlayer)
 	{
 		if (otherPlayer != null && otherPlayer != this)
 		{
@@ -514,6 +516,7 @@ public partial class PlayerController : Node3D
 		ball.endPoint = endPoint;
 		ball.ballSpeed = throwSpeed;// * (float)GetProcessDeltaTime();
 		ball.ballState = BallState.Thrown;
+		ball.throwingPlayer = this;
 		ball.ResetCatchData();
 		
 		

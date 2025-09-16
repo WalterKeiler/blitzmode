@@ -22,6 +22,7 @@ public partial class AIManager : Node
     public bool init = false;
     private PlayerController player;
     private Ball ball;
+    private bool setup = false;
     
     public override void _Ready()
     {
@@ -29,12 +30,20 @@ public partial class AIManager : Node
         player.aiManager = this;
         isOffence = player.isOffence;
         currentZone = new Zone(new Vector3(15, 0, -10), 10);
-        ball = Ball.Instance;
     }
     
     public override void _Process(double delta)
     {
         if(!init) return;
+
+        if (!setup)
+        {
+            ball = Ball.Instance;
+            setup = true;
+        }
+        
+        if(player.isPlayerControlled) return;
+        
         Vector3 finalDir = Vector3.Zero;
         if(isOffence)
         {
@@ -81,13 +90,16 @@ public partial class AIManager : Node
 
         if (distanceToBall <= catchRadius)
         {
-            BallCatchData data = new BallCatchData();
-            data.Player = player;
-            data.BallDot = dot;
-            data.DistanceToBall = distanceToBall;
-            data.DistanceToTarget = distanceToTarget;
-            data.CatchPriority = player.playerStats.Catching;
-            ball.AddCatchOption(data);
+            BallCatchData data = new BallCatchData
+            {
+                BallDot = dot,
+                CatchPriority = player.playerStats.Catching,
+                DistanceToBall = distanceToBall,
+                DistanceToTarget = distanceToTarget,
+                Player = player
+            };
+            
+            Ball.Instance.AddCatchOption(data);
         }
     }
     

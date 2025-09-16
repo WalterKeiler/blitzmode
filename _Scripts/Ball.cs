@@ -13,6 +13,8 @@ public partial class Ball : Node3D
     public Vector3 startPoint;
     public Vector3 endPoint;
 
+    public PlayerController throwingPlayer;
+    
     private BallCatchData bestOption;
     
     public List<BallCatchData> catchOptions;
@@ -26,6 +28,20 @@ public partial class Ball : Node3D
         if (ballState == BallState.Thrown)
         {
             Move(delta);
+            if (bestOption != null && ((GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 3f &&
+                                        GlobalPosition.DistanceTo(endPoint) <= (startPoint.DistanceTo(endPoint) / 2)) || bestOption.CalculateScore() >= 500))
+            {
+                endPoint = bestOption.Player.GlobalPosition;
+            }
+            if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 1f)
+            {
+                GD.Print("Caught");
+                Reparent(bestOption.Player);
+                if (throwingPlayer.PlayerAction.Contains(PlayerActions.Throw))
+                    throwingPlayer.PlayerAction.Remove(PlayerActions.Throw);
+                throwingPlayer.ChangePlayer(bestOption.Player);
+                ballState = BallState.Held;
+            }
         }
     }
 
@@ -33,12 +49,19 @@ public partial class Ball : Node3D
     {
         Vector3 moveDirection = CalculateBallDirection();
         if(GlobalPosition.Y > 0)
+        {
             GlobalPosition += moveDirection * ballSpeed;
+        }
+        else
+        {
+            ballState = BallState.Free;
+        }
     }
 
     public void ResetCatchData()
     {
         catchOptions = new List<BallCatchData>();
+        bestOption = null;
     }
     
     public void AddCatchOption(BallCatchData data)
@@ -50,10 +73,19 @@ public partial class Ball : Node3D
     public void EvaluateCatchOptions()
     {
         BallCatchData bestPick = catchOptions[0];
+        float bestScore = bestPick.CalculateScore();
         foreach (var data in catchOptions)
         {
-            
+            float score = data.CalculateScore();
+            if (bestScore <= score)
+            {
+                bestPick = data;
+                bestScore = score;
+                GD.Print("Best Local: " + bestPick.Player.isOffence + ", Score: " + bestScore);
+            }
         }
+        bestOption = bestPick;
+        GD.Print("Best Calculated: " + bestPick.Player.isOffence + ", Score: " + bestScore);
     }
     
     public Vector3 CalculateBallDirection()
@@ -80,6 +112,21 @@ public class BallCatchData
     public float DistanceToTarget;
     public float DistanceToBall;
     public float BallDot;
+
+    public float CalculateScore()
+    {
+        float mod = 1;
+        if (Player.isOffence) mod = 1.1f;
+        float dt = 1;
+        if (DistanceToTarget <= 3) dt = Mathf.Lerp(1, 10, (3 - DistanceToTarget) / 3);
+        
+        float db = 1;
+        if (DistanceToBall <= 3) db = Mathf.Lerp(1, 10,  (3 - DistanceToBall) / 3);
+        
+        float score = CatchPriority * dt * db * mod;
+
+        return score;
+    }
 }
 
 public enum BallState
