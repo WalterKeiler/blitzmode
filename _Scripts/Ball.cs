@@ -40,10 +40,15 @@ public partial class Ball : RigidBody3D
             if (bestOption != null && ((GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 5f &&
                                         GlobalPosition.DistanceTo(endPoint) <= (startPoint.DistanceTo(endPoint) / 2)) || bestOption.CalculateScore() >= 500))
             {
-                endPoint = bestOption.Player.GlobalPosition;
+                //endPoint = bestOption.Player.GlobalPosition;
+
+                if (bestOption.Player.isOffence)
+                {
+                    bestOption.Player.aiManager.overrideTargetPoint = endPoint;
+                }
                 GD.Print("Updated End Point");
             }
-            if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 1.25f)
+            if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= .5f)
             {
                 GD.Print("Caught");
                 Reparent(bestOption.Player);

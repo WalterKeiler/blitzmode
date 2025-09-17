@@ -7,6 +7,8 @@ using Array = System.Array;
 
 public partial class PlayerController : Node3D
 {
+	public const float MAXTHROWDISTANCE = 60;
+	
 	[Export] public int playerID = -1;
 	[Export] public PlayerStats playerStats;
 	[Export(PropertyHint.Range, "0,1,")] float _PlayerSprintAmount = 1;
@@ -100,6 +102,17 @@ public partial class PlayerController : Node3D
 			HasBall = true;
 		}
 		else if (HasBall) HasBall = false;
+
+		if (ball.ballState is BallState.Free or BallState.Fumbled)
+		{
+			float dist = ball.GlobalPosition.DistanceTo(GlobalPosition);
+
+			if (dist <= 1.25f)
+			{
+				ball.Reparent(this, true);
+				ball.ballState = BallState.Held;
+			}
+		}
 	}
 
 	void SelectThrowTarget()
@@ -491,7 +504,7 @@ public partial class PlayerController : Node3D
 		if(throwTarget == null || ball.ballState == BallState.Thrown) return;
 		
 		mat.SetAlbedo(Colors.Yellow);
-		Vector3 startPoint = GlobalPosition;
+		Vector3 startPoint = ball.GlobalPosition;
 		Vector3 endPoint = throwTarget.GlobalPosition;
 
 		// ball.Reparent(ballPathFollow);
@@ -500,19 +513,26 @@ public partial class PlayerController : Node3D
 
 		
 		float distance = startPoint.DistanceTo(endPoint);
-		float throwSpeed = playerStats.Agility * (float)GetProcessDeltaTime() * 2;// * distance;
-		/*
-		MeshInstance3D testMesh = new MeshInstance3D();
-		testMesh.Mesh = new BoxMesh();
-		testMesh.MaterialOverride = new Material();
-		testMesh.Position = endPoint;
-		GetTree().Root.AddChild(testMesh);
-		*/
+		float throwSpeed = playerStats.Agility * (float)GetProcessDeltaTime() * 3;// * distance;
+		float maxThrowDistance = Mathf.Clamp(playerStats.Agility * playerStats.Strength * 5, 0, MAXTHROWDISTANCE);
+		
+		
 		if(throwTarget.aiManager.currentRoute != null)
-			endPoint = throwTarget.aiManager.currentRoute.GetThrowToPoint(distance,endPoint, GlobalPosition
+			endPoint = throwTarget.aiManager.currentRoute.GetThrowToPoint(distance,endPoint, startPoint
 				, throwTarget.playerStats.Speed * (float)GetProcessDeltaTime(), ref throwSpeed);
 		GD.Print(endPoint);
 		GD.Print("Speed: " + throwSpeed * (float)GetProcessDeltaTime());
+
+		if (startPoint.DistanceTo(endPoint) > maxThrowDistance)
+		{
+			float dif = startPoint.DistanceTo(endPoint) - maxThrowDistance;
+
+			Vector3 dir = endPoint.DirectionTo(startPoint);
+
+			dir *= new Vector3(1, 0, 1);
+			
+			endPoint += (dir * dif);
+		}
 
 		((Node)ball).Reparent(GetTree().Root.GetChild(0));
 		
@@ -522,7 +542,17 @@ public partial class PlayerController : Node3D
 		ball.ballState = BallState.Thrown;
 		ball.throwingPlayer = this;
 		ball.ResetCatchData();
-		
+
+		//if (debugBox == null)
+		{
+			MeshInstance3D testMesh = new MeshInstance3D();
+			testMesh.Mesh = new BoxMesh();
+			testMesh.MaterialOverride = new Material();
+			testMesh.Position = endPoint;
+			testMesh.Scale *= .5f;
+			GetParent().AddChild(testMesh);
+			//debugBox = testMesh;
+		}
 		
 		//if (PlayerAction.Contains(PlayerActions.Throw))
 		//	PlayerAction.Remove(PlayerActions.Throw);

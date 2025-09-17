@@ -18,6 +18,8 @@ public partial class AIManager : Node
     [Export] public Route currentRoute;
     public Zone currentZone;
 
+    public Vector3 overrideTargetPoint;
+    
     public PlayerController targetPlayer;
     public bool init = false;
     private PlayerController player;
@@ -30,6 +32,8 @@ public partial class AIManager : Node
         player.aiManager = this;
         isOffence = player.isOffence;
         currentZone = new Zone(new Vector3(15, 0, -10), 10);
+        
+        overrideTargetPoint = Vector3.Inf;
     }
     
     public override void _Process(double delta)
@@ -76,7 +80,21 @@ public partial class AIManager : Node
         {
             CheckForCatch();
         }
-        
+
+        if (overrideTargetPoint < Vector3.Inf && ball.ballState == BallState.Thrown)
+        {
+            if(player.GlobalPosition.DistanceTo(overrideTargetPoint) > .01f)
+            {
+                followRoute = 0;
+                finalDir = player.GlobalPosition.DirectionTo(overrideTargetPoint);
+                finalDir *= new Vector3(1, 0, 1);
+                finalDir = finalDir.Normalized();
+            }
+            else
+            {
+                finalDir = Vector3.Zero;
+            }
+        }
         player.GetInput(finalDir);
     }
 

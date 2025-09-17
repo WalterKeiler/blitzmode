@@ -24,7 +24,7 @@ Position = Vector2(0, -5)
 
 [sub_resource type="Resource" id="Resource_vaa4w"]
 script = ExtResource("2_a416i")
-targetPoints = PackedVector3Array(0, 0, 10, 20, 0, 10, 30, 0, -20)
+targetPoints = PackedVector3Array(0, 0, 10, 10, 0, 10, 20, 0, -20)
 currentIndex = 0
 
 [sub_resource type="Resource" id="Resource_m5ewl"]
