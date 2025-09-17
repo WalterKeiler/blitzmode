@@ -57,7 +57,6 @@ public partial class FieldManager : Node
 				{
 					players[i].HasBall = true;
 					players[i].CanThrow = true;
-					players[i].AddChild(Ball.Instance);
 				}
 				if(!play.IsPlayer)
 				{

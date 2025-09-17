@@ -66,6 +66,8 @@ public partial class PlayerController : Node3D
 		_moveDirection = Vector3.Zero;
 		
 		ball = Ball.Instance;
+		GD.Print("Ball: "  + ball.GetParent().Name);
+		if(HasBall) ((Node)ball).Reparent(this, false);
 		
 		if (players != null)
 		{
@@ -485,7 +487,9 @@ public partial class PlayerController : Node3D
 			PlayerActions.StiffArm
 		};
 		if(!CanDoAction(PlayerActions.Throw, restrictions)) return;
-	
+		
+		if(throwTarget == null || ball.ballState == BallState.Thrown) return;
+		
 		mat.SetAlbedo(Colors.Yellow);
 		Vector3 startPoint = GlobalPosition;
 		Vector3 endPoint = throwTarget.GlobalPosition;
@@ -510,7 +514,7 @@ public partial class PlayerController : Node3D
 		GD.Print(endPoint);
 		GD.Print("Speed: " + throwSpeed * (float)GetProcessDeltaTime());
 
-		ball.Reparent(GetTree().Root);
+		((Node)ball).Reparent(GetTree().Root.GetChild(0));
 		
 		ball.startPoint = startPoint;
 		ball.endPoint = endPoint;

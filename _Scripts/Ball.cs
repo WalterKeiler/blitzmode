@@ -2,11 +2,13 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public partial class Ball : Node3D
+public partial class Ball : RigidBody3D
 {
     public const float BALLHEIGHTMULTIPLIER = .5f;
 
     public static Ball Instance { get; private set; }
+
+    private RigidBody3D rb;
     
     public BallState ballState;
     public float ballSpeed;
@@ -18,9 +20,16 @@ public partial class Ball : Node3D
     private BallCatchData bestOption;
     
     public List<BallCatchData> catchOptions;
+    
+    public override void _EnterTree()
+    {
+        base._EnterTree();
+        Instance = this;
+    }
+
     public override void _Ready()
     {
-        Instance = this;
+        Freeze = true;
     }
     
     public override void _Process(double delta)
@@ -28,18 +37,21 @@ public partial class Ball : Node3D
         if (ballState == BallState.Thrown)
         {
             Move(delta);
-            if (bestOption != null && ((GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 3f &&
+            if (bestOption != null && ((GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 5f &&
                                         GlobalPosition.DistanceTo(endPoint) <= (startPoint.DistanceTo(endPoint) / 2)) || bestOption.CalculateScore() >= 500))
             {
                 endPoint = bestOption.Player.GlobalPosition;
+                GD.Print("Updated End Point");
             }
-            if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 1f)
+            if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 1.25f)
             {
                 GD.Print("Caught");
                 Reparent(bestOption.Player);
                 if (throwingPlayer.PlayerAction.Contains(PlayerActions.Throw))
                     throwingPlayer.PlayerAction.Remove(PlayerActions.Throw);
-                throwingPlayer.ChangePlayer(bestOption.Player);
+                
+                if(bestOption.Player.isOffence)
+                    throwingPlayer.ChangePlayer(bestOption.Player);
                 ballState = BallState.Held;
             }
         }
@@ -48,13 +60,18 @@ public partial class Ball : Node3D
     void Move(double delta)
     {
         Vector3 moveDirection = CalculateBallDirection();
-        if(GlobalPosition.Y > 0)
+        if(GlobalPosition.Y >= .25f)
         {
             GlobalPosition += moveDirection * ballSpeed;
+
+            LookAt(GlobalPosition + moveDirection);
+            ((Node3D)GetChild(0)).RotateZ(this.ballSpeed);
         }
         else
         {
             ballState = BallState.Free;
+            Freeze = false;
+            ApplyImpulse(moveDirection * ballSpeed * 100);
         }
     }
 
@@ -81,7 +98,7 @@ public partial class Ball : Node3D
             {
                 bestPick = data;
                 bestScore = score;
-                GD.Print("Best Local: " + bestPick.Player.isOffence + ", Score: " + bestScore);
+                //GD.Print("Best Local: " + bestPick.Player.isOffence + ", Score: " + bestScore);
             }
         }
         bestOption = bestPick;
@@ -107,6 +124,8 @@ public partial class Ball : Node3D
 
 public class BallCatchData
 {
+    public const float CHECKDISTANCE = 5f;
+
     public PlayerController Player;
     public float CatchPriority;
     public float DistanceToTarget;
@@ -118,10 +137,10 @@ public class BallCatchData
         float mod = 1;
         if (Player.isOffence) mod = 1.1f;
         float dt = 1;
-        if (DistanceToTarget <= 3) dt = Mathf.Lerp(1, 10, (3 - DistanceToTarget) / 3);
+        if (DistanceToTarget <= CHECKDISTANCE) dt = Mathf.Lerp(1, 10, (CHECKDISTANCE - DistanceToTarget) / CHECKDISTANCE);
         
         float db = 1;
-        if (DistanceToBall <= 3) db = Mathf.Lerp(1, 10,  (3 - DistanceToBall) / 3);
+        if (DistanceToBall <= CHECKDISTANCE) db = Mathf.Lerp(1, 10,  (CHECKDISTANCE - DistanceToBall) / CHECKDISTANCE);
         
         float score = CatchPriority * dt * db * mod;
 

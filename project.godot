@@ -15,6 +15,10 @@ run/main_scene="res://_Scenes/Field.tscn"
 config/features=PackedStringArray("4.3", "C#", "Mobile")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Ball="*res://_Scripts/Ball.cs"
+
 [dotnet]
 
 project/assembly_name="BlitzMode"
