@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Play" load_steps=11 format=3 uid="uid://bqhd65la5qphp"]
+[gd_resource type="Resource" script_class="Play" load_steps=13 format=3 uid="uid://bqhd65la5qphp"]
 
 [ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/Linebacker.tres" id="1_gesbe"]
 [ext_resource type="Script" path="res://_Scripts/Resources/PlayerDataOffence.cs" id="1_ruvtc"]
@@ -43,8 +43,24 @@ block = 0.0
 Route = SubResource("Resource_vaa4w")
 Position = Vector2(10, 0)
 
+[sub_resource type="Resource" id="Resource_vx3as"]
+script = ExtResource("2_a416i")
+targetPoints = PackedVector3Array(10, 0, -10, 7, 0, -5)
+currentIndex = 0
+
+[sub_resource type="Resource" id="Resource_fiawq"]
+script = ExtResource("1_ruvtc")
+IsPlayer = false
+PlayerType = ExtResource("4_jd8da")
+StartsWithBall = false
+followRoute = 1.0
+findOpenSpace = 0.0
+block = 0.0
+Route = SubResource("Resource_vx3as")
+Position = Vector2(-10, 0)
+
 [resource]
 script = ExtResource("3_7u1eb")
 IsOffence = true
-PlayerDataOffence = Array[Object]([SubResource("Resource_u2nh1"), SubResource("Resource_ydei4"), SubResource("Resource_m5ewl")])
+PlayerDataOffence = Array[Object]([SubResource("Resource_u2nh1"), SubResource("Resource_ydei4"), SubResource("Resource_m5ewl"), SubResource("Resource_fiawq")])
 PlayerDataDefence = null

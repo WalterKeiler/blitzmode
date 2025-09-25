@@ -132,18 +132,18 @@ public partial class PlayerController : Node3D
 		Vector3 endPoint = Vector3.Zero;
 		for (int i = 0; i < PlayersOnTeam.Count; i++)
 		{
-			if(throwTarget != null) break;
+			//if(throwTarget != null) break;
 			if(!((PlayerController)PlayersOnTeam[i]).playerStats.canBeThrowTarget) continue;
+			
 			Vector3 dir = GlobalPosition.DirectionTo(PlayersOnTeam[i].GlobalPosition);
-			float dot = 1;
-			if(_moveDirection != Vector3.Zero) dot = dir.Dot(_moveDirection);
+			float dot = dir.Dot(_moveDirection);
 
 			if (dot >= closest)
 			{
 				GD.Print(dot);
 				if (dot - closest <= .1f)
 				{
-					//GD.Print("In Line");
+					GD.Print("In Line");
 					if(GlobalPosition.DistanceTo(PlayersOnTeam[i].GlobalPosition) <= GlobalPosition.DistanceTo(endPoint))
 					{
 						closest = dot;
@@ -171,6 +171,7 @@ public partial class PlayerController : Node3D
 		}
 		else
 		{
+			GD.Print("No target found");
 			throwTarget = GetNearestPlayer(true, false, true);
 			debugBox.Scale = Vector3.One * 2;
 		}

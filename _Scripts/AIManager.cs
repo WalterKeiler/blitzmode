@@ -174,11 +174,18 @@ public partial class AIManager : Node
     }
     Vector3 RushBall()
     {
+        if(ball.ballState == BallState.Free)
+        {
+            return player.GlobalPosition.DirectionTo(ball.GlobalPosition);
+        }
+        
         Vector3 nearestPlayer = player.GetNearestPlayerToBall(false).GlobalPosition;
+        
         if (player.GlobalPosition.DistanceTo(nearestPlayer) < 1.5f)
         {
             return Vector3.Zero;
         }
-        return player.GlobalPosition.DirectionTo(nearestPlayer);
+        
+        return player.GlobalPosition.DirectionTo(nearestPlayer);;
     }
 }
