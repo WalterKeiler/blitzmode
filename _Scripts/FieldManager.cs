@@ -67,7 +67,7 @@ public partial class FieldManager : Node
 		{
 			var player = playerPrefab.Instantiate<Node3D>();
 			player.Position = Vector3.Zero;
-			player.Name = ("Offence " + " " + OffencePlay.PlayerDataOffence[i].PlayerType.GetName() + " " + i);// = new StringName();
+			player.Name = ("Offence " + i);// = new StringName();
 			((PlayerController)player).playerStats = OffencePlay.PlayerDataOffence[i].PlayerType;
 			((PlayerController)player)._mainCam = mainCam;
 			((PlayerController)player).isOffence = true;
@@ -80,7 +80,7 @@ public partial class FieldManager : Node
 		{
 			var player = playerPrefab.Instantiate<Node3D>();
 			player.Position = Vector3.Zero;
-			player.Name = ("Defence " + " " + DefencePlay.PlayerDataDefence[i].PlayerType.GetName() + " " + i);// = new StringName();
+			player.Name = ("Defence " + i);// = new StringName();
 			((PlayerController)player).playerStats = DefencePlay.PlayerDataDefence[i].PlayerType;
 			((PlayerController)player)._mainCam = mainCam;
 			((PlayerController)player).isOffence = false;

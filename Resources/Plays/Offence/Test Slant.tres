@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Play" load_steps=13 format=3 uid="uid://bqhd65la5qphp"]
+[gd_resource type="Resource" script_class="Play" load_steps=17 format=3 uid="uid://bqhd65la5qphp"]
 
 [ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/Linebacker.tres" id="1_gesbe"]
 [ext_resource type="Script" path="res://_Scripts/Resources/PlayerDataOffence.cs" id="1_ruvtc"]
@@ -6,6 +6,16 @@
 [ext_resource type="Script" path="res://_Scripts/Resources/Play.cs" id="3_7u1eb"]
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="3_abf61"]
 [ext_resource type="Resource" uid="uid://c3iwmer7t8bnr" path="res://Resources/Stats/Players/WideReceiver.tres" id="4_jd8da"]
+
+[sub_resource type="Resource" id="Resource_ydei4"]
+script = ExtResource("1_ruvtc")
+IsPlayer = true
+PlayerType = ExtResource("3_abf61")
+StartsWithBall = true
+followRoute = 0.0
+findOpenSpace = 0.0
+block = 0.0
+Position = Vector2(0, -5)
 
 [sub_resource type="Resource" id="Resource_u2nh1"]
 script = ExtResource("1_ruvtc")
@@ -17,15 +27,25 @@ findOpenSpace = 0.0
 block = 1.0
 Position = Vector2(0, 0)
 
-[sub_resource type="Resource" id="Resource_ydei4"]
+[sub_resource type="Resource" id="Resource_jm6sq"]
 script = ExtResource("1_ruvtc")
-IsPlayer = true
-PlayerType = ExtResource("3_abf61")
-StartsWithBall = true
+IsPlayer = false
+PlayerType = ExtResource("1_gesbe")
+StartsWithBall = false
 followRoute = 0.0
 findOpenSpace = 0.0
-block = 0.0
-Position = Vector2(0, -5)
+block = 1.0
+Position = Vector2(1.5, 0)
+
+[sub_resource type="Resource" id="Resource_vehaq"]
+script = ExtResource("1_ruvtc")
+IsPlayer = false
+PlayerType = ExtResource("1_gesbe")
+StartsWithBall = false
+followRoute = 0.0
+findOpenSpace = 0.0
+block = 1.0
+Position = Vector2(-1.5, 0)
 
 [sub_resource type="Resource" id="Resource_vaa4w"]
 script = ExtResource("2_a416i")
@@ -59,8 +79,24 @@ block = 0.0
 Route = SubResource("Resource_vx3as")
 Position = Vector2(-10, 0)
 
+[sub_resource type="Resource" id="Resource_lw233"]
+script = ExtResource("2_a416i")
+targetPoints = PackedVector3Array(0, 0, -10, 3, 0, -10)
+currentIndex = 0
+
+[sub_resource type="Resource" id="Resource_yhwj8"]
+script = ExtResource("1_ruvtc")
+IsPlayer = false
+PlayerType = ExtResource("4_jd8da")
+StartsWithBall = false
+followRoute = 1.0
+findOpenSpace = 0.0
+block = 0.0
+Route = SubResource("Resource_lw233")
+Position = Vector2(-1, -4)
+
 [resource]
 script = ExtResource("3_7u1eb")
 IsOffence = true
-PlayerDataOffence = Array[Object]([SubResource("Resource_u2nh1"), SubResource("Resource_ydei4"), SubResource("Resource_m5ewl"), SubResource("Resource_fiawq")])
+PlayerDataOffence = Array[Object]([SubResource("Resource_ydei4"), SubResource("Resource_u2nh1"), SubResource("Resource_jm6sq"), SubResource("Resource_vehaq"), SubResource("Resource_m5ewl"), SubResource("Resource_fiawq"), SubResource("Resource_yhwj8")])
 PlayerDataDefence = null

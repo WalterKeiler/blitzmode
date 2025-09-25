@@ -8,6 +8,7 @@ using Array = System.Array;
 public partial class PlayerController : Node3D
 {
 	public const float MAXTHROWDISTANCE = 60;
+	public const float SWITCHTARGETCOOLDOWN = .25f;
 	
 	[Export] public int playerID = -1;
 	[Export] public PlayerStats playerStats;
@@ -36,6 +37,7 @@ public partial class PlayerController : Node3D
 	bool canTakeInput = true;
 	Vector3 _moveDirection;
 	float _sprintMultiplier;
+	private float switchTargetTimer;
 	private PlayerController throwTarget;
 
 	private Node3D debugBox;
@@ -66,6 +68,8 @@ public partial class PlayerController : Node3D
 		PlayersOnTeam = new List<Node3D>();
 		PlayersNotOnTeam = new List<Node3D>();
 		_moveDirection = Vector3.Zero;
+
+		switchTargetTimer = 0;
 		
 		ball = Ball.Instance;
 		GD.Print("Ball: "  + ball.GetParent().Name);
@@ -98,7 +102,12 @@ public partial class PlayerController : Node3D
 		
 		if (CanThrow && ball.GetParent() == this)// && !HasBall)
 		{
-			SelectThrowTarget();
+			if(switchTargetTimer > 0)
+				switchTargetTimer -= (float)delta;
+			else
+			{
+				SelectThrowTarget();
+			}
 			HasBall = true;
 		}
 		else if (HasBall) HasBall = false;
@@ -140,18 +149,18 @@ public partial class PlayerController : Node3D
 
 			if (dot >= closest)
 			{
-				GD.Print(dot);
-				if (dot - closest <= .1f)
-				{
-					GD.Print("In Line");
-					if(GlobalPosition.DistanceTo(PlayersOnTeam[i].GlobalPosition) <= GlobalPosition.DistanceTo(endPoint))
-					{
-						closest = dot;
-						endPoint = PlayersOnTeam[i].GlobalPosition;
-						target = (PlayerController)PlayersOnTeam[i];
-					}
-				}
-				else
+				//GD.Print(dot);
+				// if (dot - closest <= .1f)
+				// {
+				// 	GD.Print("In Line");
+				// 	if(GlobalPosition.DistanceTo(PlayersOnTeam[i].GlobalPosition) <= GlobalPosition.DistanceTo(endPoint))
+				// 	{
+				// 		closest = dot;
+				// 		endPoint = PlayersOnTeam[i].GlobalPosition;
+				// 		target = (PlayerController)PlayersOnTeam[i];
+				// 	}
+				// }
+				// else
 				{
 					closest = dot;
 					endPoint = PlayersOnTeam[i].GlobalPosition;
@@ -162,6 +171,10 @@ public partial class PlayerController : Node3D
 		
 		if (target != null)
 		{
+			if (throwTarget != target)
+			{
+				switchTargetTimer = SWITCHTARGETCOOLDOWN;
+			}
 			throwTarget = target;
 		}
 		if(throwTarget != null)

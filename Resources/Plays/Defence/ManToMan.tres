@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Resource_fo2q7"]
 script = ExtResource("1_6u8c1")
 IsPlayer = false
-PlayerType = ExtResource("1_gio8v")
+PlayerType = ExtResource("3_nifoy")
 followPlayer = 0.5
 coverZone = 0.0
 rushBall = 0.5
@@ -18,7 +18,7 @@ Position = Vector2(0, 0)
 [sub_resource type="Resource" id="Resource_jjkup"]
 script = ExtResource("1_6u8c1")
 IsPlayer = false
-PlayerType = ExtResource("3_nifoy")
+PlayerType = ExtResource("1_gio8v")
 followPlayer = 0.0
 coverZone = 0.0
 rushBall = 1.0
