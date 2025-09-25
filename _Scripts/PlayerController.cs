@@ -12,7 +12,7 @@ public partial class PlayerController : Node3D
 	[Export] public int playerID = -1;
 	[Export] public PlayerStats playerStats;
 	[Export(PropertyHint.Range, "0,1,")] float _PlayerSprintAmount = 1;
-	[Export] Node3D _mainCam;
+	[Export] public Node3D _mainCam;
 	[Export] public InputManager inputManager;
 	[Export] public AIManager aiManager;
 	[Export] public bool isPlayerControlled;
@@ -28,7 +28,7 @@ public partial class PlayerController : Node3D
 	List<Node3D> PlayersOnTeam;
 	List<Node3D> PlayersNotOnTeam;
 	public List<PlayerActions> PlayerAction;
-	public bool HasBall;
+	[Export] public bool HasBall;
 
 	public bool CanThrow;
 	
@@ -132,14 +132,15 @@ public partial class PlayerController : Node3D
 		Vector3 endPoint = Vector3.Zero;
 		for (int i = 0; i < PlayersOnTeam.Count; i++)
 		{
-			if(_moveDirection == Vector3.Zero && throwTarget != null) break;
+			if(throwTarget != null) break;
 			if(!((PlayerController)PlayersOnTeam[i]).playerStats.canBeThrowTarget) continue;
 			Vector3 dir = GlobalPosition.DirectionTo(PlayersOnTeam[i].GlobalPosition);
-			float dot = dir.Dot(_moveDirection);
+			float dot = 1;
+			if(_moveDirection != Vector3.Zero) dot = dir.Dot(_moveDirection);
 
 			if (dot >= closest)
 			{
-				//GD.Print(dot);
+				GD.Print(dot);
 				if (dot - closest <= .1f)
 				{
 					//GD.Print("In Line");
@@ -158,13 +159,21 @@ public partial class PlayerController : Node3D
 				}
 			}
 		}
-
-		if (throwTarget != target)
+		
+		if (target != null)
 		{
 			throwTarget = target;
 		}
 		if(throwTarget != null)
+		{
 			debugBox.GlobalPosition = throwTarget.GlobalPosition;
+			debugBox.Scale = Vector3.One;
+		}
+		else
+		{
+			throwTarget = GetNearestPlayer(true, false, true);
+			debugBox.Scale = Vector3.One * 2;
+		}
 	}
 	
 	void GetInput()
@@ -230,7 +239,7 @@ public partial class PlayerController : Node3D
 	/// <param name="sameTeam"></param>
 	/// <param name="prioritizeBall"></param>
 	/// <returns></returns>
-	public PlayerController GetNearestPlayer(bool sameTeam, bool prioritizeBall = false)
+	public PlayerController GetNearestPlayer(bool sameTeam, bool prioritizeBall = false, bool lookForReciver = false)
 	{
 		PlayerController target = null;
 		List<Node3D> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
@@ -242,6 +251,8 @@ public partial class PlayerController : Node3D
 			
 			if (currentDistance <= minDistance)
 			{
+				if(lookForReciver && !ctlr.playerStats.canBeThrowTarget) continue;
+				
 				target = ctlr;
 				minDistance = currentDistance;
 				if (ctlr.HasBall && prioritizeBall) break;
@@ -398,10 +409,10 @@ public partial class PlayerController : Node3D
 		canTakeInput = false;
 		var tween = CreateTween();
 		tween.TweenProperty(GetNode("."), "position:y", jumpHeight,
-			30 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+			30 * GetPhysicsProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
 		tween.Chain().TweenProperty(GetNode("."), "position:y", jumpHeight, .05f);
 		tween.Chain().TweenProperty(GetNode("."), "position:y", 1,
-			20 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
+			20 * GetPhysicsProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
 		await ToSignal(tween, "finished");
 		
 		canTakeInput = true;
@@ -476,13 +487,13 @@ public partial class PlayerController : Node3D
 		var tween = CreateTween();
 		tween.SetParallel(true);
 		tween.TweenProperty(GetNode("."), "position:y", diveHeight,
-			30 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+			30 * GetPhysicsProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
 		tween.TweenProperty(GetNode("."), "position", GlobalPosition + (diveDirection * 3),
-			30 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+			30 * GetPhysicsProcessDeltaTime()).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
 		tween.Chain().TweenProperty(GetNode("."), "position:y", diveHeight,
 			.05f).SetTrans(Tween.TransitionType.Sine);
 		tween.Chain().TweenProperty(GetNode("."), "position:y", 1,
-			20 * GetProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
+			20 * GetPhysicsProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
 		await ToSignal(tween, "finished");
 		
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
@@ -499,9 +510,20 @@ public partial class PlayerController : Node3D
 			PlayerActions.SpinMove,
 			PlayerActions.StiffArm
 		};
-		if(!CanDoAction(PlayerActions.Throw, restrictions)) return;
+		if(!CanDoAction(PlayerActions.Throw, restrictions))
+		{
+			GD.Print("Can't meet restrictions");
+			return;
+		}
 		
-		if(throwTarget == null || ball.ballState == BallState.Thrown) return;
+		
+		if(ball.ballState == BallState.Thrown)
+		{
+			GD.Print("thrown");
+			if (PlayerAction.Contains(PlayerActions.Throw))
+				PlayerAction.Remove(PlayerActions.Throw);
+			return;
+		}
 		
 		mat.SetAlbedo(Colors.Yellow);
 		Vector3 startPoint = ball.GlobalPosition;
@@ -513,15 +535,16 @@ public partial class PlayerController : Node3D
 
 		
 		float distance = startPoint.DistanceTo(endPoint);
-		float throwSpeed = playerStats.Agility * (float)GetProcessDeltaTime() * 3;// * distance;
+		float throwSpeed = playerStats.Agility * (float)GetPhysicsProcessDeltaTime() * 3;// * distance;
+		//GD.Print("Speed: " + throwSpeed + " Agility: " + playerStats.Agility + " processTime: " + (float)GetPhysicsProcessDeltaTime());
 		float maxThrowDistance = Mathf.Clamp(playerStats.Agility * playerStats.Strength * 5, 0, MAXTHROWDISTANCE);
 		
 		
 		if(throwTarget.aiManager.currentRoute != null)
 			endPoint = throwTarget.aiManager.currentRoute.GetThrowToPoint(distance,endPoint, startPoint
-				, throwTarget.playerStats.Speed * (float)GetProcessDeltaTime(), ref throwSpeed);
+				, throwTarget.playerStats.Speed * (float)GetPhysicsProcessDeltaTime(), ref throwSpeed);
 		GD.Print(endPoint);
-		GD.Print("Speed: " + throwSpeed * (float)GetProcessDeltaTime());
+		//GD.Print("Speed: " + throwSpeed * (float)GetPhysicsProcessDeltaTime());
 
 		if (startPoint.DistanceTo(endPoint) > maxThrowDistance)
 		{

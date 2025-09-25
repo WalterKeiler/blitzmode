@@ -6,6 +6,10 @@ using System.Linq;
 public partial class FieldManager : Node
 {
 	public static FieldManager Instance { get; private set; }
+
+	[Export] private PackedScene playerPrefab;
+	[Export] private PackedScene BallPrefab;
+	[Export] private CameraController mainCam;
 	
 	[Export] public int fieldLength = 100;
 	[Export] public int fieldWidth = 53;
@@ -20,6 +24,8 @@ public partial class FieldManager : Node
 	[Export] SceneTree endzonePrefab;
 	
 	[Export] public InputManager[] playerInputManagers;
+
+	private PlayerController[] players;
 	
 	List<Node3D> offencePlayers;
 	List<Node3D> defencePlayers;
@@ -37,9 +43,55 @@ public partial class FieldManager : Node
 		m.SetMaterial(mat);// = mat;
 		m.Size = new Vector2(fieldLength, fieldWidth + 7);
 
-		fieldMesh.Mesh = m;
+		var ball = BallPrefab.Instantiate<Node3D>();
+		ball.Position = Vector3.Zero;
+		AddChild(ball);
+
+		mainCam.target = ball;
 		
-		PlayerController[] players = GetParent().GetChildren().OfType<PlayerController>().ToArray();
+		fieldMesh.Mesh = m;
+		SpawnPlayers();
+		StartPlay();
+	}
+	
+	// Called every frame. 'delta' is the elapsed time since the previous frame.
+	public override void _Process(double delta)
+	{
+	}
+
+	void SpawnPlayers()
+	{
+		players = new PlayerController[OffencePlay.PlayerDataOffence.Length + DefencePlay.PlayerDataDefence.Length];
+		int index = 0;
+		for(int i = 0; i < OffencePlay.PlayerDataOffence.Length; i++)
+		{
+			var player = playerPrefab.Instantiate<Node3D>();
+			player.Position = Vector3.Zero;
+			player.Name = ("Offence " + " " + OffencePlay.PlayerDataOffence[i].PlayerType.GetName() + " " + i);// = new StringName();
+			((PlayerController)player).playerStats = OffencePlay.PlayerDataOffence[i].PlayerType;
+			((PlayerController)player)._mainCam = mainCam;
+			((PlayerController)player).isOffence = true;
+			AddChild(player);
+			players[index] = player as PlayerController;
+			index++;
+		}
+		
+		for(int i = 0; i < DefencePlay.PlayerDataDefence.Length; i++)
+		{
+			var player = playerPrefab.Instantiate<Node3D>();
+			player.Position = Vector3.Zero;
+			player.Name = ("Defence " + " " + DefencePlay.PlayerDataDefence[i].PlayerType.GetName() + " " + i);// = new StringName();
+			((PlayerController)player).playerStats = DefencePlay.PlayerDataDefence[i].PlayerType;
+			((PlayerController)player)._mainCam = mainCam;
+			((PlayerController)player).isOffence = false;
+			AddChild(player);
+			players[index] = player as PlayerController;
+			index++;
+		}
+	}
+	
+	public void StartPlay()
+	{
 		offencePlayers = new List<Node3D>();
 		defencePlayers = new List<Node3D>();
 		int o = 0;
@@ -103,10 +155,5 @@ public partial class FieldManager : Node
 			}
 			players[i].Init();
 		}
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
 	}
 }

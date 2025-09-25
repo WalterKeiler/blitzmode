@@ -20,15 +20,10 @@ public partial class Ball : RigidBody3D
     private BallCatchData bestOption;
     
     public List<BallCatchData> catchOptions;
-    
-    public override void _EnterTree()
-    {
-        base._EnterTree();
-        Instance = this;
-    }
 
     public override void _Ready()
     {
+        Instance = this;
         Freeze = true;
     }
     
@@ -38,7 +33,7 @@ public partial class Ball : RigidBody3D
         {
             Move(delta);
             if (bestOption != null && ((GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 5f &&
-                                        GlobalPosition.DistanceTo(endPoint) <= (startPoint.DistanceTo(endPoint) / 2)) || bestOption.CalculateScore() >= 500))
+                                        GlobalPosition.DistanceTo(endPoint) <= (startPoint.DistanceTo(endPoint) / 2)) || bestOption.CalculateScore() >= 600))
             {
                 //endPoint = bestOption.Player.GlobalPosition;
 
@@ -140,7 +135,7 @@ public class BallCatchData
     public float CalculateScore()
     {
         float mod = 1;
-        if (Player.isOffence) mod = 1.1f;
+        if (Player.isOffence) mod = 1.05f;
         float dt = 1;
         if (DistanceToTarget <= CHECKDISTANCE) dt = Mathf.Lerp(1, 10, (CHECKDISTANCE - DistanceToTarget) / CHECKDISTANCE);
         

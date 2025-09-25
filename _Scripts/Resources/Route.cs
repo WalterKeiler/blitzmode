@@ -9,6 +9,8 @@ public partial class Route : Resource
 
     Vector3 GetPointByLength(Vector3 currentPos, float length)
     {
+        if (currentIndex >= targetPoints.Length) return currentPos;
+        
         float distanceFromLastPoint =
             targetPoints[Math.Clamp(currentIndex - 1, 0, Int32.MaxValue)].DistanceTo(currentPos);
 
@@ -46,8 +48,8 @@ public partial class Route : Resource
         float time = d / (ballSpeed);
 
         //time *= delta;
-        
-        Vector3 targetPos = GetPointByLength(receiverPos, time * receiverSpeed);
+        Vector3 targetPos = receiverPos;
+        if(currentIndex < targetPoints.Length) targetPos = GetPointByLength(receiverPos, time * receiverSpeed);
         distance = qbPos.DistanceTo(targetPos);
         float neededSpeed = (distance + Mathf.Clamp((Ball.BALLHEIGHTMULTIPLIER / ((2.0f / 3) * 10)) * distance, 1, 10)) / time;
         ballSpeed = neededSpeed;
