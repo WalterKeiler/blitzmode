@@ -21,6 +21,12 @@ public partial class PlayerController : Node3D
 	[Export] BaseMaterial3D mat;
 	[Export] bool debugMode;
 	
+	public List<PlayerActions> PlayerAction;
+	public bool HasBall;
+	public bool CanCatch;
+	public bool CanThrow;
+	public bool CanMove;
+
 	Area3D tackleBox;
 	Area3D nearbyPayersBox;
 	Area3D CatchZone;
@@ -28,19 +34,15 @@ public partial class PlayerController : Node3D
 	
 	List<Node3D> PlayersOnTeam;
 	List<Node3D> PlayersNotOnTeam;
-	public List<PlayerActions> PlayerAction;
-	[Export] public bool HasBall;
 
-	public bool CanThrow;
-	
-	private bool init = false;
+	bool init = false;
 	bool canTakeInput = true;
 	Vector3 _moveDirection;
 	float _sprintMultiplier;
-	private float switchTargetTimer;
-	private PlayerController throwTarget;
-
-	private Node3D debugBox;
+	float switchTargetTimer;
+	PlayerController throwTarget;
+	
+	Node3D debugBox;
 	
 	public override void _Ready()
 	{
@@ -68,7 +70,8 @@ public partial class PlayerController : Node3D
 		PlayersOnTeam = new List<Node3D>();
 		PlayersNotOnTeam = new List<Node3D>();
 		_moveDirection = Vector3.Zero;
-
+		CanCatch = true;
+		CanMove = true;
 		switchTargetTimer = 0;
 		
 		ball = Ball.Instance;
@@ -98,7 +101,9 @@ public partial class PlayerController : Node3D
 	{
 		if(!init) return;
 		GetInput();
-		Move(delta);
+		
+		if(CanMove)
+			Move(delta);
 		
 		if (CanThrow && ball.GetParent() == this)// && !HasBall)
 		{
@@ -112,6 +117,11 @@ public partial class PlayerController : Node3D
 		}
 		else if (HasBall) HasBall = false;
 
+		if (Ball.Instance.ballState == BallState.Thrown && CanCatch)
+		{
+			CheckForCatch();
+		}
+		
 		if (ball.ballState is BallState.Free or BallState.Fumbled)
 		{
 			float dist = ball.GlobalPosition.DistanceTo(GlobalPosition);
@@ -218,6 +228,32 @@ public partial class PlayerController : Node3D
 		_moveDirection.Normalized();
 		Translate(_moveDirection * (float)delta * (playerStats.Speed + _sprintMultiplier));
 	}
+	
+	
+	void CheckForCatch()
+	{
+		float distanceToBall = ball.GlobalPosition.DistanceTo(GlobalPosition);
+		float distanceToTarget = ball.endPoint.DistanceTo(GlobalPosition);
+		float dot = GetGlobalBasis().Z.Dot(ball.GlobalPosition.DirectionTo(GlobalPosition));
+
+		float catchRadius = 3;
+
+		if (distanceToBall <= catchRadius)
+		{
+			BallCatchData data = new BallCatchData
+			{
+				BallDot = dot,
+				CatchPriority = playerStats.Catching,
+				DistanceToBall = distanceToBall,
+				DistanceToTarget = distanceToTarget,
+				Player = this
+			};
+            
+			Ball.Instance.AddCatchOption(data);
+		}
+	}
+	
+	
 	/// <summary>
 	/// Use when searching with collisions
 	/// </summary>
@@ -271,6 +307,58 @@ public partial class PlayerController : Node3D
 				minDistance = currentDistance;
 				if (ctlr.HasBall && prioritizeBall) break;
 			}
+		}
+
+		return target;
+	}
+	/// <summary>
+	/// Use when searching all players for closest one
+	/// </summary>
+	/// <param name="sameTeam"></param>
+	/// <param name="prioritizeBall"></param>
+	/// <returns></returns>
+	public PlayerController GetNearestPlayerByType(bool sameTeam, PlayerType playerType, bool prioritizeBall = false, PlayerController[] ingnorePlayers = default)
+	{
+		PlayerController target = null;
+		List<Node3D> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
+		float minDistance = float.MaxValue;
+
+		if (ingnorePlayers != default)
+		{
+			foreach (var p in ingnorePlayers)
+			{
+				if(p == null) continue;
+				playersToSearch.Remove(p);
+			}
+		}
+		
+		for (int i = 0; i < playersToSearch.Count; i++)
+		{
+			PlayerController ctlr =  (PlayerController) playersToSearch[i];
+			if(ctlr.playerStats.PlayerType != playerType) continue;
+			
+			float currentDistance = ctlr.GlobalPosition.DistanceTo(GlobalPosition);
+			
+			if (currentDistance <= minDistance)
+			{
+				target = ctlr;
+				minDistance = currentDistance;
+				if (ctlr.HasBall && prioritizeBall) break;
+			}
+		}
+
+		return target;
+	}
+	
+	public PlayerController[] GetNearestPlayersByType(bool sameTeam, PlayerType playerType, bool prioritizeBall = false)
+	{
+		
+		List<Node3D> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
+		PlayerController[] target = new PlayerController[playersToSearch.Count];
+
+		for (int i = 0; i < target.Length; i++)
+		{
+			target[i] = GetNearestPlayerByType(sameTeam, playerType, prioritizeBall, target);
 		}
 
 		return target;
@@ -340,6 +428,9 @@ public partial class PlayerController : Node3D
 				break;
 			case PlayerActions.ChangePlayer :
 				ChangePlayer();
+				break;
+			case PlayerActions.Tackled :
+				Tackled();
 				break;
 		}
 		//if(!PlayerAction.Contains(action))
@@ -463,11 +554,34 @@ public partial class PlayerController : Node3D
 		mat.SetAlbedo(Colors.Green);
 		PlayerController tackleTarget = GetNearestPlayer(tackleBox, false, true);
 		if (tackleTarget != null)
+		{
+			tackleTarget.DoAction(PlayerActions.Tackled, tackleTarget.playerID);
 			GD.Print("Tackled");
+		}
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		mat.SetAlbedo(Colors.White);
 		if (PlayerAction.Contains(PlayerActions.Tackle))
 			PlayerAction.Remove(PlayerActions.Tackle);
+	}
+	async void Tackled()
+	{
+		PlayerActions[] restrictions =
+		{
+			
+		};
+		if(!CanDoAction(PlayerActions.Tackled, restrictions)) return;
+		
+		mat.SetAlbedo(Colors.Black);
+		CanCatch = false;
+		CanMove = false;
+		
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
+
+		CanMove = true;
+		CanCatch = true;
+		mat.SetAlbedo(Colors.White);
+		if (PlayerAction.Contains(PlayerActions.Tackled))
+			PlayerAction.Remove(PlayerActions.Tackled);
 	}
 	async void Dive()
 	{
@@ -617,6 +731,7 @@ public enum PlayerActions
 	StiffArm,
 	Jump,
 	Tackle,
+	Tackled,
 	Block,
 	Dive,
 	Catch,

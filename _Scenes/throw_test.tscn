@@ -1,7 +1,7 @@
 [gd_scene load_steps=22 format=3 uid="uid://cectkalhkg1s2"]
 
 [ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="1_w60kg"]
-[ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/Linebacker.tres" id="2_jhevr"]
+[ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/OLinebacker.tres" id="2_jhevr"]
 [ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/ball.tscn" id="3_mxk2o"]
 [ext_resource type="Script" path="res://_Scripts/Ball.cs" id="4_3fjpg"]
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="5_6sy8j"]

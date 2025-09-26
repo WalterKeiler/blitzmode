@@ -27,8 +27,8 @@ public partial class FieldManager : Node
 
 	private PlayerController[] players;
 	
-	List<Node3D> offencePlayers;
-	List<Node3D> defencePlayers;
+	public List<Node3D> offencePlayers;
+	public List<Node3D> defencePlayers;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -67,10 +67,11 @@ public partial class FieldManager : Node
 		{
 			var player = playerPrefab.Instantiate<Node3D>();
 			player.Position = Vector3.Zero;
-			player.Name = ("Offence " + i);// = new StringName();
+			player.Name = (OffencePlay.PlayerDataOffence[i].PlayerType.PlayerType + " " + i);// = new StringName();
 			((PlayerController)player).playerStats = OffencePlay.PlayerDataOffence[i].PlayerType;
 			((PlayerController)player)._mainCam = mainCam;
 			((PlayerController)player).isOffence = true;
+			// ((PlayerController)player).playerID = index;
 			AddChild(player);
 			players[index] = player as PlayerController;
 			index++;
@@ -80,10 +81,11 @@ public partial class FieldManager : Node
 		{
 			var player = playerPrefab.Instantiate<Node3D>();
 			player.Position = Vector3.Zero;
-			player.Name = ("Defence " + i);// = new StringName();
+			player.Name = (DefencePlay.PlayerDataDefence[i].PlayerType.PlayerType + " " + i);// = new StringName();
 			((PlayerController)player).playerStats = DefencePlay.PlayerDataDefence[i].PlayerType;
 			((PlayerController)player)._mainCam = mainCam;
 			((PlayerController)player).isOffence = false;
+			// ((PlayerController)player).playerID = index;
 			AddChild(player);
 			players[index] = player as PlayerController;
 			index++;

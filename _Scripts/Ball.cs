@@ -134,6 +134,8 @@ public class BallCatchData
 
     public float CalculateScore()
     {
+        if (!Player.CanCatch) return 0;
+        
         float mod = 1;
         if (Player.isOffence) mod = 1.05f;
         float dt = 1;

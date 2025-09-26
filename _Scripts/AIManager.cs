@@ -61,8 +61,9 @@ public partial class AIManager : Node
 
             Vector3 route = followRoute * FollowRoute();
             Vector3 openSpace = findOpenSpace * FindOpenSpace();
+            Vector3 blockPlayer = block * Block();
 
-            finalDir = (route + openSpace).Normalized();
+            finalDir = (route + openSpace + blockPlayer).Normalized();
         }
         else
         {
@@ -76,10 +77,7 @@ public partial class AIManager : Node
             finalDir = ((FollowPlayer() * followPlayer) + (CoverZone() * coverZone) + (RushBall() * rushBall)).Normalized();
         }
 
-        if (Ball.Instance.ballState == BallState.Thrown)
-        {
-            CheckForCatch();
-        }
+        
 
         if (overrideTargetPoint < Vector3.Inf && ball.ballState == BallState.Thrown)
         {
@@ -96,29 +94,6 @@ public partial class AIManager : Node
             }
         }
         player.GetInput(finalDir);
-    }
-
-    void CheckForCatch()
-    {
-        float distanceToBall = ball.GlobalPosition.DistanceTo(player.GlobalPosition);
-        float distanceToTarget = ball.endPoint.DistanceTo(player.GlobalPosition);
-        float dot = player.GetGlobalBasis().Z.Dot(ball.GlobalPosition.DirectionTo(player.GlobalPosition));
-
-        float catchRadius = 3;
-
-        if (distanceToBall <= catchRadius)
-        {
-            BallCatchData data = new BallCatchData
-            {
-                BallDot = dot,
-                CatchPriority = player.playerStats.Catching,
-                DistanceToBall = distanceToBall,
-                DistanceToTarget = distanceToTarget,
-                Player = player
-            };
-            
-            Ball.Instance.AddCatchOption(data);
-        }
     }
     
     Vector3 FollowRoute()
@@ -145,6 +120,17 @@ public partial class AIManager : Node
             return -player.GlobalPosition.DirectionTo(nearestPlayer);
         return Vector3.Zero;
     }
+
+    Vector3 Block()
+    {
+        Vector3 nearestPlayer = player.GetNearestPlayer(false).GlobalPosition;
+        if (player.GlobalPosition.DistanceTo(nearestPlayer) < 1.5f)
+        {
+            return Vector3.Zero;
+        }
+
+        return nearestPlayer;
+    }
     
     Vector3 CoverZone()
     {
@@ -165,7 +151,22 @@ public partial class AIManager : Node
     }
     Vector3 FollowPlayer()
     {
-        Vector3 nearestPlayer = player.GetNearestPlayer(false).GlobalPosition;
+        if (targetPlayer == null)
+        {
+            PlayerController[] targets = player.GetNearestPlayersByType(false, PlayerType.Receiver);
+            int i = 0;
+            foreach (PlayerController p in FieldManager.Instance.defencePlayers)
+            {
+                if (p.aiManager.targetPlayer == targets[i])
+                {
+                    continue;
+                }
+                
+                targetPlayer = targets[i];
+                i++;
+            }
+        }
+        Vector3 nearestPlayer = targetPlayer.GlobalPosition;
         if (player.GlobalPosition.DistanceTo(nearestPlayer) < 1.5f)
         {
             return Vector3.Zero;

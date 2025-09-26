@@ -4,6 +4,8 @@
 
 [resource]
 script = ExtResource("1_0la0h")
+PlayerType = 1
+canBeThrowTarget = false
 Speed = 7.0
 Endurance = 2.0
 Strength = 1.0
