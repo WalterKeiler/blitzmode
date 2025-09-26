@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bph8u704hl88n" path="res://_Scenes/AIManager.tscn" id="3_hud2f"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ljm3w"]
+material = ExtResource("2_tyapl")
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_p1g61"]
 
@@ -14,9 +15,10 @@
 height = 2.83541
 radius = 300.679
 
-[node name="Player" type="Node3D" node_paths=PackedStringArray("aiManager")]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("aiManager", "mesh")]
 script = ExtResource("1_areti")
 aiManager = NodePath("AIManager")
+mesh = NodePath("CharacterBody3D/MeshInstance3D")
 mat = ExtResource("2_tyapl")
 debugMode = true
 

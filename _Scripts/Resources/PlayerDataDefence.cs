@@ -10,4 +10,5 @@ public partial class PlayerDataDefence : Resource
     [Export(PropertyHint.Range, "0,1,")] public float coverZone;
     [Export(PropertyHint.Range, "0,1,")] public float rushBall;
     [Export] public Vector2 Position;
+    [Export] public Zone Zone;
 }

@@ -18,7 +18,8 @@ public partial class PlayerController : Node3D
 	[Export] public AIManager aiManager;
 	[Export] public bool isPlayerControlled;
 	[Export] public bool isOffence;
-	[Export] BaseMaterial3D mat;
+	[Export] MeshInstance3D mesh;
+	[Export] Material mat;
 	[Export] bool debugMode;
 	
 	public List<PlayerActions> PlayerAction;
@@ -41,6 +42,8 @@ public partial class PlayerController : Node3D
 	float _sprintMultiplier;
 	float switchTargetTimer;
 	PlayerController throwTarget;
+
+	StandardMaterial3D testMat;
 	
 	Node3D debugBox;
 	
@@ -73,6 +76,8 @@ public partial class PlayerController : Node3D
 		CanCatch = true;
 		CanMove = true;
 		switchTargetTimer = 0;
+		testMat = (StandardMaterial3D)mat.Duplicate();
+		mesh.MaterialOverride = testMat;
 		
 		ball = Ball.Instance;
 		GD.Print("Ball: "  + ball.GetParent().Name);
@@ -490,9 +495,9 @@ public partial class PlayerController : Node3D
 		if(!CanDoAction(PlayerActions.SpinMove, restrictions)) return;
 		
 		
-		mat.SetAlbedo(Colors.Red);
+		testMat.SetAlbedo((Colors.Red));
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
-		mat.SetAlbedo(Colors.White);
+		testMat.SetAlbedo((Colors.White));
 		if (PlayerAction.Contains(PlayerActions.SpinMove))
 			PlayerAction.Remove(PlayerActions.SpinMove);
 	}
@@ -510,7 +515,7 @@ public partial class PlayerController : Node3D
 		//if(tackleBox.GetOverlappingAreas().Count > 1) return;
 		
 		float jumpHeight = 3;
-		mat.SetAlbedo(Colors.Blue);
+		testMat.SetAlbedo((Colors.Blue));
 		canTakeInput = false;
 		var tween = CreateTween();
 		tween.TweenProperty(GetNode("."), "position:y", jumpHeight,
@@ -521,7 +526,7 @@ public partial class PlayerController : Node3D
 		await ToSignal(tween, "finished");
 		
 		canTakeInput = true;
-		mat.SetAlbedo(Colors.White);
+		testMat.SetAlbedo((Colors.White));
 		if (PlayerAction.Contains(PlayerActions.Jump))
 			PlayerAction.Remove(PlayerActions.Jump);
 	}
@@ -534,11 +539,11 @@ public partial class PlayerController : Node3D
 		};
 		if(!CanDoAction(PlayerActions.StiffArm, restrictions)) return;
 		
-		mat.SetAlbedo(Colors.Orange);
+		testMat.SetAlbedo((Colors.Orange));
 		tackleBox.Monitorable = false;
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		tackleBox.Monitorable = true;
-		mat.SetAlbedo(Colors.White);
+		testMat.SetAlbedo((Colors.White));
 		if (PlayerAction.Contains(PlayerActions.StiffArm))
 			PlayerAction.Remove(PlayerActions.StiffArm);
 	}
@@ -551,7 +556,7 @@ public partial class PlayerController : Node3D
 		};
 		if(!CanDoAction(PlayerActions.Tackle, restrictions)) return;
 		
-		mat.SetAlbedo(Colors.Green);
+		testMat.SetAlbedo((Colors.Green));
 		PlayerController tackleTarget = GetNearestPlayer(tackleBox, false, true);
 		if (tackleTarget != null)
 		{
@@ -559,7 +564,7 @@ public partial class PlayerController : Node3D
 			GD.Print("Tackled");
 		}
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
-		mat.SetAlbedo(Colors.White);
+		testMat.SetAlbedo((Colors.White));
 		if (PlayerAction.Contains(PlayerActions.Tackle))
 			PlayerAction.Remove(PlayerActions.Tackle);
 	}
@@ -571,7 +576,7 @@ public partial class PlayerController : Node3D
 		};
 		if(!CanDoAction(PlayerActions.Tackled, restrictions)) return;
 		
-		mat.SetAlbedo(Colors.Black);
+		testMat.SetAlbedo((Colors.Black));
 		CanCatch = false;
 		CanMove = false;
 		
@@ -579,7 +584,7 @@ public partial class PlayerController : Node3D
 
 		CanMove = true;
 		CanCatch = true;
-		mat.SetAlbedo(Colors.White);
+		testMat.SetAlbedo((Colors.White));
 		if (PlayerAction.Contains(PlayerActions.Tackled))
 			PlayerAction.Remove(PlayerActions.Tackled);
 	}
@@ -592,7 +597,7 @@ public partial class PlayerController : Node3D
 		};
 		if(!CanDoAction(PlayerActions.Dive, restrictions)) return;
 		
-		mat.SetAlbedo(Colors.Teal);
+		testMat.SetAlbedo((Colors.Teal));
 		float diveHeight = 1.25f;
 		canTakeInput = false;
 		
@@ -627,7 +632,7 @@ public partial class PlayerController : Node3D
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		canTakeInput = true;
 		
-		mat.SetAlbedo(Colors.White);
+		testMat.SetAlbedo((Colors.White));
 		if (PlayerAction.Contains(PlayerActions.Dive))
 			PlayerAction.Remove(PlayerActions.Dive);
 	}
@@ -653,7 +658,7 @@ public partial class PlayerController : Node3D
 			return;
 		}
 		
-		mat.SetAlbedo(Colors.Yellow);
+		testMat.SetAlbedo((Colors.Yellow));
 		Vector3 startPoint = ball.GlobalPosition;
 		Vector3 endPoint = throwTarget.GlobalPosition;
 
@@ -713,12 +718,12 @@ public partial class PlayerController : Node3D
 		PlayerActions[] restrictions = Array.Empty<PlayerActions>();
 		if(!CanDoAction(PlayerActions.ChangePlayer, restrictions)) return;
 		
-		mat.SetAlbedo(Colors.BlanchedAlmond);
+		testMat.SetAlbedo((Colors.BlanchedAlmond));
 		PlayerController otherPlayer = GetNearestPlayerToBall(true);
 		ChangePlayer(otherPlayer);
 		
 		await ToSignal(GetTree().CreateTimer(.25f), "timeout");
-		mat.SetAlbedo(Colors.White);
+		testMat.SetAlbedo((Colors.White));
 		if (PlayerAction.Contains(PlayerActions.ChangePlayer))
 			PlayerAction.Remove(PlayerActions.ChangePlayer);
 	}

@@ -83,6 +83,7 @@ public partial class FieldManager : Node
 			player.Position = Vector3.Zero;
 			player.Name = (DefencePlay.PlayerDataDefence[i].PlayerType.PlayerType + " " + i);// = new StringName();
 			((PlayerController)player).playerStats = DefencePlay.PlayerDataDefence[i].PlayerType;
+			((PlayerController)player).aiManager.currentZone = DefencePlay.PlayerDataDefence[i].Zone;
 			((PlayerController)player)._mainCam = mainCam;
 			((PlayerController)player).isOffence = false;
 			// ((PlayerController)player).playerID = index;

@@ -16,7 +16,7 @@ public partial class AIManager : Node
     [Export(PropertyHint.Range, "0,1,")] public float rushBall;
 
     [Export] public Route currentRoute;
-    public Zone currentZone;
+    [Export] public Zone currentZone;
 
     public Vector3 overrideTargetPoint;
     
@@ -31,7 +31,7 @@ public partial class AIManager : Node
         player = (PlayerController)GetParent();
         player.aiManager = this;
         isOffence = player.isOffence;
-        currentZone = new Zone(new Vector3(15, 0, -10), 10);
+        //currentZone = new Zone(new Vector3(15, 0, -10), 10);
         
         overrideTargetPoint = Vector3.Inf;
     }
@@ -134,6 +134,7 @@ public partial class AIManager : Node
     
     Vector3 CoverZone()
     {
+        if(coverZone == 0 || currentZone == null) return Vector3.Zero;
         Vector3 nearestPlayer = player.GetNearestPlayer(false).GlobalPosition;
         
         if (player.GlobalPosition.DistanceTo(nearestPlayer) < 1.5f)
@@ -159,11 +160,12 @@ public partial class AIManager : Node
             {
                 if (p.aiManager.targetPlayer == targets[i])
                 {
+                    i++;
                     continue;
                 }
                 
                 targetPlayer = targets[i];
-                i++;
+                break;
             }
         }
         Vector3 nearestPlayer = targetPlayer.GlobalPosition;
