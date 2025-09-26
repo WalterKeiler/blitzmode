@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://_Scripts/Resources/Route.cs" id="2_a416i"]
 [ext_resource type="Script" path="res://_Scripts/Resources/Play.cs" id="3_7u1eb"]
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="3_abf61"]
-[ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/OLinebacker.tres" id="3_vdhdt"]
+[ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/OLinebacker.tres" id="3_c0n16"]
 [ext_resource type="Resource" uid="uid://c3iwmer7t8bnr" path="res://Resources/Stats/Players/WideReceiver.tres" id="4_jd8da"]
 
 [sub_resource type="Resource" id="Resource_ydei4"]
@@ -20,7 +20,7 @@ Position = Vector2(0, -5)
 [sub_resource type="Resource" id="Resource_u2nh1"]
 script = ExtResource("1_ruvtc")
 IsPlayer = false
-PlayerType = ExtResource("3_vdhdt")
+PlayerType = ExtResource("3_c0n16")
 StartsWithBall = false
 followRoute = 0.0
 findOpenSpace = 0.0
@@ -30,7 +30,7 @@ Position = Vector2(0, 0)
 [sub_resource type="Resource" id="Resource_jm6sq"]
 script = ExtResource("1_ruvtc")
 IsPlayer = false
-PlayerType = ExtResource("3_vdhdt")
+PlayerType = ExtResource("3_c0n16")
 StartsWithBall = false
 followRoute = 0.0
 findOpenSpace = 0.0
@@ -40,7 +40,7 @@ Position = Vector2(1.5, 0)
 [sub_resource type="Resource" id="Resource_vehaq"]
 script = ExtResource("1_ruvtc")
 IsPlayer = false
-PlayerType = ExtResource("3_vdhdt")
+PlayerType = ExtResource("3_c0n16")
 StartsWithBall = false
 followRoute = 0.0
 findOpenSpace = 0.0

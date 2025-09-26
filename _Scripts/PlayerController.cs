@@ -117,7 +117,7 @@ public partial class PlayerController : Node3D
 		}
 		else if (HasBall) HasBall = false;
 
-		if (Ball.Instance.ballState == BallState.Thrown && CanCatch)
+		if (Ball.Instance.ballState == BallState.Thrown && CanCatch && !PlayerAction.Contains(PlayerActions.Throw))
 		{
 			CheckForCatch();
 		}
@@ -731,11 +731,11 @@ public enum PlayerActions
 	StiffArm,
 	Jump,
 	Tackle,
-	Tackled,
 	Block,
 	Dive,
 	Catch,
 	Throw,
 	Kick,
-	ChangePlayer
+	ChangePlayer,
+	Tackled
 }

@@ -1,9 +1,8 @@
-[gd_scene load_steps=22 format=3 uid="uid://cectkalhkg1s2"]
+[gd_scene load_steps=21 format=3 uid="uid://cectkalhkg1s2"]
 
 [ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="1_w60kg"]
 [ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/OLinebacker.tres" id="2_jhevr"]
 [ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/ball.tscn" id="3_mxk2o"]
-[ext_resource type="Script" path="res://_Scripts/Ball.cs" id="4_3fjpg"]
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="5_6sy8j"]
 [ext_resource type="Script" path="res://_Scripts/CameraController.cs" id="6_riw6a"]
 [ext_resource type="PackedScene" uid="uid://cl04xbkb6lkf4" path="res://_Scenes/InputManager.tscn" id="7_yibri"]
@@ -43,7 +42,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.6349, 1, 0)
 playerStats = ExtResource("2_jhevr")
 _mainCam = NodePath("../CameraController")
 isOffence = true
-debugMode = true
 
 [node name="O2" parent="." node_paths=PackedStringArray("_mainCam", "inputManager") instance=ExtResource("1_w60kg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -53,11 +51,9 @@ _mainCam = NodePath("../CameraController")
 inputManager = NodePath("../InputManagerInstance")
 isPlayerControlled = true
 isOffence = true
-debugMode = true
 
 [node name="Ball" parent="O2" instance=ExtResource("3_mxk2o")]
 transform = Transform3D(-4.37114e-08, -0.624695, -0.780893, 0, 0.780869, -0.624714, 0.999999, -2.73063e-08, -3.41339e-08, 0.150002, 0.19, 0.7)
-script = ExtResource("4_3fjpg")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_etbbe")
