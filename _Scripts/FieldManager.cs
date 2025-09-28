@@ -72,8 +72,23 @@ public partial class FieldManager : Node
 			((PlayerController)player)._mainCam = mainCam;
 			((PlayerController)player).isOffence = true;
 			// ((PlayerController)player).playerID = index;
+
+			switch (OffencePlay.PlayerDataOffence[i].PlayerType.PlayerType)
+			{
+				case PlayerType.Quarterback :
+					((PlayerController)player).StartColor = Colors.White;
+					break;
+				case PlayerType.OLineman :
+					((PlayerController)player).StartColor = Colors.Moccasin;
+					break;
+				case PlayerType.Receiver :
+					((PlayerController)player).StartColor = Colors.Chartreuse;
+					break;
+			}
+			
 			AddChild(player);
 			players[index] = player as PlayerController;
+			
 			index++;
 		}
 		
@@ -87,6 +102,17 @@ public partial class FieldManager : Node
 			((PlayerController)player)._mainCam = mainCam;
 			((PlayerController)player).isOffence = false;
 			// ((PlayerController)player).playerID = index;
+			
+			switch (DefencePlay.PlayerDataDefence[i].PlayerType.PlayerType)
+			{
+				case PlayerType.DLineman :
+					((PlayerController)player).StartColor = Colors.Firebrick;
+					break;
+				case PlayerType.Safety :
+					((PlayerController)player).StartColor = Colors.Plum;
+					break;
+			}
+			
 			AddChild(player);
 			players[index] = player as PlayerController;
 			index++;

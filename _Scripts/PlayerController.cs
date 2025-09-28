@@ -43,6 +43,8 @@ public partial class PlayerController : Node3D
 	float switchTargetTimer;
 	PlayerController throwTarget;
 
+	public Color StartColor;
+	
 	StandardMaterial3D testMat;
 	
 	Node3D debugBox;
@@ -78,6 +80,9 @@ public partial class PlayerController : Node3D
 		switchTargetTimer = 0;
 		testMat = (StandardMaterial3D)mat.Duplicate();
 		mesh.MaterialOverride = testMat;
+		
+		
+		testMat.SetAlbedo(StartColor);
 		
 		ball = Ball.Instance;
 		GD.Print("Ball: "  + ball.GetParent().Name);
@@ -497,7 +502,7 @@ public partial class PlayerController : Node3D
 		
 		testMat.SetAlbedo((Colors.Red));
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
-		testMat.SetAlbedo((Colors.White));
+		testMat.SetAlbedo(StartColor);
 		if (PlayerAction.Contains(PlayerActions.SpinMove))
 			PlayerAction.Remove(PlayerActions.SpinMove);
 	}
@@ -526,7 +531,7 @@ public partial class PlayerController : Node3D
 		await ToSignal(tween, "finished");
 		
 		canTakeInput = true;
-		testMat.SetAlbedo((Colors.White));
+		testMat.SetAlbedo(StartColor);
 		if (PlayerAction.Contains(PlayerActions.Jump))
 			PlayerAction.Remove(PlayerActions.Jump);
 	}
@@ -543,7 +548,7 @@ public partial class PlayerController : Node3D
 		tackleBox.Monitorable = false;
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		tackleBox.Monitorable = true;
-		testMat.SetAlbedo((Colors.White));
+		testMat.SetAlbedo(StartColor);
 		if (PlayerAction.Contains(PlayerActions.StiffArm))
 			PlayerAction.Remove(PlayerActions.StiffArm);
 	}
@@ -564,7 +569,7 @@ public partial class PlayerController : Node3D
 			GD.Print("Tackled");
 		}
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
-		testMat.SetAlbedo((Colors.White));
+		testMat.SetAlbedo(StartColor);
 		if (PlayerAction.Contains(PlayerActions.Tackle))
 			PlayerAction.Remove(PlayerActions.Tackle);
 	}
@@ -584,7 +589,7 @@ public partial class PlayerController : Node3D
 
 		CanMove = true;
 		CanCatch = true;
-		testMat.SetAlbedo((Colors.White));
+		testMat.SetAlbedo(StartColor);
 		if (PlayerAction.Contains(PlayerActions.Tackled))
 			PlayerAction.Remove(PlayerActions.Tackled);
 	}
@@ -632,7 +637,7 @@ public partial class PlayerController : Node3D
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		canTakeInput = true;
 		
-		testMat.SetAlbedo((Colors.White));
+		testMat.SetAlbedo(StartColor);
 		if (PlayerAction.Contains(PlayerActions.Dive))
 			PlayerAction.Remove(PlayerActions.Dive);
 	}
@@ -723,7 +728,7 @@ public partial class PlayerController : Node3D
 		ChangePlayer(otherPlayer);
 		
 		await ToSignal(GetTree().CreateTimer(.25f), "timeout");
-		testMat.SetAlbedo((Colors.White));
+		testMat.SetAlbedo(StartColor);
 		if (PlayerAction.Contains(PlayerActions.ChangePlayer))
 			PlayerAction.Remove(PlayerActions.ChangePlayer);
 	}
