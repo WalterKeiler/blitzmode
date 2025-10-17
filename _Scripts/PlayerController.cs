@@ -63,6 +63,13 @@ public partial class PlayerController : Node3D
 		nearbyPayersBox = GetNode<Area3D>("NearbyPayersBox");
 	}
 
+	public override void _ExitTree()
+	{
+		base._ExitTree();
+		InputManager.InputPressAction -= DoAction;
+		InputManager.InputReleaseAction -= CancelAction;
+	}
+
 	// Called when the node enters the scene tree for the first time.
 	public void Init()
 	{
@@ -70,6 +77,7 @@ public partial class PlayerController : Node3D
 		PlayerAction = new List<PlayerActions>();
 		InputManager.InputPressAction += DoAction;
 		InputManager.InputReleaseAction += CancelAction;
+		Ball.BallCaught += BallOnBallCaught;
 		if (inputManager != null)
 		{
 			isOffence = inputManager.isOffence;
@@ -112,6 +120,25 @@ public partial class PlayerController : Node3D
 			}
 		}
 		init = true;
+	}
+
+	private void BallOnBallCaught(bool caughtByOffence)
+	{
+		if (caughtByOffence)
+		{
+			if(isOffence)
+			{
+				aiManager.followRoute = 0;
+				aiManager.findOpenSpace = 0;
+				aiManager.block = 1;
+			}
+			else
+			{
+				aiManager.coverZone = 0;
+				aiManager.followPlayer = 0;
+				aiManager.rushBall = 1;
+			}
+		}
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

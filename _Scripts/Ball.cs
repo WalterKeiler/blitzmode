@@ -20,6 +20,7 @@ public partial class Ball : RigidBody3D
     private BallCatchData bestOption;
     
     public List<BallCatchData> catchOptions;
+    public static event Action<bool> BallCaught;
 
     public override void _Ready()
     {
@@ -52,7 +53,14 @@ public partial class Ball : RigidBody3D
                     throwingPlayer.PlayerAction.Remove(PlayerActions.Throw);
                 
                 if(bestOption.Player.isOffence)
+                {
                     throwingPlayer.ChangePlayer(bestOption.Player);
+                    BallCaught?.Invoke(true);
+                }
+                else
+                {
+                    BallCaught?.Invoke(false);
+                }
                 ballState = BallState.Held;
             }
         }

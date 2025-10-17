@@ -198,6 +198,6 @@ public partial class AIManager : Node
             return Vector3.Zero;
         }
         
-        return player.GlobalPosition.DirectionTo(nearestPlayer);;
+        return player.GlobalPosition.DirectionTo(ball.GlobalPosition);;
     }
 }
