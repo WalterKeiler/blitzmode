@@ -23,11 +23,16 @@ public partial class PlayerController : Node3D
 	[Export] bool debugMode;
 	
 	public List<PlayerActions> PlayerAction;
-	public bool HasBall;
+	[Export] public bool HasBall;
 	public bool CanCatch;
 	public bool CanThrow;
 	public bool CanMove;
-
+	public bool IsBlocking;
+	public bool CanBlock;
+	public Vector3 _moveDirection;
+	public float blockStamina;
+	public float movementMultiplier = 1;
+	
 	Area3D tackleBox;
 	Area3D nearbyPayersBox;
 	Area3D CatchZone;
@@ -38,9 +43,9 @@ public partial class PlayerController : Node3D
 
 	bool init = false;
 	bool canTakeInput = true;
-	Vector3 _moveDirection;
 	float _sprintMultiplier;
 	float switchTargetTimer;
+	float blockCooldown;
 	PlayerController throwTarget;
 
 	public Color StartColor;
@@ -80,7 +85,10 @@ public partial class PlayerController : Node3D
 		switchTargetTimer = 0;
 		testMat = (StandardMaterial3D)mat.Duplicate();
 		mesh.MaterialOverride = testMat;
-		
+
+		blockStamina = playerStats.Strength;
+		blockCooldown = 0;
+		IsBlocking = false;
 		
 		testMat.SetAlbedo(StartColor);
 		
@@ -125,7 +133,7 @@ public partial class PlayerController : Node3D
 			}
 			HasBall = true;
 		}
-		else if (HasBall) HasBall = false;
+		//else if (HasBall) HasBall = false;
 
 		if (Ball.Instance.ballState == BallState.Thrown && CanCatch && !PlayerAction.Contains(PlayerActions.Throw))
 		{
@@ -141,6 +149,15 @@ public partial class PlayerController : Node3D
 				ball.Reparent(this, true);
 				ball.ballState = BallState.Held;
 			}
+		}
+		
+		if(IsBlocking)
+		{
+			blockStamina -= (float)delta;
+		}
+		else if(blockStamina < playerStats.Strength && CanBlock)
+		{
+			blockStamina += (float)delta;
 		}
 	}
 
@@ -236,7 +253,7 @@ public partial class PlayerController : Node3D
 	void Move(double delta)
 	{
 		_moveDirection.Normalized();
-		Translate(_moveDirection * (float)delta * (playerStats.Speed + _sprintMultiplier));
+		Translate(_moveDirection * (float)delta * (playerStats.Speed + _sprintMultiplier) * movementMultiplier);
 	}
 	
 	
@@ -287,6 +304,11 @@ public partial class PlayerController : Node3D
 					target = ctlr;
 					minDistance = currentDistance;
 					if (ctlr.HasBall && prioritizeBall) break;
+				}
+				if (ctlr.HasBall && prioritizeBall)
+				{
+					target = ctlr;
+					break;
 				}
 			}
 		}
@@ -477,6 +499,32 @@ public partial class PlayerController : Node3D
 		
 		PlayerAction.Add(action);
 		return true;
+	}
+
+	public void Block()
+	{
+		IsBlocking = true;
+		CanBlock = false;
+		PlayerController nearestPlayer = GetNearestPlayer(false);
+		Vector3 dir = GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition);
+		
+		if (nearestPlayer._moveDirection.Dot(dir) > .5f && (nearestPlayer.playerStats.Strength / 2) < blockStamina)
+		{
+			nearestPlayer._moveDirection = Vector3.Zero;
+		}
+		else
+		{
+			BlockCoolDown();
+			IsBlocking = false;
+		}
+	}
+
+	async void BlockCoolDown()
+	{
+		movementMultiplier = .5f;
+		await ToSignal(GetTree().CreateTimer(1), "timeout");
+		CanBlock = true;
+		movementMultiplier = 1;
 	}
 	
 	void Sprint(bool stopAction = false)

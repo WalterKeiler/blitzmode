@@ -46,6 +46,7 @@ public partial class Ball : RigidBody3D
             if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= .5f)
             {
                 GD.Print("Caught");
+                bestOption.Player.HasBall = true;
                 Reparent(bestOption.Player);
                 if (throwingPlayer.PlayerAction.Contains(PlayerActions.Throw))
                     throwingPlayer.PlayerAction.Remove(PlayerActions.Throw);
