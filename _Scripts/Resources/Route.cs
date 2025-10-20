@@ -12,11 +12,11 @@ public partial class Route : Resource
         if (currentIndex >= targetPoints.Length) return currentPos;
         
         float distanceFromLastPoint =
-            targetPoints[Math.Clamp(currentIndex - 1, 0, Int32.MaxValue)].DistanceTo(currentPos);
+            GetLOSTargetPoint(Math.Clamp(currentIndex - 1, 0, Int32.MaxValue)).DistanceTo(currentPos);
 
-        if (length < targetPoints[currentIndex].DistanceTo(currentPos))
+        if (length < GetLOSTargetPoint(currentIndex).DistanceTo(currentPos))
         {
-            Vector3 dir = targetPoints[Math.Clamp(currentIndex - 1, 0, Int32.MaxValue)].DirectionTo(targetPoints[currentIndex]);
+            Vector3 dir = GetLOSTargetPoint(Math.Clamp(currentIndex - 1, 0, Int32.MaxValue)).DirectionTo(GetLOSTargetPoint(currentIndex));
             
             return currentPos + dir * length;
         }
@@ -25,20 +25,20 @@ public partial class Route : Resource
         
         for (int i = Math.Clamp(currentIndex - 1, 0, Int32.MaxValue); i < targetPoints.Length - 1; i++)
         {
-            float dist = targetPoints[i].DistanceTo(targetPoints[i + 1]);
+            float dist = GetLOSTargetPoint(i).DistanceTo(GetLOSTargetPoint(i + 1));
             float tempDist = totalDistance;
             
             tempDist -= dist;
 
             if (tempDist <= 0)
             {
-                Vector3 dir = targetPoints[i].DirectionTo(targetPoints[i + 1]);
-                return targetPoints[i] + dir * totalDistance;
+                Vector3 dir = GetLOSTargetPoint(i).DirectionTo(GetLOSTargetPoint(i + 1));
+                return GetLOSTargetPoint(i) + dir * totalDistance;
             }
             totalDistance = tempDist;
         }
 
-        return targetPoints[^1];
+        return GetLOSTargetPoint(targetPoints.Length - 1);
     }
     
     public Vector3 GetThrowToPoint(float distance, Vector3 receiverPos, Vector3 qbPos, float receiverSpeed, ref float ballSpeed)
@@ -55,5 +55,14 @@ public partial class Route : Resource
         ballSpeed = neededSpeed;
         targetPos.Y = 1;
         return targetPos;
+    }
+
+    public Vector3 GetLOSTargetPoint(int i)
+    {
+        Vector3 pos = targetPoints[i];
+        pos *= PlayManager.Instance.PlayDirection;
+        pos += Vector3.Right * PlayManager.Instance.lineOfScrimmage;
+
+        return pos;
     }
 }

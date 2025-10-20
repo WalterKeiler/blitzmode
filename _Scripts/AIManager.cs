@@ -111,12 +111,12 @@ public partial class AIManager : Node
             //findOpenSpace = 1;
             return Vector3.Zero;
         }
-        if (player.GlobalPosition.DistanceTo(currentRoute.targetPoints[currentRoute.currentIndex]) < 1.5f)
+        if (player.GlobalPosition.DistanceTo(currentRoute.GetLOSTargetPoint(currentRoute.currentIndex)) < 1.5f)
         {
             currentRoute.currentIndex++;
             GD.Print("Moving to next Index: " + currentRoute.currentIndex);
         }
-        return currentRoute.currentIndex >= currentRoute.targetPoints.Length ? Vector3.Zero : player.GlobalPosition.DirectionTo(currentRoute.targetPoints[currentRoute.currentIndex]);
+        return currentRoute.currentIndex >= currentRoute.targetPoints.Length ? Vector3.Zero : player.GlobalPosition.DirectionTo(currentRoute.GetLOSTargetPoint(currentRoute.currentIndex));
     }
     
     Vector3 FindOpenSpace()
@@ -165,14 +165,14 @@ public partial class AIManager : Node
         {
             PlayerController[] targets = player.GetNearestPlayersByType(false, PlayerType.Receiver);
             int i = 0;
-            foreach (PlayerController p in FieldManager.Instance.defencePlayers)
+            foreach (PlayerController p in GameManager.Instance.defencePlayers)
             {
                 if (p.aiManager.targetPlayer == targets[i])
                 {
                     i++;
                     continue;
                 }
-                
+                //GD.Print(i);
                 targetPlayer = targets[i];
                 break;
             }

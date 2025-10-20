@@ -38,8 +38,8 @@ public partial class PlayerController : Node3D
 	Area3D CatchZone;
 	Ball ball;
 	
-	List<Node3D> PlayersOnTeam;
-	List<Node3D> PlayersNotOnTeam;
+	List<PlayerController> PlayersOnTeam;
+	List<PlayerController> PlayersNotOnTeam;
 
 	bool init = false;
 	bool canTakeInput = true;
@@ -51,16 +51,31 @@ public partial class PlayerController : Node3D
 	public Color StartColor;
 	
 	StandardMaterial3D testMat;
-	
+	GameManager gm;
 	Node3D debugBox;
+
+	public static event Action<bool> CrossedLOS;
 	
 	public override void _Ready()
 	{
 		base._Ready();
-		Init();
+		
+		gm = GameManager.Instance;
+		
+		//Init();
 		
 		tackleBox = GetNode<Area3D>("TackleBox");
 		nearbyPayersBox = GetNode<Area3D>("NearbyPayersBox");
+	}
+
+	public override void _EnterTree()
+	{
+		base._EnterTree();
+		InputManager.InputPressAction += DoAction;
+		InputManager.InputReleaseAction += CancelAction;
+		Ball.BallCaught += BallOnBallCaught;
+		CrossedLOS += BallOnBallCaught;
+		PlayManager.InitPlay += Init;
 	}
 
 	public override void _ExitTree()
@@ -68,6 +83,9 @@ public partial class PlayerController : Node3D
 		base._ExitTree();
 		InputManager.InputPressAction -= DoAction;
 		InputManager.InputReleaseAction -= CancelAction;
+		Ball.BallCaught -= BallOnBallCaught;
+		CrossedLOS -= BallOnBallCaught;
+		PlayManager.InitPlay -= Init;
 	}
 
 	// Called when the node enters the scene tree for the first time.
@@ -75,18 +93,14 @@ public partial class PlayerController : Node3D
 	{
 		//GD.Print(mat.ResourceName);
 		PlayerAction = new List<PlayerActions>();
-		InputManager.InputPressAction += DoAction;
-		InputManager.InputReleaseAction += CancelAction;
-		Ball.BallCaught += BallOnBallCaught;
 		if (inputManager != null)
 		{
 			isOffence = inputManager.isOffence;
 			playerID = inputManager.PlayerID;
 		}
-
-		PlayerController[] players = GetParent().GetChildren().OfType<PlayerController>().ToArray();
-		PlayersOnTeam = new List<Node3D>();
-		PlayersNotOnTeam = new List<Node3D>();
+		
+		PlayersOnTeam = new List<PlayerController>();
+		PlayersNotOnTeam = new List<PlayerController>();
 		_moveDirection = Vector3.Zero;
 		CanCatch = true;
 		CanMove = true;
@@ -101,23 +115,18 @@ public partial class PlayerController : Node3D
 		testMat.SetAlbedo(StartColor);
 		
 		ball = Ball.Instance;
-		GD.Print("Ball: "  + ball.GetParent().Name);
+		//GD.Print("Ball: "  + ball.GetParent().Name);
 		if(HasBall) ((Node)ball).Reparent(this, false);
-		
-		if (players != null)
+
+		if (isOffence)
 		{
-			for (int i = 0; i < players.Length; i++)
-			{
-				if (players[i].isOffence == isOffence && players[i] != this)
-				{
-					//GD.Print(players[i].Name);
-					PlayersOnTeam.Add(players[i]);
-				}
-				else if(players[i].isOffence != isOffence && players[i] != this)
-				{
-					PlayersNotOnTeam.Add(players[i]);
-				}
-			}
+			PlayersOnTeam = gm.offencePlayers;
+			PlayersNotOnTeam = gm.defencePlayers;
+		}
+		else
+		{
+			PlayersOnTeam = gm.defencePlayers;
+			PlayersNotOnTeam = gm.offencePlayers;
 		}
 		init = true;
 	}
@@ -152,6 +161,23 @@ public partial class PlayerController : Node3D
 		
 		if (CanThrow && ball.GetParent() == this)// && !HasBall)
 		{
+			if (PlayManager.Instance.PlayDirection > 0)
+			{
+				if(GlobalPosition.X > PlayManager.Instance.lineOfScrimmage)
+				{ 
+					CrossedLOS?.Invoke(true);
+					CanThrow = false;
+				}
+			}
+			else
+			{
+				if(GlobalPosition.X < PlayManager.Instance.lineOfScrimmage)
+				{ 
+					CrossedLOS?.Invoke(true);
+					CanThrow = false;
+				}
+			}
+			
 			if(switchTargetTimer > 0)
 				switchTargetTimer -= (float)delta;
 			else
@@ -351,7 +377,7 @@ public partial class PlayerController : Node3D
 	public PlayerController GetNearestPlayer(bool sameTeam, bool prioritizeBall = false, bool lookForReciver = false)
 	{
 		PlayerController target = null;
-		List<Node3D> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
+		List<PlayerController> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
 		float minDistance = float.MaxValue;
 		for (int i = 0; i < playersToSearch.Count; i++)
 		{
@@ -379,7 +405,7 @@ public partial class PlayerController : Node3D
 	public PlayerController GetNearestPlayerByType(bool sameTeam, PlayerType playerType, bool prioritizeBall = false, PlayerController[] ingnorePlayers = default)
 	{
 		PlayerController target = null;
-		List<Node3D> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
+		List<PlayerController> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
 		float minDistance = float.MaxValue;
 
 		if (ingnorePlayers != default)
@@ -412,12 +438,12 @@ public partial class PlayerController : Node3D
 	public PlayerController[] GetNearestPlayersByType(bool sameTeam, PlayerType playerType, bool prioritizeBall = false)
 	{
 		
-		List<Node3D> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
+		List<PlayerController> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
 		PlayerController[] target = new PlayerController[playersToSearch.Count];
 
 		for (int i = 0; i < target.Length; i++)
 		{
-			target[i] = GetNearestPlayerByType(sameTeam, playerType, prioritizeBall, target);
+			target[i] = GetNearestPlayerByType(sameTeam, playerType, prioritizeBall);
 		}
 
 		return target;
@@ -426,7 +452,7 @@ public partial class PlayerController : Node3D
 	{
 		PlayerController target = null;
 
-		List<Node3D> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
+		List<PlayerController> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
 		
 		float minDistance = float.MaxValue;
 		for (int i = 0; i < playersToSearch.Count; i++)
@@ -728,7 +754,13 @@ public partial class PlayerController : Node3D
 			GD.Print("Can't meet restrictions");
 			return;
 		}
-		
+
+		if (!CanThrow)
+		{
+			if (PlayerAction.Contains(PlayerActions.Throw))
+				PlayerAction.Remove(PlayerActions.Throw);
+			return;
+		}
 		
 		if(ball.ballState == BallState.Thrown)
 		{
