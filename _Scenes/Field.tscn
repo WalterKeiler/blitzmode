@@ -85,5 +85,4 @@ DefencePlay = ExtResource("4_5m5ee")
 
 [node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("playerInputManagers")]
 script = ExtResource("18_jm3h4")
-yardsToFirstDown = 30
 playerInputManagers = [NodePath("../InputManagerInstance")]

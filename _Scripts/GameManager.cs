@@ -6,7 +6,8 @@ public partial class GameManager : Node
 {
 	public static GameManager Instance { get; private set; }
 
-	[Export] public int yardsToFirstDown;
+	[Export] public int yardsToFirstDown = 30;
+	[Export] public int DownsTillTurnover = 4;
 	[Export] public int fieldLength = 100;
 	[Export] public int fieldWidth = 53;
 	[Export] public int EndzoneDepth = 30;

@@ -25,6 +25,9 @@ public partial class AIManager : Node
     private PlayerController player;
     private Ball ball;
     private bool setup = false;
+
+    RandomNumberGenerator rng;
+    Vector3 ranDir;
     
     public override void _Ready()
     {
@@ -32,8 +35,12 @@ public partial class AIManager : Node
         player.aiManager = this;
         isOffence = player.isOffence;
         //currentZone = new Zone(new Vector3(15, 0, -10), 10);
+
+        rng = new RandomNumberGenerator();
         
         overrideTargetPoint = Vector3.Inf;
+        
+        RandomDirection();
     }
     
     public override void _Process(double delta)
@@ -49,6 +56,7 @@ public partial class AIManager : Node
         if(player.isPlayerControlled) return;
         
         Vector3 finalDir = Vector3.Zero;
+        
         if(isOffence)
         {
             followRoute *= 1;
@@ -63,7 +71,7 @@ public partial class AIManager : Node
             Vector3 openSpace = findOpenSpace * FindOpenSpace();
             Vector3 blockPlayer = block * Block();
 
-            finalDir = (route + openSpace + blockPlayer).Normalized();
+            finalDir = (route + openSpace + blockPlayer);
         }
         else
         {
@@ -74,7 +82,7 @@ public partial class AIManager : Node
             followPlayer *= 1;
             coverZone *= 1;
             rushBall *= 1;
-            finalDir = ((FollowPlayer() * followPlayer) + (CoverZone() * coverZone) + (RushBall() * rushBall)).Normalized();
+            finalDir = ((FollowPlayer() * followPlayer) + (CoverZone() * coverZone) + (RushBall() * rushBall));
             
             if(player.GlobalPosition.DistanceTo(ball.GlobalPosition) < 1.6f)
             {
@@ -99,11 +107,25 @@ public partial class AIManager : Node
                 finalDir = Vector3.Zero;
             }
         }
-        player.GetInput(finalDir);
+
+        if (Vector3.Zero != finalDir) finalDir += ranDir;
+        
+        player.GetInput(finalDir.Normalized());
+    }
+
+    async void RandomDirection()
+    {
+        ranDir = (new Vector3(rng.Randf(), rng.Randf(), rng.Randf()) / 20);
+
+        await ToSignal(GetTree().CreateTimer(1f), "timeout");
+        
+        RandomDirection();
     }
     
     Vector3 FollowRoute()
     {
+        if(followRoute == 0) return Vector3.Zero;
+        
         if (currentRoute == null) return player.GlobalPosition;
         if(currentRoute.currentIndex >= currentRoute.targetPoints.Length)
         {
@@ -121,6 +143,8 @@ public partial class AIManager : Node
     
     Vector3 FindOpenSpace()
     {
+        if(findOpenSpace == 0) return Vector3.Zero;
+
         Vector3 nearestPlayer = player.GetNearestPlayer(false).GlobalPosition;
         if (player.GlobalPosition.DistanceTo(nearestPlayer) < 10f)
             return -player.GlobalPosition.DirectionTo(nearestPlayer);
@@ -129,6 +153,8 @@ public partial class AIManager : Node
 
     Vector3 Block()
     {
+        if(block == 0) return Vector3.Zero;
+
         PlayerController nearestPlayer = player.GetNearestPlayer(false);
         Vector3 dir = player.GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition);
         if (player.GlobalPosition.DistanceTo(nearestPlayer.GlobalPosition) < 1f)
@@ -144,23 +170,29 @@ public partial class AIManager : Node
     Vector3 CoverZone()
     {
         if(coverZone == 0 || currentZone == null) return Vector3.Zero;
-        Vector3 nearestPlayer = player.GetNearestPlayer(false).GlobalPosition;
+        PlayerController nearestPlayer = player.GetNearestPlayerByType(false, PlayerType.Receiver);
+        PlayerController nearestQB = player.GetNearestPlayerByType(false, PlayerType.Quarterback);
+
+        if (player.GlobalPosition.DistanceTo(nearestQB.GlobalPosition) < player.GlobalPosition.DistanceTo(nearestPlayer.GlobalPosition))
+            nearestPlayer = nearestQB;
         
-        if (player.GlobalPosition.DistanceTo(nearestPlayer) < 1.5f)
+        if (player.GlobalPosition.DistanceTo(nearestPlayer.GlobalPosition) < 1.5f)
         {
             return Vector3.Zero;
         }
-        if (currentZone.center.DistanceTo(nearestPlayer) < currentZone.radius)
+        if (currentZone.GetLOSCenter().DistanceTo(nearestPlayer.GlobalPosition) < currentZone.radius)
         {
-            return player.GlobalPosition.DirectionTo(nearestPlayer);
+            return player.GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition + nearestPlayer._moveDirection);
         }
         else
         {
-            return player.GlobalPosition.DirectionTo(currentZone.center);
+            return player.GlobalPosition.DirectionTo(currentZone.GetLOSCenter());
         }
     }
     Vector3 FollowPlayer()
     {
+        if(followPlayer == 0) return Vector3.Zero;
+
         if (targetPlayer == null)
         {
             PlayerController[] targets = player.GetNearestPlayersByType(false, PlayerType.Receiver);
@@ -182,10 +214,12 @@ public partial class AIManager : Node
         {
             return Vector3.Zero;
         }
-        return player.GlobalPosition.DirectionTo(nearestPlayer);
+        return player.GlobalPosition.DirectionTo(nearestPlayer + targetPlayer._moveDirection);
     }
     Vector3 RushBall()
     {
+        if(rushBall == 0) return Vector3.Zero;
+
         if(ball.ballState == BallState.Free)
         {
             return player.GlobalPosition.DirectionTo(ball.GlobalPosition);

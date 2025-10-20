@@ -16,6 +16,7 @@ public partial class PlayManager : Node
 	[Export] public float lineOfScrimmage = 0;
 
 	[Export] public int PlayDirection = 1;
+	[Export] public int CurrentDown = 1;
 	
 	public static event Action InitPlay;
 
