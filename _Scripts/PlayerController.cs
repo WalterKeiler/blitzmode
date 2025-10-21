@@ -75,6 +75,7 @@ public partial class PlayerController : Node3D
 		InputManager.InputReleaseAction += CancelAction;
 		Ball.BallCaught += BallOnBallCaught;
 		CrossedLOS += BallOnBallCaught;
+		PlayManager.EndPlay += OnPlayerWithBallTackled;
 		PlayManager.InitPlay += Init;
 	}
 
@@ -85,6 +86,7 @@ public partial class PlayerController : Node3D
 		InputManager.InputReleaseAction -= CancelAction;
 		Ball.BallCaught -= BallOnBallCaught;
 		CrossedLOS -= BallOnBallCaught;
+		PlayManager.EndPlay -= OnPlayerWithBallTackled;
 		PlayManager.InitPlay -= Init;
 	}
 
@@ -116,6 +118,7 @@ public partial class PlayerController : Node3D
 		
 		ball = Ball.Instance;
 		//GD.Print("Ball: "  + ball.GetParent().Name);
+		ball.Position = Vector3.Up;
 		if(HasBall) ((Node)ball).Reparent(this, false);
 
 		if (isOffence)
@@ -150,6 +153,10 @@ public partial class PlayerController : Node3D
 		}
 	}
 
+	void OnPlayerWithBallTackled(bool incompletePass)
+	{
+		//CanMove = false;
+	}
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
@@ -686,6 +693,8 @@ public partial class PlayerController : Node3D
 		CanCatch = false;
 		CanMove = false;
 		
+		if(HasBall) PlayManager.InvokeEndPlay(true);
+		
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 
 		CanMove = true;
@@ -734,6 +743,13 @@ public partial class PlayerController : Node3D
 		tween.Chain().TweenProperty(GetNode("."), "position:y", 1,
 			20 * GetPhysicsProcessDeltaTime()).SetTrans(Tween.TransitionType.Sine);
 		await ToSignal(tween, "finished");
+		
+		tackleTarget = GetNearestPlayer(tackleBox, false, true);
+		if (tackleTarget != null)
+		{
+			tackleTarget.DoAction(PlayerActions.Tackled, tackleTarget.playerID);
+			GD.Print("Tackled");
+		}
 		
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		canTakeInput = true;

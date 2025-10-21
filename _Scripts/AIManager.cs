@@ -28,7 +28,19 @@ public partial class AIManager : Node
 
     RandomNumberGenerator rng;
     Vector3 ranDir;
-    
+
+    public override void _EnterTree()
+    {
+        base._EnterTree();
+        PlayManager.InitPlay += Init;
+    }
+
+    public override void _ExitTree()
+    {
+        base._ExitTree();
+        PlayManager.InitPlay += Init;
+    }
+
     public override void _Ready()
     {
         player = (PlayerController)GetParent();
@@ -41,6 +53,12 @@ public partial class AIManager : Node
         overrideTargetPoint = Vector3.Inf;
         
         RandomDirection();
+    }
+
+    void Init()
+    {
+        init = true;
+        overrideTargetPoint = Vector3.Inf;
     }
     
     public override void _Process(double delta)

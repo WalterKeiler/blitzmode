@@ -10,7 +10,7 @@ public partial class Ball : RigidBody3D
 
     private RigidBody3D rb;
     
-    public BallState ballState;
+    [Export] public BallState ballState;
     public float ballSpeed;
     public Vector3 startPoint;
     public Vector3 endPoint;
@@ -78,6 +78,12 @@ public partial class Ball : RigidBody3D
         }
         else
         {
+            if(ballState == BallState.Thrown)
+            {
+                PlayManager.InvokeEndPlay(false);
+                return;
+            }
+            
             ballState = BallState.Free;
             Freeze = false;
             ApplyImpulse(moveDirection * ballSpeed * 100);

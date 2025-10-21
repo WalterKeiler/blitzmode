@@ -19,6 +19,7 @@ public partial class PlayManager : Node
 	[Export] public int CurrentDown = 1;
 	
 	public static event Action InitPlay;
+	public static event Action<bool> EndPlay;
 
 	
 	private GameManager gm;
@@ -27,6 +28,13 @@ public partial class PlayManager : Node
 	{
 		base._EnterTree();
 		Instance = this;
+		EndPlay += PlayEnded;
+	}
+
+	public override void _ExitTree()
+	{
+		base._ExitTree();
+		EndPlay -= PlayEnded;
 	}
 
 	public override void _Ready()
@@ -112,6 +120,10 @@ public partial class PlayManager : Node
 	{
 		gm.offencePlayers = new List<PlayerController>();
 		gm.defencePlayers = new List<PlayerController>();
+		
+		Ball.Instance.ballState = BallState.Held;
+		Ball.Instance.GlobalPosition = Vector3.Up;
+		
 		int o = 0;
 		int d = 0;
 		for (int i = 0; i < gm.players.Length; i++)
@@ -134,13 +146,14 @@ public partial class PlayManager : Node
 					gm.players[i].aiManager.findOpenSpace = play.findOpenSpace;
 					gm.players[i].aiManager.followRoute = play.followRoute;
 					gm.players[i].inputManager = null;
+					gm.players[i].playerID = -1;
 					gm.players[i].isPlayerControlled = false;
+					gm.players[i].HasBall = false;
 					if(play.Route != null)
 					{
 						play.Route.currentIndex = 0;
 						gm.players[i].aiManager.currentRoute = (Route)play.Route.Duplicate();
 					}
-					gm.players[i].aiManager.init = true;
 				}
 				else
 				{
@@ -162,7 +175,7 @@ public partial class PlayManager : Node
 					gm.players[i].aiManager.rushBall = play.rushBall;
 					gm.players[i].inputManager = null;
 					gm.players[i].isPlayerControlled = false;
-					gm.players[i].aiManager.init = true;
+					gm.players[i].playerID = -1;
 				}
 				else
 				{
@@ -176,5 +189,22 @@ public partial class PlayManager : Node
 		FieldManager.Instance.SetFieldLines(lineOfScrimmage);
 		
 		InitPlay?.Invoke();
+	}
+
+	public void PlayEnded(bool moveLineOfScrimmage)
+	{
+		if(!moveLineOfScrimmage)
+		{
+			StartPlay();
+			return;
+		}
+		
+		lineOfScrimmage = MathF.Round(Ball.Instance.GlobalPosition.X * 10) / 10;
+		StartPlay();
+	}
+
+	public static void InvokeEndPlay(bool moveLineOfScrimmage)
+	{
+		EndPlay?.Invoke(moveLineOfScrimmage);
 	}
 }

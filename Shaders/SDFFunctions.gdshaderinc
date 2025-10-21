@@ -1,5 +1,9 @@
 const int arrayMaxLength = 15;
 
+float opXor( float a, float b )
+{
+    return max( min(a,b), -max(a,b) );
+}
 float smin(float a, float b, float k)
     {
         float h = max(k - abs(a - b), 0.0) / k;

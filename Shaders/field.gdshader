@@ -373,7 +373,8 @@ void fragment()
 	float partialLines = CreateLines(fieldPos,yardsLength,yardsWidth,1, closestSmallYard);
 
 	float edgeDist = sdBox(fieldPos,vec2(halfLength,halfWidth));
-	float partialLineBox = sdBox(fieldPos,vec2(halfLength,halfWidth - halfWidth / 10.0));
+	float partialLineBox = opXor(sdBox(fieldPos,vec2(halfLength,halfWidth - halfWidth / 10.0)),
+	opXor(sdBox(fieldPos,vec2(halfLength,halfWidth / 5.0)),sdBox(fieldPos,vec2(halfLength,halfWidth / 10.0))));
 
 	float los = sdSegment(fieldPos, vec2(lineOfScrimmage, float(yardsWidth)), vec2(lineOfScrimmage, -float(yardsWidth)))-0.10;
 	float fd = sdSegment(fieldPos, vec2(firstDownLine, float(yardsWidth)), vec2(firstDownLine, -float(yardsWidth)))-0.10;
