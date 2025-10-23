@@ -42,7 +42,7 @@ public partial class Ball : RigidBody3D
                 {
                     bestOption.Player.aiManager.overrideTargetPoint = endPoint;
                 }
-                GD.Print("Updated End Point");
+                // GD.Print("Updated End Point");
             }
             if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= .5f)
             {
@@ -80,6 +80,7 @@ public partial class Ball : RigidBody3D
         {
             if(ballState == BallState.Thrown)
             {
+                GD.Print("Incomplete Pass");
                 PlayManager.InvokeEndPlay(false);
                 return;
             }
@@ -117,7 +118,7 @@ public partial class Ball : RigidBody3D
             }
         }
         bestOption = bestPick;
-        GD.Print("Best Calculated: " + bestPick.Player.isOffence + ", Score: " + bestScore);
+        // GD.Print("Best Calculated is Off: " + bestPick.Player.isOffence + ", Score: " + bestScore);
     }
     
     public Vector3 CalculateBallDirection()

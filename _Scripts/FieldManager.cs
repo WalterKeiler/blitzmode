@@ -48,12 +48,12 @@ public partial class FieldManager : Node
 	{
 	}
 	
-	public void SetFieldLines(float lineOfScrimmage)
+	public void SetFieldLines(float lineOfScrimmage, float firstDownLine)
 	{
 		PlaneMesh m = (PlaneMesh)fieldMesh.Mesh;
 		var mat = m.GetMaterial();
 		((ShaderMaterial)mat).SetShaderParameter("lineOfScrimmage", lineOfScrimmage);
-		((ShaderMaterial)mat).SetShaderParameter("firstDownLine", lineOfScrimmage + gm.yardsToFirstDown);
+		((ShaderMaterial)mat).SetShaderParameter("firstDownLine", firstDownLine);
 		m.SetMaterial(mat);
 	}
 }

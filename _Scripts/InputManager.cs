@@ -16,8 +16,8 @@ public partial class InputManager : Node
 	List<InputCombo> activeInputs;
 	double deltaTime;
 	
-	public static event Action<PlayerActions, int> InputPressAction;
-	public static event Action<PlayerActions, int> InputReleaseAction;
+	public static event Action<PlayerActions, int, bool, bool> InputPressAction;
+	public static event Action<PlayerActions, int, bool, bool> InputReleaseAction;
 	public override void _Ready()
 	{
 		activeInputs = new List<InputCombo>();
@@ -47,13 +47,13 @@ public partial class InputManager : Node
 						if (activeInputs.FindAll(x => x.InputActions == _inputCombos[i].InputActions).Count ==
 						    _inputCombos[i].PressCount)
 						{
-							InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID);
+							InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true);
 							_inputCombos[i].isActive = true;
 						}
 					}
 					else
 					{
-						InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID);
+						InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true);
 						_inputCombos[i].isActive = true;
 					}
 				}
@@ -61,7 +61,7 @@ public partial class InputManager : Node
 				{
 					WaitForMoreInput(_inputCombos[i]);
 					if(_inputCombos[i].isActive)
-						InputReleaseAction?.Invoke(_inputCombos[i].Action, PlayerID);
+						InputReleaseAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true);
 				}
 			}
 		}

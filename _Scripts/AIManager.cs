@@ -45,7 +45,6 @@ public partial class AIManager : Node
     {
         player = (PlayerController)GetParent();
         player.aiManager = this;
-        isOffence = player.isOffence;
         //currentZone = new Zone(new Vector3(15, 0, -10), 10);
 
         rng = new RandomNumberGenerator();
@@ -58,12 +57,14 @@ public partial class AIManager : Node
     void Init()
     {
         init = true;
+        targetPlayer = null;
         overrideTargetPoint = Vector3.Inf;
+        isOffence = player.isOffence;
     }
     
     public override void _Process(double delta)
     {
-        if(!init) return;
+        if(!init || !player.CanAct) return;
 
         if (!setup)
         {
@@ -102,9 +103,9 @@ public partial class AIManager : Node
             rushBall *= 1;
             finalDir = ((FollowPlayer() * followPlayer) + (CoverZone() * coverZone) + (RushBall() * rushBall));
             
-            if(player.GlobalPosition.DistanceTo(ball.GlobalPosition) < 1.6f)
+            if(player.GlobalPosition.DistanceTo(ball.GlobalPosition) < 2f)
             {
-                player.DoAction(PlayerActions.Tackle, -1);
+                player.DoAction(PlayerActions.Tackle, player.playerID);
             }
             
         }
@@ -154,7 +155,7 @@ public partial class AIManager : Node
         if (player.GlobalPosition.DistanceTo(currentRoute.GetLOSTargetPoint(currentRoute.currentIndex)) < 1.5f)
         {
             currentRoute.currentIndex++;
-            GD.Print("Moving to next Index: " + currentRoute.currentIndex);
+            //GD.Print("Moving to next Index: " + currentRoute.currentIndex);
         }
         return currentRoute.currentIndex >= currentRoute.targetPoints.Length ? Vector3.Zero : player.GlobalPosition.DirectionTo(currentRoute.GetLOSTargetPoint(currentRoute.currentIndex));
     }
@@ -227,6 +228,9 @@ public partial class AIManager : Node
                 break;
             }
         }
+
+        if (targetPlayer == null) return Vector3.Zero;
+        
         Vector3 nearestPlayer = targetPlayer.GlobalPosition;
         if (player.GlobalPosition.DistanceTo(nearestPlayer) < 1.5f)
         {

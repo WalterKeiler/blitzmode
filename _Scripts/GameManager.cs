@@ -11,7 +11,8 @@ public partial class GameManager : Node
 	[Export] public int fieldLength = 100;
 	[Export] public int fieldWidth = 53;
 	[Export] public int EndzoneDepth = 30;
-	[Export] public InputManager[] playerInputManagers;
+	[Export] public InputManager[] playerInputTeam1;
+	[Export] public InputManager[] playerInputTeam2;
 
 	
 	public List<PlayerController> offencePlayers;

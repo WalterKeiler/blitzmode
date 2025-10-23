@@ -83,6 +83,8 @@ mainCam = NodePath("../CameraController")
 OffencePlay = ExtResource("3_ivai1")
 DefencePlay = ExtResource("4_5m5ee")
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("playerInputManagers")]
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("playerInputTeam1", "playerInputTeam2")]
 script = ExtResource("18_jm3h4")
-playerInputManagers = [NodePath("../InputManagerInstance")]
+yardsToFirstDown = 10
+playerInputTeam1 = [NodePath("../InputManagerInstance")]
+playerInputTeam2 = []

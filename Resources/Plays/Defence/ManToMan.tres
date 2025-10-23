@@ -67,7 +67,7 @@ radius = 7.5
 
 [sub_resource type="Resource" id="Resource_d7vhj"]
 script = ExtResource("1_6u8c1")
-IsPlayer = false
+IsPlayer = true
 PlayerType = ExtResource("1_p4bfn")
 followPlayer = 0.0
 coverZone = 1.0

@@ -11,6 +11,7 @@ public partial class PlayerController : Node3D
 	public const float SWITCHTARGETCOOLDOWN = .25f;
 	
 	[Export] public int playerID = -1;
+	[Export] public int inputID = -1;
 	[Export] public PlayerStats playerStats;
 	[Export(PropertyHint.Range, "0,1,")] float _PlayerSprintAmount = 1;
 	[Export] public Node3D _mainCam;
@@ -25,6 +26,7 @@ public partial class PlayerController : Node3D
 	public List<PlayerActions> PlayerAction;
 	[Export] public bool HasBall;
 	public bool CanCatch;
+	public bool CanAct;
 	public bool CanThrow;
 	public bool CanMove;
 	public bool IsBlocking;
@@ -63,7 +65,7 @@ public partial class PlayerController : Node3D
 		gm = GameManager.Instance;
 		
 		//Init();
-		
+		//CanMove = true;
 		tackleBox = GetNode<Area3D>("TackleBox");
 		nearbyPayersBox = GetNode<Area3D>("NearbyPayersBox");
 	}
@@ -97,14 +99,14 @@ public partial class PlayerController : Node3D
 		PlayerAction = new List<PlayerActions>();
 		if (inputManager != null)
 		{
-			isOffence = inputManager.isOffence;
-			playerID = inputManager.PlayerID;
+			inputID = inputManager.PlayerID;
 		}
 		
 		PlayersOnTeam = new List<PlayerController>();
 		PlayersNotOnTeam = new List<PlayerController>();
 		_moveDirection = Vector3.Zero;
 		CanCatch = true;
+		CanAct = true;
 		CanMove = true;
 		switchTargetTimer = 0;
 		testMat = (StandardMaterial3D)mat.Duplicate();
@@ -115,6 +117,8 @@ public partial class PlayerController : Node3D
 		IsBlocking = false;
 		
 		testMat.SetAlbedo(StartColor);
+
+		if (!isOffence) HasBall = false;
 		
 		ball = Ball.Instance;
 		//GD.Print("Ball: "  + ball.GetParent().Name);
@@ -289,7 +293,7 @@ public partial class PlayerController : Node3D
 	
 	void GetInput()
 	{
-		if (playerID == -1 || !canTakeInput) return;
+		if (inputID == -1 || !canTakeInput) return;
 		
 		Vector3 inputDir = inputManager.GetDirectionalInput();
 		Vector3 xDir = Vector3.Zero;
@@ -304,7 +308,7 @@ public partial class PlayerController : Node3D
 
 	public void GetInput(Vector3 direction)
 	{
-		if (playerID != -1 || !canTakeInput) return;
+		if (inputID != -1 || !canTakeInput) return;
 		_moveDirection = direction.Normalized();
 		
 		_moveDirection.Y = 0;
@@ -481,18 +485,29 @@ public partial class PlayerController : Node3D
 	{
 		if (otherPlayer != null && otherPlayer != this)
 		{
-			otherPlayer.playerID = playerID;
+			otherPlayer.inputID = inputID;
 			otherPlayer.inputManager = inputManager;
 			otherPlayer.PlayerAction = PlayerAction;
-			playerID = -1;
+			inputID = -1;
 			_moveDirection = Vector3.Zero;
 		}
 	}
 	
-	public void DoAction(PlayerActions action, int calledPlayerId)
+	public void DoAction(PlayerActions action, int calledPlayerId, bool forceAction = false, bool playerAction = false)
 	{
-		if(playerID != calledPlayerId) return;
+		if(!CanAct)return;
 		
+		if(!forceAction)
+		{
+			if (!playerAction)
+			{
+				if (playerID != calledPlayerId) return;
+			}
+			else
+			{
+				if (inputID != calledPlayerId) return;
+			}
+		}
 		
 		GD.Print("Started: " + action);
 		switch (action)
@@ -528,9 +543,12 @@ public partial class PlayerController : Node3D
 		//if(!PlayerAction.Contains(action))
 		//	PlayerAction.Add(action);
 	}
-	public void CancelAction(PlayerActions action, int calledPlayerId)
+	public void CancelAction(PlayerActions action, int calledPlayerId, bool forceAction, bool playerAction)
 	{
-		if(playerID != calledPlayerId) return;
+		if(inputID == -1)
+			if(playerID != calledPlayerId) return;
+		else
+			if(inputID != calledPlayerId) return;
 		
 		GD.Print("Stopped: " + action);
 		switch (action)
@@ -673,7 +691,7 @@ public partial class PlayerController : Node3D
 		PlayerController tackleTarget = GetNearestPlayer(tackleBox, false, true);
 		if (tackleTarget != null)
 		{
-			tackleTarget.DoAction(PlayerActions.Tackled, tackleTarget.playerID);
+			tackleTarget.DoAction(PlayerActions.Tackled, tackleTarget.inputID, true);
 			GD.Print("Tackled");
 		}
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
@@ -685,7 +703,7 @@ public partial class PlayerController : Node3D
 	{
 		PlayerActions[] restrictions =
 		{
-			
+			PlayerActions.Tackled
 		};
 		if(!CanDoAction(PlayerActions.Tackled, restrictions)) return;
 		
@@ -693,7 +711,11 @@ public partial class PlayerController : Node3D
 		CanCatch = false;
 		CanMove = false;
 		
-		if(HasBall) PlayManager.InvokeEndPlay(true);
+		if(HasBall)
+		{
+			PlayManager.InvokeEndPlay(true);
+			return;
+		}
 		
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 
@@ -747,7 +769,7 @@ public partial class PlayerController : Node3D
 		tackleTarget = GetNearestPlayer(tackleBox, false, true);
 		if (tackleTarget != null)
 		{
-			tackleTarget.DoAction(PlayerActions.Tackled, tackleTarget.playerID);
+			tackleTarget.DoAction(PlayerActions.Tackled, tackleTarget.playerID, true);
 			GD.Print("Tackled");
 		}
 		

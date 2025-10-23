@@ -60,7 +60,7 @@ public partial class Route : Resource
     public Vector3 GetLOSTargetPoint(int i)
     {
         Vector3 pos = targetPoints[i];
-        pos *= PlayManager.Instance.PlayDirection;
+        pos.X *= PlayManager.Instance.PlayDirection;
         pos += Vector3.Right * PlayManager.Instance.lineOfScrimmage;
 
         return pos;
