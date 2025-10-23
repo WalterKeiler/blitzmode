@@ -15,6 +15,8 @@ public partial class InputManager : Node
 	
 	List<InputCombo> activeInputs;
 	double deltaTime;
+
+	public Vector3 directionalInput;
 	
 	public static event Action<PlayerActions, int, bool, bool> InputPressAction;
 	public static event Action<PlayerActions, int, bool, bool> InputReleaseAction;
@@ -22,6 +24,7 @@ public partial class InputManager : Node
 	{
 		activeInputs = new List<InputCombo>();
 		isFirstController = (PlayerID == 1);
+		directionalInput = Vector3.Zero;
 		
 		GD.Print(Input.GetConnectedJoypads().Count);
 	}
@@ -31,6 +34,76 @@ public partial class InputManager : Node
 	{
 		deltaTime = delta;
 		CustomInputs();
+	}
+
+	public override void _Input(InputEvent iEvent)
+	{
+		base._Input(iEvent);
+		
+		
+		if(iEvent.GetDevice() == PlayerID)
+		{
+			if(iEvent.IsAction("move_left") || iEvent.IsAction("move_right"))
+			{
+				if (iEvent is InputEventJoypadMotion joyEvent)
+				{
+					directionalInput.X = -joyEvent.GetAxisValue();
+				}
+
+				if (iEvent is InputEventKey keyEvent)
+				{
+					if (iEvent.IsAction("move_left") && keyEvent.Pressed)
+					{
+						directionalInput.X = -1;
+					}
+					else
+					{
+						directionalInput.X = 0;
+					}
+
+					if (iEvent.IsAction("move_right") && keyEvent.Pressed)
+					{
+						directionalInput.X = 1;
+					}
+					else
+					{
+						directionalInput.X = 0;
+					}
+				}
+			}
+
+			if (iEvent.IsAction("move_back") || iEvent.IsAction("move_forward"))
+			{
+				if (iEvent is InputEventJoypadMotion joyEvent)
+				{
+					directionalInput.Z = -joyEvent.GetAxisValue();
+				}
+				
+				if (iEvent is InputEventKey keyEvent)
+				{
+					if (iEvent.IsAction("move_back") && keyEvent.Pressed)
+					{
+						directionalInput.Z = -1;
+					}
+					else
+					{
+						directionalInput.Z = 0;
+					}
+
+					if (iEvent.IsAction("move_forward") && keyEvent.Pressed)
+					{
+						directionalInput.Z = 1;
+					}
+					else
+					{
+						directionalInput.Z = 0;
+					}
+				}
+				
+			}
+			
+			
+		}
 	}
 
 	void CustomInputs()
@@ -73,43 +146,118 @@ public partial class InputManager : Node
 		activeInputs.Remove(inputCombo);
 	}
 	
+	// public Vector3 GetDirectionalInput()
+	// {
+	// 	bool canMove = false;
+	// 	
+	// 	Vector2 input = directionalInput;
+	// 	
+	// 	
+	// 	//if(!canMove) return Vector3.Zero;
+	// 	//Vector2 input = Input.GetVector("move_right", "move_left", "move_back", "move_forward");
+	// 	return new Vector3(input.X,0,input.Y);
+	// }
+	
 	public Vector3 GetDirectionalInput()
 	{
 		bool canMove = false;
-		foreach (var right in InputMap.ActionGetEvents("move_right"))
+		float left = directionalInput.X;
+		float right = directionalInput.X;
+		float forw = directionalInput.Z;
+		float back = directionalInput.Z;
+		foreach (var inEvent in InputMap.ActionGetEvents("move_right"))
 		{
-			if (right.Device == PlayerID)
+			if (inEvent.GetDevice() == PlayerID)
 			{
-				canMove = true;
+				// InputEventJoypadMotion joyEvent = (InputEventJoypadMotion) inEvent;
+				//
+				// right = joyEvent.AxisValue;
+				
+				// string e = inEvent.AsText();
+				//
+				// float val = 0;
+				//
+				// val += Convert.ToInt32(e[^1]) * .01f;
+				// val += Convert.ToInt32(e[^2]) * .1f;
+				// val += Convert.ToInt32(e[^4]) * 1f;
+				// if (e[^5] == "-"[0]) val *= -1;
+				//
+				// right = val;
 				break;
 			}
 		}
-		foreach (var right in InputMap.ActionGetEvents("move_left"))
+		foreach (var inEvent in InputMap.ActionGetEvents("move_left"))
 		{
-			if (right.Device == PlayerID)
+			if (inEvent.GetDevice() == PlayerID)
 			{
-				canMove = true;
+				//((InputEventKey)inEvent).
+				if(inEvent is InputEventJoypadMotion joyEvent)
+				{
+					GD.Print("FUck");
+					left = joyEvent.GetAxisValue();
+				}
+				
+				// string e = inEvent.AsText();
+				//
+				// float val = 0;
+				//
+				// val += Convert.ToInt32(e[^1]) * .01f;
+				// val += Convert.ToInt32(e[^2]) * .1f;
+				// val += Convert.ToInt32(e[^4]) * 1f;
+				// if (e[^5] == "-"[0]) val *= -1;
+				//
+				// left = val;
 				break;
 			}
 		}
-		foreach (var right in InputMap.ActionGetEvents("move_back"))
+		foreach (var inEvent in InputMap.ActionGetEvents("move_back"))
 		{
-			if (right.Device == PlayerID)
+			if (inEvent.GetDevice() == PlayerID)
 			{
-				canMove = true;
+				// InputEventJoypadMotion joyEvent = (InputEventJoypadMotion) inEvent;
+				//
+				// back = joyEvent.AxisValue;
+				
+				// string e = inEvent.AsText();
+				//
+				// float val = 0;
+				//
+				// val += (int)e[^1] * .01f;
+				// val += (int)e[^2] * .1f;
+				// val += (int)e[^4] * 1f;
+				// if (e[^5] == "-"[0]) val *= -1;
+				//
+				// forw = val;
 				break;
 			}
 		}
-		foreach (var right in InputMap.ActionGetEvents("move_forward"))
+		foreach (var inEvent in InputMap.ActionGetEvents("move_forward"))
 		{
-			if (right.Device == PlayerID)
+			if (inEvent.GetDevice() == PlayerID)
 			{
-				canMove = true;
+				if(inEvent is InputEventJoypadMotion joyEvent)
+				{
+					forw = joyEvent.AxisValue;
+				}
+				
+				// string e = inEvent.AsText();
+				//
+				// float val = 0;
+				//
+				// val += (int)e[^1] * .01f;
+				// val += (int)e[^2] * .1f;
+				// val += (int)e[^4] * 1f;
+				// if (e[^5] == "-"[0]) val *= -1;
+				//
+				// back = val;
 				break;
 			}
 		}
-		if(!canMove) return Vector3.Zero;
-		Vector2 input = Input.GetVector("move_right", "move_left", "move_back", "move_forward");
-		return new Vector3(input.X,0,input.Y);
+
+		directionalInput = new Vector3(left, 0, forw);
+		GD.Print(directionalInput);
+		//Vector2 input = Input.GetVector("move_right", "move_left", "move_back", "move_forward");
+		return directionalInput;
+		//return new Vector3(input.X,0,input.Y);
 	}
 }
