@@ -16,6 +16,8 @@ public partial class PlayManager : Node
 	[Export] public float lineOfScrimmage = 0;
 	[Export] public float firstDownLine = 0;
 
+	[Export] public int ScoreTeam1 = 0;
+	[Export] public int ScoreTeam2 = 0;
 	[Export] public int PlayDirection = 1;
 	[Export] public int CurrentDown = 1;
 
@@ -160,13 +162,7 @@ public partial class PlayManager : Node
 				}
 				if(!play.IsPlayer)
 				{
-					gm.players[i].aiManager.block = play.block;
-					gm.players[i].aiManager.findOpenSpace = play.findOpenSpace;
-					gm.players[i].aiManager.followRoute = play.followRoute;
-					gm.players[i].aiManager.rushBall = 1;
-					gm.players[i].inputManager = null;
-					gm.players[i].inputID = -1;
-					gm.players[i].isPlayerControlled = false;
+					SetPlayerInitalVars(true, i, play, null);
 					if(play.Route != null)
 					{
 						play.Route.currentIndex = 0;
@@ -181,13 +177,7 @@ public partial class PlayManager : Node
 					{
 						if (gm.playerInputTeam1.Length <= team1PlayerIndex)
 						{
-							gm.players[i].aiManager.block = play.block;
-							gm.players[i].aiManager.findOpenSpace = play.findOpenSpace;
-							gm.players[i].aiManager.followRoute = play.followRoute;
-							gm.players[i].aiManager.rushBall = 1;
-							gm.players[i].inputManager = null;
-							gm.players[i].inputID = -1;
-							gm.players[i].isPlayerControlled = false;
+							SetPlayerInitalVars(true, i, play, null);
 							o++;
 							continue;
 						}
@@ -199,13 +189,7 @@ public partial class PlayManager : Node
 					{
 						if (gm.playerInputTeam2.Length <= team2PlayerIndex)
 						{
-							gm.players[i].aiManager.block = play.block;
-							gm.players[i].aiManager.findOpenSpace = play.findOpenSpace;
-							gm.players[i].aiManager.followRoute = play.followRoute;
-							gm.players[i].aiManager.rushBall = 1;
-							gm.players[i].inputManager = null;
-							gm.players[i].inputID = -1;
-							gm.players[i].isPlayerControlled = false;
+							SetPlayerInitalVars(true, i, play, null);
 							o++;
 							continue;
 						}
@@ -234,14 +218,7 @@ public partial class PlayManager : Node
 				
 				if(!play.IsPlayer)
 				{
-					gm.players[i].aiManager.followPlayer = play.followPlayer;
-					gm.players[i].aiManager.coverZone = play.coverZone;
-					gm.players[i].aiManager.rushBall = play.rushBall;
-					gm.players[i].aiManager.block = 1;
-					gm.players[i].aiManager.targetPlayer = null;
-					gm.players[i].inputManager = null;
-					gm.players[i].isPlayerControlled = false;
-					gm.players[i].inputID = -1;
+					SetPlayerInitalVars(false, i, null, play);
 				}
 				else
 				{
@@ -251,14 +228,7 @@ public partial class PlayManager : Node
 					{
 						if (gm.playerInputTeam2.Length <= team2PlayerIndex)
 						{
-							gm.players[i].aiManager.followPlayer = play.followPlayer;
-							gm.players[i].aiManager.coverZone = play.coverZone;
-							gm.players[i].aiManager.rushBall = play.rushBall;
-							gm.players[i].aiManager.block = 1;
-							gm.players[i].aiManager.targetPlayer = null;
-							gm.players[i].inputManager = null;
-							gm.players[i].isPlayerControlled = false;
-							gm.players[i].inputID = -1;
+							SetPlayerInitalVars(false, i, null, play);
 							d++;
 							continue;
 						}
@@ -270,14 +240,7 @@ public partial class PlayManager : Node
 					{
 						if (gm.playerInputTeam1.Length <= team1PlayerIndex)
 						{
-							gm.players[i].aiManager.followPlayer = play.followPlayer;
-							gm.players[i].aiManager.coverZone = play.coverZone;
-							gm.players[i].aiManager.rushBall = play.rushBall;
-							gm.players[i].aiManager.block = 1;
-							gm.players[i].aiManager.targetPlayer = null;
-							gm.players[i].inputManager = null;
-							gm.players[i].isPlayerControlled = false;
-							gm.players[i].inputID = -1;
+							SetPlayerInitalVars(false, i, null, play);
 							d++;
 							continue;
 						}
@@ -300,6 +263,30 @@ public partial class PlayManager : Node
 		InitPlay?.Invoke();
 	}
 
+	void SetPlayerInitalVars(bool isOffence, int i, PlayerDataOffence pO, PlayerDataDefence pD)
+	{
+		if(isOffence)
+		{
+			gm.players[i].aiManager.block = pO.block;
+			gm.players[i].aiManager.findOpenSpace = pO.findOpenSpace;
+			gm.players[i].aiManager.followRoute = pO.followRoute;
+			gm.players[i].aiManager.rushBall = 1;
+			gm.players[i].inputManager = null;
+			gm.players[i].inputID = -1;
+			gm.players[i].isPlayerControlled = false;
+			return;
+		}
+		
+		gm.players[i].aiManager.followPlayer = pD.followPlayer;
+		gm.players[i].aiManager.coverZone = pD.coverZone;
+		gm.players[i].aiManager.rushBall = pD.rushBall;
+		gm.players[i].aiManager.block = 1;
+		gm.players[i].aiManager.targetPlayer = null;
+		gm.players[i].inputManager = null;
+		gm.players[i].isPlayerControlled = false;
+		gm.players[i].inputID = -1;
+	}
+	
 	public void PlayEnded(bool moveLineOfScrimmage)
 	{
 		if(inbetweenPlays) return;
@@ -314,10 +301,23 @@ public partial class PlayManager : Node
 			FirstDown();
 		}
 		
+		if ((newLos * PlayDirection >= GameManager.Instance.fieldLength / 2f &&
+		     newLos * PlayDirection <= (GameManager.Instance.fieldLength / 2f) + GameManager.Instance.EndzoneDepth))
+		{
+			Touchdown();
+		}
+		
+		if ((newLos * -PlayDirection >= GameManager.Instance.fieldLength / 2f &&
+		     newLos * -PlayDirection <= (GameManager.Instance.fieldLength / 2f) + GameManager.Instance.EndzoneDepth))
+		{
+			Safety();
+		}
+		
 		CurrentDown--;
 
 		if (CurrentDown <= 0)
 		{
+			if (moveLineOfScrimmage) lineOfScrimmage = newLos;
 			Turnover(false);
 			return;
 		}
@@ -340,6 +340,26 @@ public partial class PlayManager : Node
 		firstDownLine = lineOfScrimmage + gm.yardsToFirstDown * PlayDirection;
 	}
 
+	void Touchdown()
+	{
+		GD.Print("Touchdown");
+		Score(PlayDirection == 1, gm.TouchdownScoreValue);
+	}
+
+	void Safety()
+	{
+		GD.Print("Safety");
+		Score(PlayDirection == -1, gm.SafetyScoreValue);
+	}
+	void Score(bool isTeam1 ,int scoreValue)
+	{
+		if(isTeam1) ScoreTeam1 += scoreValue;
+		else
+		{
+			ScoreTeam2 += scoreValue;
+		}
+	}
+	
 	public async void Turnover(bool playStillActive)
 	{
 		GD.Print("Turnover");

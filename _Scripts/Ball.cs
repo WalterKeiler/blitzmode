@@ -64,6 +64,14 @@ public partial class Ball : RigidBody3D
                 ballState = BallState.Held;
             }
         }
+        //GD.Print(GlobalPosition.X * PlayManager.Instance.PlayDirection >= GameManager.Instance.fieldLength / 2f);
+        if (ballState == BallState.Held &&
+            (GlobalPosition.X * PlayManager.Instance.PlayDirection >= GameManager.Instance.fieldLength / 2f &&
+             GlobalPosition.X * PlayManager.Instance.PlayDirection <=
+             (GameManager.Instance.fieldLength / 2f) + GameManager.Instance.EndzoneDepth))
+        {
+            PlayManager.InvokeEndPlay(true);
+        }
     }
 
     void Move(double delta)

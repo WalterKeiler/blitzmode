@@ -6,12 +6,17 @@ public partial class GameManager : Node
 {
 	public static GameManager Instance { get; private set; }
 
-	[Export] public int yardsToFirstDown = 30;
+	[Export, ExportGroup("Play")] public int yardsToFirstDown = 30;
 	[Export] public int DownsTillTurnover = 4;
-	[Export] public int fieldLength = 100;
+	[Export] public int TouchdownScoreValue = 6;
+	[Export] public int FieldGoalScoreValue = 3;
+	[Export] public int SafetyScoreValue = 2;
+	[Export] public int ExtraPointKickScoreValue = 1;
+	[Export] public int ExtraPointPlayScoreValue = 2;
+	[Export, ExportGroup("Field")] public int fieldLength = 100;
 	[Export] public int fieldWidth = 53;
 	[Export] public int EndzoneDepth = 30;
-	[Export] public InputManager[] playerInputTeam1;
+	[Export, ExportGroup("Player Input")] public InputManager[] playerInputTeam1;
 	[Export] public InputManager[] playerInputTeam2;
 
 	

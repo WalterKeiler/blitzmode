@@ -15,9 +15,9 @@
 [ext_resource type="Resource" uid="uid://bsm7re1plbrl1" path="res://Resources/Input/Jump.tres" id="11_1quqr"]
 [ext_resource type="Resource" uid="uid://doyaqfc8yadf4" path="res://Resources/Input/Tackle.tres" id="12_2ifbs"]
 [ext_resource type="Resource" uid="uid://bx2h0hskxnnli" path="res://Resources/Input/Throw.tres" id="13_anypg"]
+[ext_resource type="Script" path="res://_Scripts/GameManager.cs" id="13_vno2e"]
 [ext_resource type="Resource" uid="uid://ds41fgws8hnvb" path="res://Resources/Input/StiffArm.tres" id="14_bggh7"]
-[ext_resource type="Script" path="res://_Scripts/PlayManager.cs" id="17_22vxm"]
-[ext_resource type="Script" path="res://_Scripts/GameManager.cs" id="18_jm3h4"]
+[ext_resource type="Script" path="res://_Scripts/PlayManager.cs" id="14_tri8s"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -75,21 +75,15 @@ _inputCombos = Array[Resource]([ExtResource("7_5jy3s"), ExtResource("8_cy3xd"), 
 _inputBuffer = 0.1
 isOffence = true
 
-[node name="InputManagerInstance2" parent="." instance=ExtResource("6_rn8ec")]
-PlayerID = 1
-_inputCombos = Array[Resource]([ExtResource("7_5jy3s"), ExtResource("8_cy3xd"), ExtResource("9_y1vnq"), ExtResource("10_ekhn6"), ExtResource("11_1quqr"), ExtResource("12_2ifbs"), ExtResource("13_anypg"), ExtResource("14_bggh7")])
-_inputBuffer = 0.1
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("playerInputTeam1", "playerInputTeam2")]
+script = ExtResource("13_vno2e")
+playerInputTeam1 = [NodePath("../InputManagerInstance")]
+playerInputTeam2 = []
 
 [node name="PlayManager" type="Node" parent="." node_paths=PackedStringArray("mainCam")]
-script = ExtResource("17_22vxm")
+script = ExtResource("14_tri8s")
 playerPrefab = ExtResource("3_jke3i")
 BallPrefab = ExtResource("5_weq6n")
 mainCam = NodePath("../CameraController")
 OffencePlay = ExtResource("3_ivai1")
 DefencePlay = ExtResource("4_5m5ee")
-
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("playerInputTeam1", "playerInputTeam2")]
-script = ExtResource("18_jm3h4")
-yardsToFirstDown = 10
-playerInputTeam1 = [NodePath("../InputManagerInstance")]
-playerInputTeam2 = [NodePath("../InputManagerInstance2")]
