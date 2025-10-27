@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://bcmgvfcvwhc7b"]
+[gd_scene load_steps=3 format=3 uid="uid://bcmgvfcvwhc7b"]
 
 [ext_resource type="Texture2D" uid="uid://pxurrja54agg" path="res://Materials/Sprites/UIElement1.png" id="1_108i1"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_p7shf"]
+font_size = 18
+font_color = Color(0, 0, 0, 1)
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -19,11 +23,43 @@ offset_bottom = 100.0
 texture = ExtResource("1_108i1")
 
 [node name="PanelContainer" type="PanelContainer" parent="NinePatchRect"]
-modulate = Color(1, 1, 1, 0)
-show_behind_parent = true
+self_modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 9.0
+offset_right = -3.0
+offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Label" type="Label" parent="NinePatchRect/PanelContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(45, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "0:00
+1st"
+label_settings = SubResource("LabelSettings_p7shf")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VSplitContainer" type="VSplitContainer" parent="NinePatchRect/PanelContainer"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="NinePatchRect/PanelContainer/VSplitContainer"]
+layout_mode = 2
+text = "Team 1: 0"
+label_settings = SubResource("LabelSettings_p7shf")
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="NinePatchRect/PanelContainer/VSplitContainer"]
+layout_mode = 2
+text = "Team 2: 0"
+label_settings = SubResource("LabelSettings_p7shf")
+vertical_alignment = 1
