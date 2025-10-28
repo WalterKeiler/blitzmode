@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://pxurrja54agg" path="res://Materials/Sprites/UIElement1.png" id="1_108i1"]
 [ext_resource type="Script" path="res://_Scripts/ScoreBoard.cs" id="2_5b0kn"]
 [ext_resource type="LabelSettings" uid="uid://du8aqcxf77afe" path="res://Fonts/ScoreboardText.tres" id="2_s4ij8"]
-[ext_resource type="Script" path="res://_Scenes/GameTimer.cs" id="3_woxg8"]
+[ext_resource type="Script" path="res://_Scripts/GameTimer.cs" id="3_woxg8"]
 
 [node name="Control" type="Control"]
 layout_mode = 3

@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://xx74hqowek0u"]
+
+[ext_resource type="Script" path="res://_Scripts/PlayDesignPlayer.cs" id="1_3ytnm"]
+[ext_resource type="Shader" path="res://Shaders/PlayDrawPlayer.gdshader" id="1_vrcjv"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rr3id"]
+render_priority = 0
+shader = ExtResource("1_vrcjv")
+shader_parameter/isSelected = false
+shader_parameter/UnselectedCol = Color(1, 0.733333, 0, 1)
+shader_parameter/SelectedCol = Color(0, 0.441539, 0.899011, 1)
+shader_parameter/Circle = 0.0
+shader_parameter/Square = 1.0
+shader_parameter/Triangle = 0.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_n2vt7"]
+material = SubResource("ShaderMaterial_rr3id")
+orientation = 1
+
+[node name="PlayDesignPlayer" type="Node3D"]
+script = ExtResource("1_3ytnm")
+
+[node name="Player" type="MeshInstance3D" parent="."]
+mesh = SubResource("QuadMesh_n2vt7")
