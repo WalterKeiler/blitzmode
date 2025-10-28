@@ -1,12 +1,12 @@
-[gd_scene load_steps=25 format=3 uid="uid://dkddmtmu5c3pb"]
+[gd_scene load_steps=27 format=3 uid="uid://dkddmtmu5c3pb"]
 
 [ext_resource type="Script" path="res://_Scripts/CameraController.cs" id="1_nb8lh"]
 [ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="2_acjaa"]
 [ext_resource type="Script" path="res://_Scripts/FieldManager.cs" id="2_mpaqs"]
 [ext_resource type="Resource" uid="uid://bqhd65la5qphp" path="res://Resources/Plays/Offence/Test Slant.tres" id="3_ivai1"]
-[ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="3_jke3i"]
+[ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/Player.tscn" id="3_jke3i"]
 [ext_resource type="Resource" uid="uid://cu8kg5n6okpmp" path="res://Resources/Plays/Defence/ManToMan.tres" id="4_5m5ee"]
-[ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/ball.tscn" id="5_weq6n"]
+[ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/Ball.tscn" id="5_weq6n"]
 [ext_resource type="PackedScene" uid="uid://cl04xbkb6lkf4" path="res://_Scenes/InputManager.tscn" id="6_rn8ec"]
 [ext_resource type="Resource" uid="uid://tcnum2x5ch5a" path="res://Resources/Input/Sprint.tres" id="7_5jy3s"]
 [ext_resource type="Resource" uid="uid://bduqn4upev1j5" path="res://Resources/Input/SpinMove.tres" id="8_cy3xd"]
@@ -17,7 +17,9 @@
 [ext_resource type="Resource" uid="uid://bx2h0hskxnnli" path="res://Resources/Input/Throw.tres" id="13_anypg"]
 [ext_resource type="Script" path="res://_Scripts/GameManager.cs" id="13_vno2e"]
 [ext_resource type="Resource" uid="uid://ds41fgws8hnvb" path="res://Resources/Input/StiffArm.tres" id="14_bggh7"]
+[ext_resource type="Resource" uid="uid://ds2cg24b7iqae" path="res://Resources/Stats/Teams/Birds.tres" id="14_cg1ps"]
 [ext_resource type="Script" path="res://_Scripts/PlayManager.cs" id="14_tri8s"]
+[ext_resource type="Resource" uid="uid://c7eyrp0e4tg0h" path="res://Resources/Stats/Teams/Mamals.tres" id="15_bsuan"]
 [ext_resource type="PackedScene" uid="uid://bcmgvfcvwhc7b" path="res://_Scenes/PlayHUD.tscn" id="19_puul3"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
@@ -78,6 +80,8 @@ isOffence = true
 
 [node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("playerInputTeam1", "playerInputTeam2")]
 script = ExtResource("13_vno2e")
+team1 = ExtResource("14_cg1ps")
+team2 = ExtResource("15_bsuan")
 playerInputTeam1 = [NodePath("../InputManagerInstance")]
 playerInputTeam2 = []
 

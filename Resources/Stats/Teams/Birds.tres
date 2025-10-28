@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://ds2cg24b7iqae"]
+
+[ext_resource type="Script" path="res://_Scripts/Resources/TeamData.cs" id="1_g4q8k"]
+
+[resource]
+script = ExtResource("1_g4q8k")
+teamName = "Birds"
+teamAbreviation = "BIR"
+Passing = 0.7
+Running = 0.6
+Linemen = 0.7
+Defence = 0.5
+SPTeams = 0.2

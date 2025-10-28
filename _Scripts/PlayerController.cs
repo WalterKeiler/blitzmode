@@ -34,11 +34,14 @@ public partial class PlayerController : Node3D
 	public Vector3 _moveDirection;
 	public float blockStamina;
 	public float movementMultiplier = 1;
+	public bool IsTeam1;
 	
 	Area3D tackleBox;
 	Area3D nearbyPayersBox;
 	Area3D CatchZone;
 	Ball ball;
+
+	TeamData teamStats;
 	
 	List<PlayerController> PlayersOnTeam;
 	List<PlayerController> PlayersNotOnTeam;
@@ -112,7 +115,9 @@ public partial class PlayerController : Node3D
 		testMat = (StandardMaterial3D)mat.Duplicate();
 		mesh.MaterialOverride = testMat;
 
-		blockStamina = playerStats.Strength;
+		teamStats = IsTeam1 ? gm.team1 : gm.team2;
+		
+		blockStamina = playerStats.Strength + teamStats.Linemen;
 		blockCooldown = 0;
 		IsBlocking = false;
 		
@@ -219,7 +224,7 @@ public partial class PlayerController : Node3D
 		{
 			blockStamina -= (float)delta;
 		}
-		else if(blockStamina < playerStats.Strength && CanBlock)
+		else if(blockStamina < (playerStats.Strength + teamStats.Linemen) && CanBlock)
 		{
 			blockStamina += (float)delta;
 		}
@@ -317,7 +322,7 @@ public partial class PlayerController : Node3D
 	void Move(double delta)
 	{
 		_moveDirection.Normalized();
-		Translate(_moveDirection * (float)delta * (playerStats.Speed + _sprintMultiplier) * movementMultiplier);
+		Translate(_moveDirection * (float)delta * ((playerStats.Speed + teamStats.Running) + _sprintMultiplier) * movementMultiplier);
 	}
 	
 	
@@ -334,7 +339,7 @@ public partial class PlayerController : Node3D
 			BallCatchData data = new BallCatchData
 			{
 				BallDot = dot,
-				CatchPriority = playerStats.Catching,
+				CatchPriority = playerStats.Catching + teamStats.Passing,
 				DistanceToBall = distanceToBall,
 				DistanceToTarget = distanceToTarget,
 				Player = this
@@ -586,7 +591,7 @@ public partial class PlayerController : Node3D
 		PlayerController nearestPlayer = GetNearestPlayer(false);
 		Vector3 dir = GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition);
 		
-		if (nearestPlayer._moveDirection.Dot(dir) > .5f && (nearestPlayer.playerStats.Strength / 2) < blockStamina)
+		if (nearestPlayer._moveDirection.Dot(dir) > .5f && ((nearestPlayer.playerStats.Strength + nearestPlayer.teamStats.Linemen) / 2) < blockStamina)
 		{
 			nearestPlayer._moveDirection = Vector3.Zero;
 		}
@@ -612,7 +617,7 @@ public partial class PlayerController : Node3D
 			_sprintMultiplier = 0;
 			return;
 		}
-		_sprintMultiplier = playerStats.Agility;
+		_sprintMultiplier = playerStats.Agility + teamStats.Running;
 		if (PlayerAction.Contains(PlayerActions.Sprint))
 			PlayerAction.Remove(PlayerActions.Sprint);
 	}
@@ -818,14 +823,14 @@ public partial class PlayerController : Node3D
 
 		
 		float distance = startPoint.DistanceTo(endPoint);
-		float throwSpeed = playerStats.Agility * (float)GetPhysicsProcessDeltaTime() * 3;// * distance;
+		float throwSpeed = (playerStats.Agility + teamStats.Passing) * (float)GetPhysicsProcessDeltaTime() * 3;// * distance;
 		//GD.Print("Speed: " + throwSpeed + " Agility: " + playerStats.Agility + " processTime: " + (float)GetPhysicsProcessDeltaTime());
-		float maxThrowDistance = Mathf.Clamp(playerStats.Agility * playerStats.Strength * 5, 0, MAXTHROWDISTANCE);
+		float maxThrowDistance = Mathf.Clamp((playerStats.Agility + teamStats.Passing) * (playerStats.Strength + teamStats.Passing) * 5, 0, MAXTHROWDISTANCE);
 		
 		
 		if(throwTarget.aiManager.currentRoute != null)
 			endPoint = throwTarget.aiManager.currentRoute.GetThrowToPoint(distance,endPoint, startPoint
-				, throwTarget.playerStats.Speed * (float)GetPhysicsProcessDeltaTime(), ref throwSpeed);
+				, (throwTarget.playerStats.Speed + throwTarget.teamStats.Running) * (float)GetPhysicsProcessDeltaTime(), ref throwSpeed);
 		GD.Print(endPoint);
 		//GD.Print("Speed: " + throwSpeed * (float)GetPhysicsProcessDeltaTime());
 

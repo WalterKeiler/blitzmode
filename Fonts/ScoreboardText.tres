@@ -1,0 +1,10 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://du8aqcxf77afe"]
+
+[ext_resource type="FontFile" uid="uid://bx8fbr4nisvkq" path="res://Fonts/Doto,JetBrains_Mono/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf" id="1_1tcx0"]
+
+[resource]
+font = ExtResource("1_1tcx0")
+font_size = 24
+font_color = Color(0, 0, 0, 1)
+outline_color = Color(0, 0, 0, 1)
+shadow_color = Color(1, 1, 1, 1)

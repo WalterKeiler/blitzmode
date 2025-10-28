@@ -22,8 +22,13 @@ public partial class PlayManager : Node
 	[Export] public int CurrentDown = 1;
 
 	private bool inbetweenPlays;
+
+	bool timerRunning = false;
+	public float quarterTimer;
+	public int quarterNumber = 1;
 	
 	public static event Action InitPlay;
+	public static event Action UpdateScore;
 	public static event Action<bool> EndPlay;
 	
 	private GameManager gm;
@@ -59,10 +64,17 @@ public partial class PlayManager : Node
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		if(timerRunning) quarterTimer -= (float)delta;
+		if(quarterTimer < 0)
+		{
+			quarterTimer = gm.QuarterLength * 60;
+			quarterNumber++;
+		}
 	}
 	
 	void SpawnPlayers()
 	{
+		quarterTimer = gm.QuarterLength * 60;
 		CurrentDown = gm.DownsTillTurnover;
 		PlayDirection = 1;
 		
@@ -76,6 +88,7 @@ public partial class PlayManager : Node
 			((PlayerController)player).playerStats = OffencePlay.PlayerDataOffence[i].PlayerType;
 			((PlayerController)player)._mainCam = mainCam;
 			((PlayerController)player).isOffence = true;
+			((PlayerController)player).IsTeam1 = true;
 			// ((PlayerController)player).playerID = index;
 
 			switch (OffencePlay.PlayerDataOffence[i].PlayerType.PlayerType)
@@ -106,6 +119,7 @@ public partial class PlayManager : Node
 			((PlayerController)player).aiManager.currentZone = DefencePlay.PlayerDataDefence[i].Zone;
 			((PlayerController)player)._mainCam = mainCam;
 			((PlayerController)player).isOffence = false;
+			((PlayerController)player).IsTeam1 = false;
 			// ((PlayerController)player).playerID = index;
 			
 			switch (DefencePlay.PlayerDataDefence[i].PlayerType.PlayerType)
@@ -260,6 +274,7 @@ public partial class PlayManager : Node
 		
 		FieldManager.Instance.SetFieldLines(lineOfScrimmage, firstDownLine);
 		inbetweenPlays = false;
+		StartTimer();
 		InitPlay?.Invoke();
 	}
 
@@ -292,6 +307,8 @@ public partial class PlayManager : Node
 		if(inbetweenPlays) return;
 
 		inbetweenPlays = true;
+
+		StopTimer();
 		
 		float newLos = MathF.Round(Ball.Instance.GlobalPosition.X * 10) / 10;
 		
@@ -358,6 +375,7 @@ public partial class PlayManager : Node
 		{
 			ScoreTeam2 += scoreValue;
 		}
+		UpdateScore?.Invoke();
 	}
 	
 	public async void Turnover(bool playStillActive)
@@ -395,6 +413,9 @@ public partial class PlayManager : Node
 		
 		StartPlay();
 	}
+	
+	public void StartTimer() {timerRunning = true;}
+	public void StopTimer() {timerRunning = false;}
 	
 	public static void InvokeEndPlay(bool moveLineOfScrimmage)
 	{

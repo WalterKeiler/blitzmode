@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://c7eyrp0e4tg0h"]
+
+[ext_resource type="Script" path="res://_Scripts/Resources/TeamData.cs" id="1_b70he"]
+
+[resource]
+script = ExtResource("1_b70he")
+teamName = "Mamals"
+teamAbreviation = "MAM"
+Passing = 0.5
+Running = 0.6
+Linemen = 0.3
+Defence = 0.7
+SPTeams = 0.7
