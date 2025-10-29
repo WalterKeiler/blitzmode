@@ -22,14 +22,34 @@ public partial class Ball : RigidBody3D
     public List<BallCatchData> catchOptions;
     public static event Action<bool> BallCaught;
 
+    private bool init = false;
+    
     public override void _Ready()
     {
         Instance = this;
         Freeze = true;
     }
     
+    public override void _EnterTree()
+    {
+        base._EnterTree();
+        PlayManager.InitPlay += Init;
+    }
+
+    public override void _ExitTree()
+    {
+        base._ExitTree();
+        PlayManager.InitPlay -= Init;
+    }
+
+    void Init()
+    {
+        init = true;
+    }
     public override void _Process(double delta)
     {
+        if(!init) return;
+        
         if (ballState == BallState.Thrown)
         {
             Move(delta);

@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://bcmgvfcvwhc7b"]
+[gd_scene load_steps=6 format=3 uid="uid://bcmgvfcvwhc7b"]
 
 [ext_resource type="Texture2D" uid="uid://pxurrja54agg" path="res://Materials/Sprites/UIElement1.png" id="1_108i1"]
-[ext_resource type="Script" path="res://_Scripts/ScoreBoard.cs" id="2_5b0kn"]
+[ext_resource type="Script" uid="uid://ddt3sm5njp0v" path="res://_Scripts/ScoreBoard.cs" id="2_5b0kn"]
+[ext_resource type="Theme" uid="uid://b0ucpf0tv241a" path="res://Fonts/UITheme.tres" id="2_e8oqs"]
 [ext_resource type="LabelSettings" uid="uid://du8aqcxf77afe" path="res://Fonts/ScoreboardText.tres" id="2_s4ij8"]
-[ext_resource type="Script" path="res://_Scripts/GameTimer.cs" id="3_woxg8"]
+[ext_resource type="Script" uid="uid://4mk0sr7fjndv" path="res://_Scripts/GameTimer.cs" id="3_woxg8"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -58,6 +59,7 @@ clip_contents = true
 custom_minimum_size = Vector2(45, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+theme = ExtResource("2_e8oqs")
 text = "0:00
 1st"
 label_settings = ExtResource("2_s4ij8")
@@ -71,6 +73,7 @@ alignment = 1
 
 [node name="Team1Score" type="Label" parent="UISplit/Upper/Left/NinePatchRect/HBoxContainer/VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("2_e8oqs")
 text = "TEM 0"
 label_settings = ExtResource("2_s4ij8")
 vertical_alignment = 1
@@ -79,6 +82,7 @@ isTeam1 = true
 
 [node name="Team2Score" type="Label" parent="UISplit/Upper/Left/NinePatchRect/HBoxContainer/VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("2_e8oqs")
 text = "TEM 0"
 label_settings = ExtResource("2_s4ij8")
 vertical_alignment = 1

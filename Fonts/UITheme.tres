@@ -1,0 +1,6 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://b0ucpf0tv241a"]
+
+[ext_resource type="FontFile" uid="uid://bx8fbr4nisvkq" path="res://Fonts/Doto,JetBrains_Mono/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf" id="1_b5sxe"]
+
+[resource]
+default_font = ExtResource("1_b5sxe")

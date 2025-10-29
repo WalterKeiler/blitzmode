@@ -1,0 +1,64 @@
+[gd_scene load_steps=3 format=3 uid="uid://lnxttgtpmkpu"]
+
+[ext_resource type="Theme" uid="uid://b0ucpf0tv241a" path="res://Fonts/UITheme.tres" id="1_o2d43"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_o2d43"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UISplit" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Upper" type="HBoxContainer" parent="UISplit"]
+layout_mode = 2
+
+[node name="Left" type="VBoxContainer" parent="UISplit/Upper"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="QB" type="Button" parent="UISplit/Upper/Left"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("1_o2d43")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_o2d43")
+text = "QuarterBack"
+
+[node name="R" type="Button" parent="UISplit/Upper/Left"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("1_o2d43")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_o2d43")
+text = "Reciver"
+
+[node name="L" type="Button" parent="UISplit/Upper/Left"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("1_o2d43")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_o2d43")
+text = "Linebacker"
+
+[node name="Right" type="Control" parent="UISplit/Upper"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Middle" type="Control" parent="UISplit"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Lower" type="Control" parent="UISplit"]
+layout_mode = 2

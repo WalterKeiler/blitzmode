@@ -1,9 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://benqlesmck0wx"]
+[gd_scene load_steps=8 format=3 uid="uid://benqlesmck0wx"]
 
 [ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="1_6lhqy"]
+[ext_resource type="Script" uid="uid://ifq76xqg5nab" path="res://_Scripts/PlayDesignManager.cs" id="1_npj1j"]
 [ext_resource type="PackedScene" uid="uid://xx74hqowek0u" path="res://_Scenes/PlayDesignPlayer.tscn" id="2_tifcr"]
-[ext_resource type="Material" uid="uid://k4x7eqdcrbjq" path="res://Materials/TestMat.tres" id="3_o740h"]
-[ext_resource type="Script" uid="uid://2b5ptjxwopat" path="res://addons/LineRenderer/line_renderer.gd" id="4_8r0ty"]
+[ext_resource type="PackedScene" uid="uid://lnxttgtpmkpu" path="res://_Scenes/PlayDesignUI.tscn" id="4_o740h"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_s2wmh"]
 material = ExtResource("1_6lhqy")
@@ -13,9 +13,10 @@ size = Vector2(100, 60)
 
 [sub_resource type="Environment" id="Environment_yx6ej"]
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_720m6"]
-
 [node name="Node3D" type="Node3D"]
+
+[node name="PlayDesignManager" type="Node" parent="."]
+script = ExtResource("1_npj1j")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1.3113416e-07, 1, -4.371139e-08, 3.821371e-15, 4.371139e-08, 1, 1, -1.3113416e-07, 1.9106855e-15, 5, 10, 0)
@@ -35,29 +36,38 @@ skeleton = NodePath("../../..")
 transform = Transform3D(1, 0, 0, 0, 1, -3.55271e-15, 0, 3.55271e-15, 1, 0, 0, 0)
 shape = SubResource("WorldBoundaryShape3D_eimuq")
 
-[node name="PlayDesignPlayer" parent="." instance=ExtResource("2_tifcr")]
+[node name="Node" type="Node" parent="."]
+
+[node name="PlayDesignPlayer" parent="Node" instance=ExtResource("2_tifcr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1, 0)
+visible = false
 playerType = 1
 
-[node name="PlayDesignPlayer2" parent="." instance=ExtResource("2_tifcr")]
+[node name="PlayDesignPlayer2" parent="Node" instance=ExtResource("2_tifcr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, 1)
+visible = false
 
-[node name="PlayDesignPlayer3" parent="." instance=ExtResource("2_tifcr")]
+[node name="PlayDesignPlayer3" parent="Node" instance=ExtResource("2_tifcr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, -1)
+visible = false
 
-[node name="PlayDesignPlayer4" parent="." instance=ExtResource("2_tifcr")]
+[node name="PlayDesignPlayer4" parent="Node" instance=ExtResource("2_tifcr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, 0)
+visible = false
 
-[node name="PlayDesignPlayer5" parent="." instance=ExtResource("2_tifcr")]
+[node name="PlayDesignPlayer5" parent="Node" instance=ExtResource("2_tifcr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, 5)
+visible = false
 playerType = 2
 
-[node name="PlayDesignPlayer7" parent="." instance=ExtResource("2_tifcr")]
+[node name="PlayDesignPlayer7" parent="Node" instance=ExtResource("2_tifcr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, -5)
+visible = false
 playerType = 2
 
-[node name="PlayDesignPlayer6" parent="." instance=ExtResource("2_tifcr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1, 4)
+[node name="PlayDesignPlayer6" parent="Node" instance=ExtResource("2_tifcr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1, 4)
+visible = false
 playerType = 2
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -66,11 +76,4 @@ environment = SubResource("Environment_yx6ej")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 20, 0)
 
-[node name="LineRenderer3D" type="MeshInstance3D" parent="."]
-material_override = ExtResource("3_o740h")
-mesh = SubResource("ImmediateMesh_720m6")
-script = ExtResource("4_8r0ty")
-points = Array[Vector3]([Vector3(-0.5, 0.5, 5), Vector3(6, 0.5, 5), Vector3(12, 0.5, -5)])
-start_thickness = 0.25
-end_thickness = 0.25
-metadata/_custom_type_script = "uid://2b5ptjxwopat"
+[node name="Control" parent="." instance=ExtResource("4_o740h")]
