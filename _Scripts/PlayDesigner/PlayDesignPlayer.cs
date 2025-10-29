@@ -1,7 +1,18 @@
 using Godot;
 using System;
 
-public partial class PlayDesignPlayer : Node3D
+public partial class PlayDesignSelectable : Node3D
+{
+    private PlayDesignManager pdm; 
+    public override void _Ready()
+    {
+        base._Ready();
+        pdm = PlayDesignManager.Instance;
+        pdm.selectableObjects.Add(this);
+    }
+}
+
+public partial class PlayDesignPlayer : PlayDesignSelectable
 {
     [Export] Material playerMaterial;
     [Export] MeshInstance3D mesh;
@@ -20,6 +31,10 @@ public partial class PlayDesignPlayer : Node3D
     public override void _Ready()
     {
         base._Ready();
+    }
+
+    public void Init()
+    {
         mat = (Material)playerMaterial.Duplicate();
         mesh.MaterialOverride = mat;
 
@@ -55,11 +70,20 @@ public partial class PlayDesignPlayer : Node3D
         ((ShaderMaterial)mat).SetShaderParameter("Square", square);
         ((ShaderMaterial)mat).SetShaderParameter("Triangle", triangle);
         ((ShaderMaterial)mat).SetShaderParameter("Circle", circle);
-
     }
-
+    
     public override void _Process(double delta)
     {
         base._Process(delta);
+    }
+
+    public void Selected()
+    {
+        ((ShaderMaterial)mat).SetShaderParameter("isSelected", true);
+    }
+    
+    public void DeSelected()
+    {
+        ((ShaderMaterial)mat).SetShaderParameter("isSelected", false);
     }
 }

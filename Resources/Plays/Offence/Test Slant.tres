@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Play" load_steps=17 format=3 uid="uid://bqhd65la5qphp"]
+[gd_resource type="Resource" load_steps=17 format=3 uid="uid://bqhd65la5qphp"]
 
 [ext_resource type="Script" uid="uid://dys3y3oj7sr6d" path="res://_Scripts/Resources/PlayerDataOffence.cs" id="1_ruvtc"]
 [ext_resource type="Script" uid="uid://cbqyfumputku2" path="res://_Scripts/Resources/Route.cs" id="2_a416i"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://xx74hqowek0u"]
 
-[ext_resource type="Script" uid="uid://chbo2u7vnb50y" path="res://_Scripts/PlayDesignPlayer.cs" id="1_3ytnm"]
+[ext_resource type="Script" uid="uid://chbo2u7vnb50y" path="res://_Scripts/PlayDesigner/PlayDesignPlayer.cs" id="1_3ytnm"]
 [ext_resource type="Material" uid="uid://ux3khxvx5uyi" path="res://Materials/PlayDesignPlayer.tres" id="2_4uqqj"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_n2vt7"]
