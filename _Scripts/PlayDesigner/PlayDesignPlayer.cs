@@ -1,27 +1,15 @@
 using Godot;
 using System;
-
-public partial class PlayDesignSelectable : Node3D
-{
-    private PlayDesignManager pdm; 
-    public override void _Ready()
-    {
-        base._Ready();
-        pdm = PlayDesignManager.Instance;
-        pdm.selectableObjects.Add(this);
-    }
-}
-
 public partial class PlayDesignPlayer : PlayDesignSelectable
 {
     [Export] Material playerMaterial;
     [Export] MeshInstance3D mesh;
 
-    [Export] public PlayerType playerType;
-    
-    [Export] public Route route;
+    [Export] public PlayerDataOffence playerData;
     [Export] public Zone zone;
 
+    public int routeIndex = -1;
+    
     private Material mat;
 
     private float square;
@@ -38,7 +26,7 @@ public partial class PlayDesignPlayer : PlayDesignSelectable
         mat = (Material)playerMaterial.Duplicate();
         mesh.MaterialOverride = mat;
 
-        switch (playerType)
+        switch (playerData.PlayerType.PlayerType)
         {
             case PlayerType.Quarterback :
                 triangle = 1;

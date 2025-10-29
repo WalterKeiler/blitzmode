@@ -12,22 +12,38 @@ script = ExtResource("1_ruvtc")
 IsPlayer = true
 PlayerType = ExtResource("3_abf61")
 StartsWithBall = true
+followRoute = null
+findOpenSpace = null
+block = null
 Position = Vector2(0, -5)
 
 [sub_resource type="Resource" id="Resource_u2nh1"]
 script = ExtResource("1_ruvtc")
+IsPlayer = null
 PlayerType = ExtResource("3_c0n16")
+StartsWithBall = null
+followRoute = null
+findOpenSpace = null
 block = 1.0
+Position = null
 
 [sub_resource type="Resource" id="Resource_jm6sq"]
 script = ExtResource("1_ruvtc")
+IsPlayer = null
 PlayerType = ExtResource("3_c0n16")
+StartsWithBall = null
+followRoute = null
+findOpenSpace = null
 block = 1.0
 Position = Vector2(1.5, 0)
 
 [sub_resource type="Resource" id="Resource_vehaq"]
 script = ExtResource("1_ruvtc")
+IsPlayer = null
 PlayerType = ExtResource("3_c0n16")
+StartsWithBall = null
+followRoute = null
+findOpenSpace = null
 block = 1.0
 Position = Vector2(-1.5, 0)
 
@@ -37,8 +53,12 @@ targetPoints = PackedVector3Array(0, 0, 10, 10, 0, 10, 20, 0, -20)
 
 [sub_resource type="Resource" id="Resource_m5ewl"]
 script = ExtResource("1_ruvtc")
+IsPlayer = null
 PlayerType = ExtResource("4_jd8da")
+StartsWithBall = null
 followRoute = 1.0
+findOpenSpace = null
+block = null
 Route = SubResource("Resource_vaa4w")
 Position = Vector2(10, 0)
 
@@ -48,8 +68,12 @@ targetPoints = PackedVector3Array(10, 0, -10, 7, 0, -5)
 
 [sub_resource type="Resource" id="Resource_fiawq"]
 script = ExtResource("1_ruvtc")
+IsPlayer = null
 PlayerType = ExtResource("4_jd8da")
+StartsWithBall = null
 followRoute = 1.0
+findOpenSpace = null
+block = null
 Route = SubResource("Resource_vx3as")
 Position = Vector2(-10, 0)
 
@@ -59,8 +83,12 @@ targetPoints = PackedVector3Array(0, 0, -10, 3, 0, -10)
 
 [sub_resource type="Resource" id="Resource_yhwj8"]
 script = ExtResource("1_ruvtc")
+IsPlayer = null
 PlayerType = ExtResource("4_jd8da")
+StartsWithBall = null
 followRoute = 1.0
+findOpenSpace = null
+block = null
 Route = SubResource("Resource_lw233")
 Position = Vector2(-1, -4)
 

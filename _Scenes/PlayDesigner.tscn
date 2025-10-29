@@ -1,10 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://benqlesmck0wx"]
+[gd_scene load_steps=16 format=3 uid="uid://benqlesmck0wx"]
 
 [ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="1_6lhqy"]
 [ext_resource type="Script" uid="uid://ifq76xqg5nab" path="res://_Scripts/PlayDesigner/PlayDesignManager.cs" id="1_o740h"]
 [ext_resource type="PackedScene" uid="uid://xx74hqowek0u" path="res://_Scenes/PlayDesignPlayer.tscn" id="2_tifcr"]
+[ext_resource type="Resource" uid="uid://duahorhpdwoe1" path="res://Resources/Stats/Players/DLinebacker.tres" id="3_bnbha"]
+[ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/OLinebacker.tres" id="4_kr0m8"]
 [ext_resource type="PackedScene" uid="uid://lnxttgtpmkpu" path="res://_Scenes/PlayDesignUI.tscn" id="4_o740h"]
 [ext_resource type="Shader" uid="uid://c60bnyclatswx" path="res://Shaders/PlayDrawPlayer.gdshader" id="5_8r0ty"]
+[ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="5_loc3g"]
+[ext_resource type="Resource" uid="uid://blpydpdwlcl2a" path="res://Resources/Stats/Players/Safety.tres" id="6_g4men"]
+[ext_resource type="Resource" uid="uid://c3iwmer7t8bnr" path="res://Resources/Stats/Players/WideReceiver.tres" id="7_m0da6"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_s2wmh"]
 material = ExtResource("1_6lhqy")
@@ -34,6 +39,7 @@ orientation = 1
 script = ExtResource("1_o740h")
 playerPrefab = ExtResource("2_tifcr")
 cursorIcon = NodePath("../SelectionIcon")
+playerTypes = Array[Resource]([ExtResource("3_bnbha"), ExtResource("4_kr0m8"), ExtResource("5_loc3g"), ExtResource("6_g4men"), ExtResource("7_m0da6")])
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1.3113416e-07, 1, -4.371139e-08, 3.821371e-15, 4.371139e-08, 1, 1, -1.3113416e-07, 1.9106855e-15, 10, 10, 0)

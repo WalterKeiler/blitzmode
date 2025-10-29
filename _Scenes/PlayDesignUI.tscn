@@ -1,12 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://lnxttgtpmkpu"]
+[gd_scene load_steps=8 format=3 uid="uid://lnxttgtpmkpu"]
 
 [ext_resource type="Theme" uid="uid://b0ucpf0tv241a" path="res://Fonts/UITheme.tres" id="1_o2d43"]
 [ext_resource type="Script" uid="uid://c07wqc8q8hise" path="res://_Scripts/PlayDesigner/PDUIManager.cs" id="1_pct5s"]
 [ext_resource type="Script" uid="uid://dii51lbs8ac7u" path="res://_Scripts/PlayDesigner/PDPlayerSelectButton.cs" id="2_7llaf"]
+[ext_resource type="Script" uid="uid://def3fsix35ltm" path="res://_Scripts/PlayDesigner/PDSavePlay.cs" id="3_qmewk"]
+[ext_resource type="Script" uid="uid://d2hv5tdf1vs1d" path="res://_Scripts/PlayDesigner/PDNewRoute.cs" id="4_u78hh"]
+[ext_resource type="Script" uid="uid://de8quecnf3jpj" path="res://_Scripts/PlayDesigner/RouteDesignManager.cs" id="5_qmewk"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_o2d43"]
 
-[node name="Control" type="Control" node_paths=PackedStringArray("selectPlayerType")]
+[node name="Control" type="Control" node_paths=PackedStringArray("selectPlayerType", "selectedPlayerUI")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,7 +17,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_pct5s")
-selectPlayerType = NodePath("HBoxContainer")
+selectPlayerType = NodePath("PlayerSelector")
+selectedPlayerUI = NodePath("SelectedPlayerUI")
 
 [node name="UISplit" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -28,40 +32,17 @@ grow_vertical = 2
 layout_mode = 2
 
 [node name="Left" type="VBoxContainer" parent="UISplit/Upper"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="QB" type="Button" parent="UISplit/Upper/Left"]
-visible = false
+[node name="SavePlay" type="Button" parent="UISplit/Upper/Left"]
 layout_mode = 2
 size_flags_horizontal = 0
 theme = ExtResource("1_o2d43")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_o2d43")
-text = "QuarterBack"
-script = ExtResource("2_7llaf")
-playerType = 1
-
-[node name="R" type="Button" parent="UISplit/Upper/Left"]
-layout_mode = 2
-size_flags_horizontal = 0
-theme = ExtResource("1_o2d43")
-toggle_mode = true
-button_pressed = true
-button_group = SubResource("ButtonGroup_o2d43")
-text = "Reciver"
-script = ExtResource("2_7llaf")
-playerType = 2
-
-[node name="L" type="Button" parent="UISplit/Upper/Left"]
-layout_mode = 2
-size_flags_horizontal = 0
-theme = ExtResource("1_o2d43")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_o2d43")
-text = "Linebacker"
-script = ExtResource("2_7llaf")
+text = "Save Play"
+script = ExtResource("3_qmewk")
 
 [node name="Right" type="Control" parent="UISplit/Upper"]
 layout_mode = 2
@@ -74,13 +55,14 @@ size_flags_vertical = 3
 [node name="Lower" type="Control" parent="UISplit"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="PlayerSelector" type="HBoxContainer" parent="."]
+visible = false
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 alignment = 1
 
-[node name="QB" type="Button" parent="HBoxContainer"]
+[node name="QB" type="Button" parent="PlayerSelector"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 0
@@ -89,7 +71,7 @@ text = "QuarterBack"
 script = ExtResource("2_7llaf")
 playerType = 1
 
-[node name="R" type="Button" parent="HBoxContainer"]
+[node name="R" type="Button" parent="PlayerSelector"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -97,7 +79,7 @@ theme = ExtResource("1_o2d43")
 script = ExtResource("2_7llaf")
 playerType = 2
 
-[node name="Label" type="Label" parent="HBoxContainer/R"]
+[node name="Label" type="Label" parent="PlayerSelector/R"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -108,19 +90,20 @@ text = "Reciver"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="PlayerSelector"]
 self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 
-[node name="L" type="Button" parent="HBoxContainer"]
+[node name="L" type="Button" parent="PlayerSelector"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 theme = ExtResource("1_o2d43")
 script = ExtResource("2_7llaf")
+playerType = null
 
-[node name="Label" type="Label" parent="HBoxContainer/L"]
+[node name="Label" type="Label" parent="PlayerSelector/L"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -130,3 +113,105 @@ grow_vertical = 2
 text = "Linebacker"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="SelectedPlayerUI" type="GridContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+columns = 3
+
+[node name="TL" type="PanelContainer" parent="SelectedPlayerUI"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+
+[node name="Route" type="Button" parent="SelectedPlayerUI"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("1_o2d43")
+script = ExtResource("4_u78hh")
+
+[node name="Label" type="Label" parent="SelectedPlayerUI/Route"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Route"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TR" type="PanelContainer" parent="SelectedPlayerUI"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+
+[node name="Reciver" type="Button" parent="SelectedPlayerUI"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+theme = ExtResource("1_o2d43")
+script = ExtResource("2_7llaf")
+playerType = 2
+
+[node name="Label" type="Label" parent="SelectedPlayerUI/Reciver"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Reciver"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MC" type="PanelContainer" parent="SelectedPlayerUI"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+
+[node name="LineBacker" type="Button" parent="SelectedPlayerUI"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("1_o2d43")
+script = ExtResource("2_7llaf")
+playerType = null
+
+[node name="Label" type="Label" parent="SelectedPlayerUI/LineBacker"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Linebacker"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LL" type="PanelContainer" parent="SelectedPlayerUI"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+
+[node name="LC" type="PanelContainer" parent="SelectedPlayerUI"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+
+[node name="LR" type="PanelContainer" parent="SelectedPlayerUI"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+
+[node name="RouteManager" type="Node" parent="."]
+script = ExtResource("5_qmewk")
+
+[node name="Line2D" type="Line2D" parent="RouteManager"]
+visible = false
+points = PackedVector2Array(0, 0, 100, 0, 449, 100, 275.1096, -135.6548, 619, 86)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2

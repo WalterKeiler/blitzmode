@@ -5,6 +5,7 @@ public partial class PDUIManager : Control
 {
     public static PDUIManager Instance;
     [Export] public Control selectPlayerType;
+    [Export] public Control selectedPlayerUI;
 
     bool selectPosition;
     PlayDesignManager pdm;
@@ -18,7 +19,7 @@ public partial class PDUIManager : Control
     public override void _Ready()
     {
         selectPlayerType.Visible = false;
-        selectPosition = true;
+        selectedPlayerUI.Visible = false;
         pdm = PlayDesignManager.Instance;
         base._Ready();
     }
@@ -29,17 +30,27 @@ public partial class PDUIManager : Control
     //     
     // }
 
+    public void SelectPlayer(Vector2 cursorPos)
+    {
+        selectedPlayerUI.Visible = true;
+        selectedPlayerUI.Position = cursorPos - (selectPlayerType.Size / 2);
+    }
+    
     public void SelectPlayerType(Vector2 cursorPos)
     {
-        selectPosition = false;
         selectPlayerType.Visible = true;
         selectPlayerType.Position = cursorPos - (selectPlayerType.Size / 2);
     }
     
     public void SelectionMade()
     {
-        selectPosition = false;
         selectPlayerType.Visible = false;
         pdm.SpawnNewPlayer();
+    }
+
+    public void NewRoute()
+    {
+        selectedPlayerUI.Visible = false;
+        pdm.MakeNewRoute();
     }
 }
