@@ -58,10 +58,12 @@ public partial class PlayDesignManager : Node3D
 		cursorIcon.GlobalPosition = new Vector3(-3, 1, 0);
 		SpawnNewPlayer();
 		players[0].playerData.IsPlayer = true;
+		players[0].canBeEditied = false;
 		
 		selectedPlayerType = PlayerType.OLineman;
 		cursorIcon.GlobalPosition = new Vector3(-1, 1, 0);
 		SpawnNewPlayer();
+		players[1].canBeEditied = false;
 		
 		mat = (Material)cursorIcon.GetActiveMaterial(0).Duplicate();
 		cursorIcon.MaterialOverride = mat;
@@ -97,6 +99,7 @@ public partial class PlayDesignManager : Node3D
 		if (editingRoute)
 		{
 			rdm.UpdateLine(mainCamera, cursorIcon.GlobalPosition, ((PlayDesignPlayer) selectedObject).routeIndex);
+			((ShaderMaterial) mat).SetShaderParameter("isSelected", false);
 		}
 		
 	}
@@ -117,11 +120,13 @@ public partial class PlayDesignManager : Node3D
 
 			if (hoveringSelectable && !editingRoute)
 			{
+				if(!hoveredObject.canBeEditied) return;
+				
 				selectedObject = hoveredObject;
 				if (selectedObject is PlayDesignPlayer)
 				{
 					playerSelected = true;
-					if (mainCamera != null) SelectPlayer(mainCamera.UnprojectPosition(cursorPos));
+					if (mainCamera != null) pdUI.SelectPlayer(mainCamera.UnprojectPosition(cursorPos));
 				}
 			}
 			
@@ -144,6 +149,15 @@ public partial class PlayDesignManager : Node3D
 				rdm.EndEdit((((PlayDesignPlayer) selectedObject)!).routeIndex);
 				//rdm.SubViewLineRendering(sCamera, mainCamera);
 				selectedObject = null;
+			}
+			else
+			{
+				if (hoveringSelectable && !editingRoute)
+				{
+					if(!hoveredObject.canBeEditied) return;
+
+					DeleteObject(hoveredObject);
+				}
 			}
 		}
 		
@@ -304,14 +318,22 @@ public partial class PlayDesignManager : Node3D
 			}
 		}
 		
-		//GetTree().ReloadCurrentScene();
-	}
-	
-	public void SelectPlayer(Vector2 pos)
-	{
-		pdUI.SelectPlayer(pos);
+		GetTree().ReloadCurrentScene();
 	}
 
+	void DeleteObject(PlayDesignSelectable obj)
+	{
+		players.Remove((PlayDesignPlayer) obj);
+		selectableObjects.Remove(obj);
+		if (((PlayDesignPlayer) obj).routeIndex != -1)
+		{
+			rdm.RemoveRoute(((PlayDesignPlayer) obj).routeIndex);
+		}
+		hoveredObject = null;
+		selectedObject = null;
+		obj.QueueFree();
+	}
+	
 	public void MakeNewRoute()
 	{
 		playerSelected = false;
@@ -342,6 +364,7 @@ public partial class PlayDesignManager : Node3D
 		{
 			((PlayDesignPlayer) selectedObject).playerData.PlayerType = ps;
 			((PlayDesignPlayer) selectedObject).Init();
+			playerSelected = false;
 			return;
 		}
 		

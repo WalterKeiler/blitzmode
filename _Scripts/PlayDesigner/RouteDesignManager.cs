@@ -61,6 +61,11 @@ public partial class RouteDesignManager : Node
         newLine.SetEndCapMode(Line2D.LineCapMode.Round);
     }
 
+    public void RemoveRoute(int index)
+    {
+        lines[index].ClearPoints();
+    }
+    
     public void UpdateLine(Camera3D cam, Vector3 pos, int index)
     {
         Vector2 viewPos = cam.UnprojectPosition(pos);

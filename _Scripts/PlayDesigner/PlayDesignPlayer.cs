@@ -7,7 +7,7 @@ public partial class PlayDesignPlayer : PlayDesignSelectable
 
     [Export] public PlayerDataOffence playerData;
     [Export] public Zone zone;
-
+    
     public int routeIndex = -1;
     
     private Material mat;

@@ -33,7 +33,7 @@ public partial class PDUIManager : Control
     public void SelectPlayer(Vector2 cursorPos)
     {
         selectedPlayerUI.Visible = true;
-        selectedPlayerUI.Position = cursorPos - (selectPlayerType.Size / 2);
+        selectedPlayerUI.Position = cursorPos - (selectedPlayerUI.Size / 2);
     }
     
     public void SelectPlayerType(Vector2 cursorPos)
@@ -42,9 +42,11 @@ public partial class PDUIManager : Control
         selectPlayerType.Position = cursorPos - (selectPlayerType.Size / 2);
     }
     
+    
     public void SelectionMade()
     {
         selectPlayerType.Visible = false;
+        selectedPlayerUI.Visible = false;
         pdm.SpawnNewPlayer();
     }
 
