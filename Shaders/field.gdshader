@@ -1,5 +1,6 @@
 shader_type spatial;
 #include "res://Shaders/SDFFunctions.gdshaderinc"
+#include "res://Shaders/NoiseFunctions.gdshaderinc"
 
 //const int arrayMaxLength = 15;
 
@@ -8,6 +9,7 @@ uniform vec3 fieldColor : source_color;
 uniform vec3 lineColor : source_color;
 uniform vec3 lineOfScrimmageColor : source_color;
 uniform vec3 firstDownColor : source_color;
+uniform float noiseEffect = 1;
 uniform float lineOfScrimmage = 20;
 uniform float firstDownLine = 20;
 uniform int numberIndent = 20;
@@ -411,14 +413,19 @@ void fragment()
 
 	col = clamp(col,0,1);
 
+	float grassNoise = noise(round(fieldPos * 10.0)) * noiseEffect;
+
+	grassNoise = smoothstep(2.5,.0,grassNoise);
+
 	vec3 lineCol = col * lineColor;
 	vec3 fieldCol = -col * fieldColor;
 	vec3 losCol = losVec * lineOfScrimmageColor;
 	vec3 fdCol = fdVec * firstDownColor;
 
-	vec3 finalCol = lineCol + fieldColor + losCol + fdCol;
+	vec3 finalCol = lineCol + clamp(fieldColor * grassNoise, 0, 1) + losCol + fdCol;
 
 	finalCol = clamp(finalCol,0,1);
 
 	ALBEDO = finalCol;
+	//ALBEDO = vec3(grassNoise);
 }

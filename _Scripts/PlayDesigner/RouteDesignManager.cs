@@ -59,6 +59,7 @@ public partial class RouteDesignManager : Node
         newLine.SetJointMode(Line2D.LineJointMode.Round);
         newLine.SetBeginCapMode(Line2D.LineCapMode.Round);
         newLine.SetEndCapMode(Line2D.LineCapMode.Round);
+        newLine.SetDefaultColor(Colors.Red);
     }
 
     public void RemoveRoute(int index)

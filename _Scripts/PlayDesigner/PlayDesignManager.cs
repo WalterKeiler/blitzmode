@@ -301,9 +301,12 @@ public partial class PlayDesignManager : Node3D
 
 			await ToSignal(GetTree().CreateTimer(.1f), "timeout");
 			var tex = sCamera.GetTexture();
-			var imTex = ImageTexture.CreateFromImage(tex.GetImage());
-			play.Image = imTex;
-
+			var img = tex.GetImage();
+			//Error compressed = img.Compress(Image.CompressMode.Max);
+			//GD.Print(compressed);
+			
+			play.Image = img.SavePngToBuffer();
+			
 			play.Name = playName;
 			
 			Error error = ResourceSaver.Save(play, $"res://Resources/Plays/Offence/{play.Name}.tres", ResourceSaver.SaverFlags.None);

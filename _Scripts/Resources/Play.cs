@@ -5,7 +5,7 @@ using System;
 public partial class Play : Resource
 {
     [Export] public string Name;
-    [Export] public Texture2D Image;
+    [Export] public byte[] Image;
     [Export] public bool IsOffence;
     [Export] public PlayerDataOffence[] PlayerDataOffence;
     [Export] public PlayerDataDefence[] PlayerDataDefence;
