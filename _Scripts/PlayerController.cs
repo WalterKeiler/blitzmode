@@ -58,6 +58,7 @@ public partial class PlayerController : Node3D
 	StandardMaterial3D testMat;
 	GameManager gm;
 	Node3D debugBox;
+	Node3D debugBox2;
 
 	public static event Action<bool> CrossedLOS;
 	
@@ -240,6 +241,14 @@ public partial class PlayerController : Node3D
 			testMesh.Position = Vector3.Zero;
 			GetParent().AddChild(testMesh);
 			debugBox = testMesh;
+			
+			MeshInstance3D testMesh2 = new MeshInstance3D();
+			testMesh2.Mesh = new BoxMesh();
+			testMesh2.MaterialOverride = new Material();
+			testMesh2.Position = Vector3.Zero;
+			testMesh2.Scale *= .5f;
+			GetParent().AddChild(testMesh2);
+			debugBox2 = testMesh2;
 		}
 		
 		float closest = -100000;
@@ -285,6 +294,16 @@ public partial class PlayerController : Node3D
 		}
 		if(throwTarget != null)
 		{
+			if(throwTarget.aiManager.currentRoute != null)
+			{
+				float distance = GlobalPosition.DistanceTo(throwTarget.GlobalPosition);
+				float throwSpeed = (playerStats.Agility + teamStats.Passing) * (float)GetPhysicsProcessDeltaTime() * 3;
+				Vector3 ep = throwTarget.aiManager.currentRoute.GetThrowToPoint(distance, throwTarget.GlobalPosition, GlobalPosition
+					, (throwTarget.playerStats.Speed + throwTarget.teamStats.Running) * (float) GetPhysicsProcessDeltaTime(),
+					ref throwSpeed);
+				debugBox2.GlobalPosition = ep + Vector3.Up * 2;
+			}
+			
 			debugBox.GlobalPosition = throwTarget.GlobalPosition;
 			debugBox.Scale = Vector3.One;
 		}

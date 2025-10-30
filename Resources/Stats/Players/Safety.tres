@@ -1,12 +1,11 @@
 [gd_resource type="Resource" script_class="PlayerStats" load_steps=2 format=3 uid="uid://blpydpdwlcl2a"]
 
-[ext_resource type="Script" path="res://_Scripts/Resources/PlayerStats.cs" id="1_mn3nl"]
+[ext_resource type="Script" uid="uid://cbmoa5rip6qma" path="res://_Scripts/Resources/PlayerStats.cs" id="1_mn3nl"]
 
 [resource]
 script = ExtResource("1_mn3nl")
 PlayerType = 4
-canBeThrowTarget = false
-Speed = 8.0
+Speed = 7.0
 Endurance = 5.0
 Strength = 2.0
 Catching = 8.0

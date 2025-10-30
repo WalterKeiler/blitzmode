@@ -45,6 +45,8 @@ public partial class Ball : RigidBody3D
     void Init()
     {
         init = true;
+        endPoint = Vector3.Inf;
+        startPoint = Vector3.Inf;
     }
     public override void _Process(double delta)
     {
@@ -64,7 +66,7 @@ public partial class Ball : RigidBody3D
                 }
                 // GD.Print("Updated End Point");
             }
-            if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= .5f)
+            if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 1f)
             {
                 GD.Print("Caught");
                 bestOption.Player.HasBall = true;

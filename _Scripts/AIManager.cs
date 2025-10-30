@@ -3,6 +3,8 @@ using System;
 
 public partial class AIManager : Node
 {
+    public static float DISTANCE_FROM_SIDELINE = 1;
+    
     [Export] public bool isOffence;
 
     [ExportCategory("Offensive Weights")] 
@@ -148,8 +150,24 @@ public partial class AIManager : Node
         if (currentRoute == null) return player.GlobalPosition;
         if(currentRoute.currentIndex >= currentRoute.targetPoints.Length)
         {
-            //followRoute = 0;
-            //findOpenSpace = 1;
+            currentRoute.currentIndex = (int.MaxValue - 100);
+            switch (currentRoute.endAction)
+            {
+                //followRoute = 0;
+                //findOpenSpace = 1;
+                case EndRouteAction.Continue:
+                    if(MathF.Abs(player.GlobalPosition.Z) >= (GameManager.Instance.fieldWidth / 2f) - DISTANCE_FROM_SIDELINE) return Vector3.Right * PlayManager.Instance.PlayDirection;
+                    return currentRoute.targetPoints[^2].DirectionTo(currentRoute.targetPoints[^1]);
+                case EndRouteAction.Block:
+                    followRoute = 0;
+                    block = 1;
+                    break;
+                case EndRouteAction.Zone:
+                    followRoute = 0;
+                    coverZone = 1;
+                    break;
+            }
+
             return Vector3.Zero;
         }
         if (player.GlobalPosition.DistanceTo(currentRoute.GetLOSTargetPoint(currentRoute.currentIndex)) < 1.5f)

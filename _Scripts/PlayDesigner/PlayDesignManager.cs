@@ -58,6 +58,7 @@ public partial class PlayDesignManager : Node3D
 		cursorIcon.GlobalPosition = new Vector3(-3, 1, 0);
 		SpawnNewPlayer();
 		players[0].playerData.IsPlayer = true;
+		players[0].playerData.StartsWithBall = true;
 		players[0].canBeEditied = false;
 		
 		selectedPlayerType = PlayerType.OLineman;
@@ -146,8 +147,22 @@ public partial class PlayDesignManager : Node3D
 			{
 				editingRoute = false;
 				(((PlayDesignPlayer) selectedObject)!).playerData.Route.targetPoints = currentRoute.ToArray();
-				rdm.EndEdit((((PlayDesignPlayer) selectedObject)!).routeIndex);
+				rdm.EndEdit((((PlayDesignPlayer) selectedObject)!).routeIndex, (((PlayDesignPlayer) selectedObject)!).playerData.PlayerType.PlayerType);
 				//rdm.SubViewLineRendering(sCamera, mainCamera);
+
+				switch ((((PlayDesignPlayer) selectedObject)!).playerData.PlayerType.PlayerType)
+				{
+					case PlayerType.Receiver :
+						(((PlayDesignPlayer) selectedObject)!).playerData.Route.endAction = EndRouteAction.Continue;
+						break;
+					case PlayerType.OLineman :
+						(((PlayDesignPlayer) selectedObject)!).playerData.Route.endAction = EndRouteAction.Block;
+						break;
+					case PlayerType.Safety :
+						(((PlayDesignPlayer) selectedObject)!).playerData.Route.endAction = EndRouteAction.Zone;
+						break;
+				}
+				
 				selectedObject = null;
 			}
 			else
@@ -292,7 +307,13 @@ public partial class PlayDesignManager : Node3D
 			play.PlayerDataOffence = new PlayerDataOffence[players.Count];
 			for (int i = 0; i < players.Count; i++)
 			{
-				players[i].playerData.Position = new Vector2(players[i].GlobalPosition.X, players[i].GlobalPosition.Z);
+				players[i].playerData.Position = new Vector2(players[i].GlobalPosition.Z, players[i].GlobalPosition.X);
+				if (players[i].routeIndex != -1)
+					players[i].playerData.followRoute = 1;
+				else
+				{
+					players[i].playerData.block = 1;
+				}
 				play.PlayerDataOffence[i] = players[i].playerData;
 			}
 

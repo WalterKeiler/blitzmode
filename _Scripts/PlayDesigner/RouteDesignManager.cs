@@ -60,6 +60,7 @@ public partial class RouteDesignManager : Node
         newLine.SetBeginCapMode(Line2D.LineCapMode.Round);
         newLine.SetEndCapMode(Line2D.LineCapMode.Round);
         newLine.SetDefaultColor(Colors.Red);
+        newLine.SetWidth(4.5f);
     }
 
     public void RemoveRoute(int index)
@@ -79,8 +80,33 @@ public partial class RouteDesignManager : Node
             lines[index].AddPoint(lines[index].Points[^1]);
     }
 
-    public void EndEdit(int index)
+    public void EndEdit(int index, PlayerType playerType)
     {
         lines[index].RemovePoint(lines[index].Points.Length - 1);
+
+        Vector2 startPoint = lines[index].Points[^1];
+        
+        Vector2 dir = lines[index].Points[^2].DirectionTo(startPoint);
+
+        if(playerType == PlayerType.Receiver || playerType == PlayerType.Safety)
+        {
+            Vector2 top = startPoint + dir * 8;
+            Vector2 left = startPoint + ((dir.Orthogonal() * 4) - (dir * 1.0f) );
+            Vector2 right = startPoint + ((-dir.Orthogonal() * 4) - (dir * 1.0f) );
+
+            lines[index].AddPoint(left);
+            lines[index].AddPoint(top);
+            lines[index].AddPoint(right);
+            lines[index].AddPoint(startPoint);
+        }
+
+        if (playerType == PlayerType.OLineman)
+        {
+            Vector2 left = startPoint + dir.Orthogonal() * 6;
+            Vector2 right = startPoint - dir.Orthogonal() * 6;
+
+            lines[index].AddPoint(left);
+            lines[index].AddPoint(right);
+        }
     }
 }
