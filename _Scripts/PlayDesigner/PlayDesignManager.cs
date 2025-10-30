@@ -11,11 +11,16 @@ public partial class PlayDesignManager : Node3D
 	[Export] public PackedScene playerPrefab;
 	[Export] public MeshInstance3D cursorIcon;
 
+	[Export] Camera3D mainCamera;
+	[Export] SubViewport sCamera;
+	
 	[Export] private PlayerStats[] playerTypes;
 
 	public PlayerType selectedPlayerType;
 	public bool playerSelected;
 
+	public string playName;
+	
 	bool isOffencePlay = true;
 	bool hoveringSelectable;
 	bool canPlacePlayer;
@@ -25,7 +30,6 @@ public partial class PlayDesignManager : Node3D
 	Vector3 CursorMaxPos = new (30, -1, 27);
 	Vector3 cursorPos;
 	Material mat;
-	Camera3D camera;
 
 	private List<Vector3> currentRoute;
 	
@@ -49,8 +53,6 @@ public partial class PlayDesignManager : Node3D
 		pdUI = PDUIManager.Instance;
 		rdm = RouteDesignManager.Instance;
 		players = new List<PlayDesignPlayer>();
-
-		camera = GetViewport().GetCamera3D();
 		
 		selectedPlayerType = PlayerType.Quarterback;
 		cursorIcon.GlobalPosition = new Vector3(-3, 1, 0);
@@ -94,7 +96,7 @@ public partial class PlayDesignManager : Node3D
 
 		if (editingRoute)
 		{
-			rdm.UpdateLine(camera.UnprojectPosition(cursorIcon.GlobalPosition), ((PlayDesignPlayer) selectedObject).routeIndex);
+			rdm.UpdateLine(mainCamera, cursorIcon.GlobalPosition, ((PlayDesignPlayer) selectedObject).routeIndex);
 		}
 		
 	}
@@ -107,9 +109,9 @@ public partial class PlayDesignManager : Node3D
 			{
 				selectedObject = null;
 				playerSelected = true;
-				if (camera != null)
+				if (mainCamera != null)
 				{
-					pdUI.SelectPlayerType(camera.UnprojectPosition(cursorPos));
+					pdUI.SelectPlayerType(mainCamera.UnprojectPosition(cursorPos));
 				}
 			}
 
@@ -119,7 +121,7 @@ public partial class PlayDesignManager : Node3D
 				if (selectedObject is PlayDesignPlayer)
 				{
 					playerSelected = true;
-					if (camera != null) SelectPlayer(camera.UnprojectPosition(cursorPos));
+					if (mainCamera != null) SelectPlayer(mainCamera.UnprojectPosition(cursorPos));
 				}
 			}
 			
@@ -139,6 +141,8 @@ public partial class PlayDesignManager : Node3D
 			{
 				editingRoute = false;
 				(((PlayDesignPlayer) selectedObject)!).playerData.Route.targetPoints = currentRoute.ToArray();
+				rdm.EndEdit((((PlayDesignPlayer) selectedObject)!).routeIndex);
+				//rdm.SubViewLineRendering(sCamera, mainCamera);
 				selectedObject = null;
 			}
 		}
@@ -148,14 +152,14 @@ public partial class PlayDesignManager : Node3D
 		if (inEvent is InputEventMouseMotion mouseMotion)
 		{
 
-			if (camera != null)
+			if (mainCamera != null)
 			{
 				Vector2 mouseScreenPosition = mouseMotion.Position;
 
-				Vector3 rayOrigin = camera.ProjectRayOrigin(mouseScreenPosition);
-				Vector3 rayNormal = camera.ProjectRayNormal(mouseScreenPosition);
+				Vector3 rayOrigin = mainCamera.ProjectRayOrigin(mouseScreenPosition);
+				Vector3 rayNormal = mainCamera.ProjectRayNormal(mouseScreenPosition);
 
-				float rayLength = camera.Far;
+				float rayLength = mainCamera.Far;
 				Vector3 rayEnd = rayOrigin + rayNormal * rayLength;
 
 				PhysicsRayQueryParameters3D query = PhysicsRayQueryParameters3D.Create(rayOrigin, rayEnd);
@@ -265,7 +269,7 @@ public partial class PlayDesignManager : Node3D
         cursorIcon.GlobalPosition = new Vector3(cursorPos.X, 1, cursorPos.Z);
 	}
 
-	public void SavePlay()
+	public async void SavePlay()
 	{
 		if (isOffencePlay)
 		{
@@ -277,8 +281,18 @@ public partial class PlayDesignManager : Node3D
 				players[i].playerData.Position = new Vector2(players[i].GlobalPosition.X, players[i].GlobalPosition.Z);
 				play.PlayerDataOffence[i] = players[i].playerData;
 			}
+
+			//sCamera.RenderTargetUpdateMode = SubViewport.UpdateMode.Once;
+			rdm.SubViewLineRendering(sCamera, mainCamera);
+
+			await ToSignal(GetTree().CreateTimer(.1f), "timeout");
+			var tex = sCamera.GetTexture();
+			var imTex = ImageTexture.CreateFromImage(tex.GetImage());
+			play.Image = imTex;
+
+			play.Name = playName;
 			
-			Error error = ResourceSaver.Save(play, $"res://Resources/Plays/Offence/{play.IsOffence}.tres", ResourceSaver.SaverFlags.None);
+			Error error = ResourceSaver.Save(play, $"res://Resources/Plays/Offence/{play.Name}.tres", ResourceSaver.SaverFlags.None);
 			
 			if (error != Error.Ok)
 			{
@@ -290,7 +304,7 @@ public partial class PlayDesignManager : Node3D
 			}
 		}
 		
-		GetTree().ReloadCurrentScene();
+		//GetTree().ReloadCurrentScene();
 	}
 	
 	public void SelectPlayer(Vector2 pos)
@@ -304,7 +318,7 @@ public partial class PlayDesignManager : Node3D
 		PlayDesignPlayer player = (PlayDesignPlayer) selectedObject;
 
 		if (player.routeIndex == -1) player.routeIndex = rdm.lines.Count;
-		rdm.NewRoute(camera.UnprojectPosition(selectedObject.GlobalPosition));
+		rdm.NewRoute(mainCamera.UnprojectPosition(selectedObject.GlobalPosition));
 		player.playerData.Route = new Route();
 
 		currentRoute = new List<Vector3>();

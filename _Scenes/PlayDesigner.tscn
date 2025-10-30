@@ -35,13 +35,15 @@ orientation = 1
 
 [node name="Node3D" type="Node3D"]
 
-[node name="PlayDesignManager" type="Node3D" parent="." node_paths=PackedStringArray("cursorIcon")]
+[node name="PlayDesignManager" type="Node3D" parent="." node_paths=PackedStringArray("cursorIcon", "mainCamera", "sCamera")]
 script = ExtResource("1_o740h")
 playerPrefab = ExtResource("2_tifcr")
 cursorIcon = NodePath("../SelectionIcon")
+mainCamera = NodePath("../MainCam")
+sCamera = NodePath("../SubViewport")
 playerTypes = Array[Resource]([ExtResource("3_bnbha"), ExtResource("4_kr0m8"), ExtResource("5_loc3g"), ExtResource("6_g4men"), ExtResource("7_m0da6")])
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="MainCam" type="Camera3D" parent="."]
 transform = Transform3D(1.3113416e-07, 1, -4.371139e-08, 3.821371e-15, 4.371139e-08, 1, 1, -1.3113416e-07, 1.9106855e-15, 10, 10, 0)
 projection = 1
 current = true
@@ -52,6 +54,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 3.55271e-15, 0, -3.55271e-15, 1, 0, 0, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="FieldGeo"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+layers = 3
 mesh = SubResource("QuadMesh_s2wmh")
 skeleton = NodePath("../../..")
 
@@ -64,9 +67,22 @@ environment = SubResource("Environment_yx6ej")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 20, 0)
+layers = 3
 
 [node name="Control" parent="." instance=ExtResource("4_o740h")]
 
 [node name="SelectionIcon" type="MeshInstance3D" parent="."]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+layers = 2
 mesh = SubResource("QuadMesh_kv2qg")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+handle_input_locally = false
+size = Vector2i(1400, 1024)
+render_target_update_mode = 4
+
+[node name="ScreenShotCam" type="Camera3D" parent="SubViewport"]
+transform = Transform3D(1.3113416e-07, 1, -4.371139e-08, 3.821371e-15, 4.371139e-08, 1, 1, -1.3113416e-07, 1.9106853e-15, 10, 10, 0)
+cull_mask = 1
+projection = 1
+size = 41.5

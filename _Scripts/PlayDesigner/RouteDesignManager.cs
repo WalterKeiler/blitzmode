@@ -22,6 +22,24 @@ public partial class RouteDesignManager : Node
         lines = new List<Line2D>();
     }
 
+    public void SubViewLineRendering(Viewport view, Camera3D oldCam)
+    {
+        Camera3D cam = view.GetCamera3D();
+        
+        foreach (var line in lines)
+        {
+            Line2D newLine = line.Duplicate() as Line2D;
+            view.AddChild(newLine);
+            for (int i = 0; i < line.Points.Length; i++)
+            {
+                Vector2 pos = newLine.Points[i];
+                Vector3 worldPos = oldCam.ProjectPosition(pos, 1);
+                Vector2 newPos = cam.UnprojectPosition(worldPos);
+                newLine.SetPointPosition(i, newPos);
+            }
+        }
+    }
+    
     public void NewRoute(Vector2 startPoint, int replaceIndex = -1)
     {
         Line2D newLine;
@@ -43,9 +61,10 @@ public partial class RouteDesignManager : Node
         newLine.SetEndCapMode(Line2D.LineCapMode.Round);
     }
 
-    public void UpdateLine(Vector2 pos, int index)
+    public void UpdateLine(Camera3D cam, Vector3 pos, int index)
     {
-        lines[index].SetPointPosition(lines[index].Points.Length - 1, pos);
+        Vector2 viewPos = cam.UnprojectPosition(pos);
+        lines[index].SetPointPosition(lines[index].Points.Length - 1, viewPos);
     }
 
     public void PlacePoint(int index)
@@ -56,7 +75,6 @@ public partial class RouteDesignManager : Node
 
     public void EndEdit(int index)
     {
-        lines[index].RemovePoint(lines[index].Points.Length - 1);
         lines[index].RemovePoint(lines[index].Points.Length - 1);
     }
 }

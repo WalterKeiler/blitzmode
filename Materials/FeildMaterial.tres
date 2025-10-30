@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bi2dythq2vfsg"]
 
-[ext_resource type="Shader" path="res://Shaders/field.gdshader" id="1_5vsit"]
+[ext_resource type="Shader" uid="uid://b5c5tjpfohqyp" path="res://Shaders/field.gdshader" id="1_5vsit"]
 
 [resource]
 render_priority = 0
@@ -11,8 +11,8 @@ shader_parameter/lineColor = Color(1, 1, 1, 1)
 shader_parameter/lineOfScrimmageColor = Color(0, 0.720126, 0.774425, 1)
 shader_parameter/firstDownColor = Color(1, 0.67451, 0, 1)
 shader_parameter/lineOfScrimmage = 0.0
-shader_parameter/firstDownLine = 20.0
-shader_parameter/numberIndent = 10
+shader_parameter/firstDownLine = 100.0
+shader_parameter/numberIndent = 100
 shader_parameter/numberSpacing = 1.5
 shader_parameter/yardsLength = 100
 shader_parameter/yardsWidth = 54
