@@ -5,10 +5,12 @@ public partial class PlayDesignPlayer : PlayDesignSelectable
     [Export] Material playerMaterial;
     [Export] MeshInstance3D mesh;
 
-    [Export] public PlayerDataOffence playerData;
+    [Export] public PlayerDataOffence playerDataOff;
+    [Export] public PlayerDataDefence playerDataDef;
     [Export] public Zone zone;
     
     public int routeIndex = -1;
+    public int zoneIndex = -1;
     
     private Material mat;
 
@@ -26,33 +28,43 @@ public partial class PlayDesignPlayer : PlayDesignSelectable
         mat = (Material)playerMaterial.Duplicate();
         mesh.MaterialOverride = mat;
 
-        switch (playerData.PlayerType.PlayerType)
+        if(playerDataOff != null)
         {
-            case PlayerType.Quarterback :
-                triangle = 1;
-                circle = 0;
-                square = 0;
-                break;
-            case PlayerType.Receiver :
-                triangle = 0;
-                circle = 1;
-                square = 0;
-                break;
-            case PlayerType.OLineman :
-                triangle = 0;
-                circle = 0;
-                square = 1;
-                break;
-            case PlayerType.Safety :
-                triangle = 0;
-                circle = 1;
-                square = 0;
-                break;
-            case PlayerType.DLineman :
-                triangle = 0;
-                circle = 0;
-                square = 1;
-                break;
+            switch (playerDataOff.PlayerType.PlayerType)
+            {
+                case PlayerType.Quarterback:
+                    triangle = 1;
+                    circle = 0;
+                    square = 0;
+                    break;
+                case PlayerType.Receiver:
+                    triangle = 0;
+                    circle = 1;
+                    square = 0;
+                    break;
+                case PlayerType.OLineman:
+                    triangle = 0;
+                    circle = 0;
+                    square = 1;
+                    break;
+            }
+        }
+
+        if (playerDataDef != null)
+        {
+            switch (playerDataDef.PlayerType.PlayerType)
+            {
+                case PlayerType.Safety :
+                    triangle = 1;
+                    circle = 0;
+                    square = 0;
+                    break;
+                case PlayerType.DLineman :
+                    triangle = 0;
+                    circle = 0;
+                    square = 1;
+                    break;
+            }
         }
         
         ((ShaderMaterial)mat).SetShaderParameter("Square", square);

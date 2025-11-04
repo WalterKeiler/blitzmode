@@ -67,21 +67,38 @@ public partial class RouteDesignManager : Node
     {
         lines[index].ClearPoints();
     }
+
+    public void Reset()
+    {
+        foreach (var l in lines)
+        {
+            l.ClearPoints();
+            l.QueueFree();
+        }
+    }
     
     public void UpdateLine(Camera3D cam, Vector3 pos, int index)
     {
         Vector2 viewPos = cam.UnprojectPosition(pos);
+
+        if (index == -1) index = lines.Count - 1;
+        
         lines[index].SetPointPosition(lines[index].Points.Length - 1, viewPos);
     }
 
     public void PlacePoint(int index)
     {
+        if (index == -1) index = lines.Count - 1;
+        
         if(lines[index].Points[^1].Floor() != lines[index].Points[^2].Floor())
             lines[index].AddPoint(lines[index].Points[^1]);
     }
-
+    
+    
     public void EndEdit(int index, PlayerType playerType)
     {
+        if (index == -1) index = lines.Count - 1;
+        
         lines[index].RemovePoint(lines[index].Points.Length - 1);
 
         Vector2 startPoint = lines[index].Points[^1];

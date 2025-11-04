@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://d1scmny0qfd4e"]
+
+[ext_resource type="Shader" uid="uid://2uawl3ou4vmt" path="res://Shaders/PDZone.gdshader" id="1_wq3qw"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_wq3qw")
+shader_parameter/OutlineSize = 0.1
+shader_parameter/Scale = 1.0
+shader_parameter/Color = Color(0.9137255, 0.62352943, 0, 1)
+shader_parameter/Circle = 1.0

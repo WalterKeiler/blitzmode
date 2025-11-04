@@ -4,8 +4,11 @@ using System;
 public partial class PDUIManager : Control
 {
     public static PDUIManager Instance;
-    [Export] public Control selectPlayerType;
-    [Export] public Control selectedPlayerUI;
+    [Export] public Control selectPlayerTypeOff;
+    [Export] public Control selectedPlayerUIOff;
+    
+    [Export] public Control selectPlayerTypeDef;
+    [Export] public Control selectedPlayerUIDef;
 
     bool selectPosition;
     PlayDesignManager pdm;
@@ -18,8 +21,8 @@ public partial class PDUIManager : Control
 
     public override void _Ready()
     {
-        selectPlayerType.Visible = false;
-        selectedPlayerUI.Visible = false;
+        selectPlayerTypeOff.Visible = false;
+        selectedPlayerUIOff.Visible = false;
         pdm = PlayDesignManager.Instance;
         base._Ready();
     }
@@ -32,27 +35,68 @@ public partial class PDUIManager : Control
 
     public void SelectPlayer(Vector2 cursorPos)
     {
-        selectedPlayerUI.Visible = true;
-        selectedPlayerUI.Position = cursorPos - (selectedPlayerUI.Size / 2);
+        if(pdm.isOffencePlay)
+        {
+            selectedPlayerUIOff.Visible = true;
+            selectedPlayerUIOff.Position = cursorPos - (selectedPlayerUIOff.Size / 2);
+        }
+        else
+        {
+            selectedPlayerUIDef.Visible = true;
+            selectedPlayerUIDef.Position = cursorPos - (selectedPlayerUIDef.Size / 2);
+        }
     }
     
     public void SelectPlayerType(Vector2 cursorPos)
     {
-        selectPlayerType.Visible = true;
-        selectPlayerType.Position = cursorPos - (selectPlayerType.Size / 2);
+        if(pdm.isOffencePlay)
+        {
+            selectPlayerTypeOff.Visible = true;
+            selectPlayerTypeOff.Position = cursorPos - (selectPlayerTypeOff.Size / 2);
+        }
+        else
+        {
+            selectPlayerTypeDef.Visible = true;
+            selectPlayerTypeDef.Position = cursorPos - (selectPlayerTypeDef.Size / 2);
+        }
     }
     
     
     public void SelectionMade()
     {
-        selectPlayerType.Visible = false;
-        selectedPlayerUI.Visible = false;
+        selectPlayerTypeOff.Visible = false;
+        selectedPlayerUIOff.Visible = false;
+
+        selectPlayerTypeDef.Visible = false;
+        selectedPlayerUIDef.Visible = false;
+        
         pdm.SpawnNewPlayer();
     }
 
+    public void TurnOffAll()
+    {
+        selectPlayerTypeOff.Visible = false;
+        selectedPlayerUIOff.Visible = false;
+
+        selectPlayerTypeDef.Visible = false;
+        selectedPlayerUIDef.Visible = false;
+    }
+
+    public void Blitz()
+    {
+        selectedPlayerUIDef.Visible = false;
+        pdm.Blitz();
+    }
+    
+    public void NewZone()
+    {
+        selectedPlayerUIDef.Visible = false;
+        pdm.MakeNewZone();
+    }
+    
     public void NewRoute()
     {
-        selectedPlayerUI.Visible = false;
+        selectedPlayerUIOff.Visible = false;
         pdm.MakeNewRoute();
     }
 }

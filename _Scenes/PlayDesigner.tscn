@@ -3,13 +3,14 @@
 [ext_resource type="Script" uid="uid://ifq76xqg5nab" path="res://_Scripts/PlayDesigner/PlayDesignManager.cs" id="1_o740h"]
 [ext_resource type="PackedScene" uid="uid://xx74hqowek0u" path="res://_Scenes/PlayDesignPlayer.tscn" id="2_tifcr"]
 [ext_resource type="Resource" uid="uid://duahorhpdwoe1" path="res://Resources/Stats/Players/DLinebacker.tres" id="3_bnbha"]
+[ext_resource type="PackedScene" uid="uid://dajehm2qdephw" path="res://_Scenes/PDZone.tscn" id="3_kr0m8"]
 [ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/OLinebacker.tres" id="4_kr0m8"]
 [ext_resource type="PackedScene" uid="uid://lnxttgtpmkpu" path="res://_Scenes/PlayDesignUI.tscn" id="4_o740h"]
-[ext_resource type="Shader" uid="uid://c60bnyclatswx" path="res://Shaders/PlayDrawPlayer.gdshader" id="5_8r0ty"]
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="5_loc3g"]
 [ext_resource type="Resource" uid="uid://blpydpdwlcl2a" path="res://Resources/Stats/Players/Safety.tres" id="6_g4men"]
 [ext_resource type="Resource" uid="uid://c3iwmer7t8bnr" path="res://Resources/Stats/Players/WideReceiver.tres" id="7_m0da6"]
 [ext_resource type="Shader" uid="uid://b5c5tjpfohqyp" path="res://Shaders/field.gdshader" id="8_bnbha"]
+[ext_resource type="Material" uid="uid://bfbcgudrdtuyh" path="res://Materials/PDCursor.tres" id="10_kr0m8"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kr0m8"]
 render_priority = 0
@@ -36,18 +37,8 @@ size = Vector2(100, 100)
 
 [sub_resource type="Environment" id="Environment_yx6ej"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_720m6"]
-render_priority = 0
-shader = ExtResource("5_8r0ty")
-shader_parameter/isSelected = false
-shader_parameter/UnselectedCol = Color(0.7666192, 0.7666196, 0.76661956, 1)
-shader_parameter/SelectedCol = Color(0.20751235, 0.20751238, 0.20751235, 1)
-shader_parameter/Circle = 1.0
-shader_parameter/Square = 0.0
-shader_parameter/Triangle = 1.0
-
 [sub_resource type="QuadMesh" id="QuadMesh_kv2qg"]
-material = SubResource("ShaderMaterial_720m6")
+material = ExtResource("10_kr0m8")
 orientation = 1
 
 [node name="Node3D" type="Node3D"]
@@ -56,6 +47,7 @@ orientation = 1
 script = ExtResource("1_o740h")
 playerPrefab = ExtResource("2_tifcr")
 cursorIcon = NodePath("../SelectionIcon")
+zonePrefab = ExtResource("3_kr0m8")
 mainCamera = NodePath("../MainCam")
 sCamera = NodePath("../SubViewport")
 playerTypes = Array[Resource]([ExtResource("3_bnbha"), ExtResource("4_kr0m8"), ExtResource("5_loc3g"), ExtResource("6_g4men"), ExtResource("7_m0da6")])

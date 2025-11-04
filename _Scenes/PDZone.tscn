@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://dajehm2qdephw"]
+
+[ext_resource type="Material" uid="uid://d1scmny0qfd4e" path="res://Materials/PDZone.tres" id="1_ushok"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_g4men"]
+material = ExtResource("1_ushok")
+orientation = 1
+
+[node name="ZonePrefab" type="MeshInstance3D"]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("QuadMesh_g4men")
