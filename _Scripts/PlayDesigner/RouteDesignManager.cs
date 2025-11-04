@@ -75,6 +75,8 @@ public partial class RouteDesignManager : Node
             l.ClearPoints();
             l.QueueFree();
         }
+
+        lines = new List<Line2D>();
     }
     
     public void UpdateLine(Camera3D cam, Vector3 pos, int index)

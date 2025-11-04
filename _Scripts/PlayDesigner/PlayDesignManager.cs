@@ -145,6 +145,12 @@ public partial class PlayDesignManager : Node3D
 		rdm.Reset();
 		pdUI.TurnOffAll();
 		rdm.lines = new List<Line2D>();
+		foreach (var c in sCamera.GetChildren())
+		{
+			if(c is Line2D)
+				c.QueueFree();
+		}
+
 	}
 	
 	public override void _Input(InputEvent inEvent)
@@ -452,6 +458,11 @@ public partial class PlayDesignManager : Node3D
 		players.Remove((PlayDesignPlayer) obj);
 		selectableObjects.Remove(obj);
 		
+		if (((PlayDesignPlayer) obj).routeIndex != -1)
+		{
+			rdm.RemoveRoute(((PlayDesignPlayer) obj).routeIndex);
+		}
+		
 		if (((PlayDesignPlayer) obj).zoneIndex != -1)
 		{
 			zonesObjects[((PlayDesignPlayer) obj).zoneIndex].QueueFree();
@@ -471,6 +482,7 @@ public partial class PlayDesignManager : Node3D
 		player.playerDataOff.Route = new Route();
 
 		currentRoute = new List<Vector3>();
+		currentRoute.Add(player.GlobalPosition);
 		
 		editingRoute = true;
 	}

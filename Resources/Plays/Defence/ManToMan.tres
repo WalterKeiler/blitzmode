@@ -57,6 +57,5 @@ Zone = SubResource("Resource_uq318")
 
 [resource]
 script = ExtResource("1_g7x5f")
-Name = "Man To Man"
 PlayerDataOffence = null
 PlayerDataDefence = Array[Object]([SubResource("Resource_ulerc"), SubResource("Resource_jjkup"), SubResource("Resource_51qj0"), SubResource("Resource_n2mmf"), SubResource("Resource_yv0fv"), SubResource("Resource_353sc"), SubResource("Resource_d7vhj")])

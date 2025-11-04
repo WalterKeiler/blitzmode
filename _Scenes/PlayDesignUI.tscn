@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://lnxttgtpmkpu"]
+[gd_scene load_steps=15 format=3 uid="uid://lnxttgtpmkpu"]
 
 [ext_resource type="Theme" uid="uid://b0ucpf0tv241a" path="res://Fonts/UITheme.tres" id="1_o2d43"]
 [ext_resource type="Script" uid="uid://c07wqc8q8hise" path="res://_Scripts/PlayDesigner/PDUIManager.cs" id="1_pct5s"]
@@ -11,10 +11,11 @@
 [ext_resource type="ButtonGroup" uid="uid://b2xq5ptuchkk0" path="res://Resources/PlayDesignOffDefBG.tres" id="6_fek32"]
 [ext_resource type="Script" uid="uid://jv5rn8l2hshj" path="res://_Scripts/PlayDesigner/PDSetSide.cs" id="7_kgyuy"]
 [ext_resource type="LabelSettings" uid="uid://bn80hiao1bfo6" path="res://Fonts/PlayUI.tres" id="8_fek32"]
+[ext_resource type="Script" uid="uid://cy5wuy6dm5lu0" path="res://_Scripts/PlayDesigner/PDCancel.cs" id="11_4cm4h"]
 [ext_resource type="Script" uid="uid://cqrjcgw613gkm" path="res://_Scripts/PlayDesigner/PDZone.cs" id="11_anhj4"]
 [ext_resource type="Script" uid="uid://dm1bmkhrr40gx" path="res://_Scripts/PlayDesigner/PDBlitz.cs" id="12_4cm4h"]
 
-[node name="PDUI" type="Control" node_paths=PackedStringArray("selectPlayerTypeOff", "selectedPlayerUIOff", "selectPlayerTypeDef", "selectedPlayerUIDef")]
+[node name="PDUI" type="Control" node_paths=PackedStringArray("selectRoute", "selectedPlayerUIOff", "selectBlitz", "selectZone", "selectedPlayerUIDef")]
 visibility_layer = 3
 layout_mode = 3
 anchors_preset = 15
@@ -23,9 +24,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_pct5s")
-selectPlayerTypeOff = NodePath("PlayerSelectorOff")
+selectRoute = NodePath("SelectedPlayerUIOff/Route")
 selectedPlayerUIOff = NodePath("SelectedPlayerUIOff")
-selectPlayerTypeDef = NodePath("PlayerSelectorDef")
+selectBlitz = NodePath("SelectedPlayerUIDef/Blitz")
+selectZone = NodePath("SelectedPlayerUIDef/Zone")
 selectedPlayerUIDef = NodePath("SelectedPlayerUIDef")
 
 [node name="UISplit" type="VBoxContainer" parent="."]
@@ -129,69 +131,6 @@ size_flags_vertical = 3
 [node name="Lower" type="Control" parent="UISplit"]
 layout_mode = 2
 
-[node name="PlayerSelectorOff" type="HBoxContainer" parent="."]
-visible = false
-visibility_layer = 2
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-alignment = 1
-
-[node name="QB" type="Button" parent="PlayerSelectorOff"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 0
-theme = ExtResource("1_o2d43")
-text = "QuarterBack"
-script = ExtResource("2_7llaf")
-playerType = 1
-
-[node name="R" type="Button" parent="PlayerSelectorOff"]
-visibility_layer = 2
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-size_flags_horizontal = 0
-theme = ExtResource("1_o2d43")
-script = ExtResource("2_7llaf")
-playerType = 2
-
-[node name="Label" type="Label" parent="PlayerSelectorOff/R"]
-visibility_layer = 2
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Receiver"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="PanelContainer" type="PanelContainer" parent="PlayerSelectorOff"]
-self_modulate = Color(1, 1, 1, 0)
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-
-[node name="L" type="Button" parent="PlayerSelectorOff"]
-visibility_layer = 2
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-size_flags_horizontal = 8
-theme = ExtResource("1_o2d43")
-script = ExtResource("2_7llaf")
-
-[node name="Label" type="Label" parent="PlayerSelectorOff/L"]
-visibility_layer = 2
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Linebacker"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="SelectedPlayerUIOff" type="GridContainer" parent="."]
 visible = false
 visibility_layer = 2
@@ -281,69 +220,15 @@ self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 
-[node name="LC" type="PanelContainer" parent="SelectedPlayerUIOff"]
-self_modulate = Color(1, 1, 1, 0)
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 2
-
-[node name="LR" type="PanelContainer" parent="SelectedPlayerUIOff"]
-self_modulate = Color(1, 1, 1, 0)
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 2
-
-[node name="PlayerSelectorDef" type="HBoxContainer" parent="."]
-visible = false
-visibility_layer = 2
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-alignment = 1
-
-[node name="QB" type="Button" parent="PlayerSelectorDef"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 0
-theme = ExtResource("1_o2d43")
-text = "QuarterBack"
-script = ExtResource("2_7llaf")
-playerType = 1
-
-[node name="S" type="Button" parent="PlayerSelectorDef"]
-visibility_layer = 2
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-size_flags_horizontal = 0
-theme = ExtResource("1_o2d43")
-script = ExtResource("2_7llaf")
-playerType = 4
-
-[node name="Label" type="Label" parent="PlayerSelectorDef/S"]
-visibility_layer = 2
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Safety"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="PanelContainer" type="PanelContainer" parent="PlayerSelectorDef"]
-self_modulate = Color(1, 1, 1, 0)
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-
-[node name="L" type="Button" parent="PlayerSelectorDef"]
+[node name="Cancel" type="Button" parent="SelectedPlayerUIOff"]
 visibility_layer = 2
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 theme = ExtResource("1_o2d43")
-script = ExtResource("2_7llaf")
-playerType = 3
+script = ExtResource("11_4cm4h")
 
-[node name="Label" type="Label" parent="PlayerSelectorDef/L"]
+[node name="Label" type="Label" parent="SelectedPlayerUIOff/Cancel"]
 visibility_layer = 2
 layout_mode = 1
 anchors_preset = 15
@@ -351,9 +236,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Linebacker"
+text = "Cancel"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="LR" type="PanelContainer" parent="SelectedPlayerUIOff"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
 
 [node name="SelectedPlayerUIDef" type="GridContainer" parent="."]
 visible = false
@@ -363,12 +253,27 @@ offset_right = 40.0
 offset_bottom = 40.0
 columns = 3
 
-[node name="TL" type="PanelContainer" parent="SelectedPlayerUIDef"]
-self_modulate = Color(1, 1, 1, 0)
-custom_minimum_size = Vector2(50, 50)
+[node name="Cancel" type="Button" parent="SelectedPlayerUIDef"]
+visibility_layer = 2
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+size_flags_horizontal = 8
+theme = ExtResource("1_o2d43")
+script = ExtResource("11_4cm4h")
 
-[node name="Route" type="Button" parent="SelectedPlayerUIDef"]
+[node name="Label" type="Label" parent="SelectedPlayerUIDef/Cancel"]
+visibility_layer = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Cancel"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Zone" type="Button" parent="SelectedPlayerUIDef"]
 visibility_layer = 2
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
@@ -376,7 +281,7 @@ size_flags_horizontal = 0
 theme = ExtResource("1_o2d43")
 script = ExtResource("11_anhj4")
 
-[node name="Label" type="Label" parent="SelectedPlayerUIDef/Route"]
+[node name="Label" type="Label" parent="SelectedPlayerUIDef/Zone"]
 visibility_layer = 2
 layout_mode = 1
 anchors_preset = 15
