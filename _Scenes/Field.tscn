@@ -19,7 +19,7 @@
 [ext_resource type="Script" uid="uid://dfois0v0jtqqd" path="res://_Scripts/PlayManager.cs" id="14_tri8s"]
 [ext_resource type="Resource" uid="uid://c7eyrp0e4tg0h" path="res://Resources/Stats/Teams/Mamals.tres" id="15_bsuan"]
 [ext_resource type="PackedScene" uid="uid://bcmgvfcvwhc7b" path="res://_Scenes/PlayHUD.tscn" id="19_puul3"]
-[ext_resource type="Resource" path="res://Resources/Plays/Offence/Saquon Up The Middle.tres" id="19_tnsxv"]
+[ext_resource type="Resource" uid="uid://bfsuyo3p3p5db" path="res://Resources/Plays/Offence/Saquon Up The Middle.tres" id="19_tnsxv"]
 [ext_resource type="Resource" uid="uid://bi7utm7mbpr17" path="res://Resources/Plays/Defence/All Out Blitz.tres" id="20_tnsxv"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]

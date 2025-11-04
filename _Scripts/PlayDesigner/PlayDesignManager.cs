@@ -494,7 +494,7 @@ public partial class PlayDesignManager : Node3D
 		player.playerDataDef.rushBall = 1;
 
 		Vector3 dir = (player.GlobalPosition * new Vector3(0, 1, 1)).DirectionTo(QBStartPos);
-		
+		player.routeIndex = rdm.lines.Count;
 		rdm.NewRoute(mainCamera.UnprojectPosition(selectedObject.GlobalPosition));
 		rdm.UpdateLine(mainCamera, player.GlobalPosition * new Vector3(0,1,1), -1);
 		rdm.PlacePoint(-1);

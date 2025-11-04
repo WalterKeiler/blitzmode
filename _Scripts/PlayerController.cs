@@ -31,6 +31,8 @@ public partial class PlayerController : Node3D
 	public bool CanMove;
 	public bool IsBlocking;
 	public bool CanBlock;
+	public bool IsBlocked;
+	public bool IsTargeted;
 	public Vector3 _moveDirection;
 	public float blockStamina;
 	public float movementMultiplier = 1;
@@ -112,6 +114,9 @@ public partial class PlayerController : Node3D
 		CanCatch = true;
 		CanAct = true;
 		CanMove = true;
+		IsTargeted = false;
+		IsBlocked = false;
+		IsBlocking = false;
 		switchTargetTimer = 0;
 		testMat = (StandardMaterial3D)mat.Duplicate();
 		mesh.MaterialOverride = testMat;
@@ -409,11 +414,21 @@ public partial class PlayerController : Node3D
 	/// <param name="sameTeam"></param>
 	/// <param name="prioritizeBall"></param>
 	/// <returns></returns>
-	public PlayerController GetNearestPlayer(bool sameTeam, bool prioritizeBall = false, bool lookForReciver = false)
+	public PlayerController GetNearestPlayer(bool sameTeam, bool prioritizeBall = false, bool lookForReciver = false, PlayerController[] ingnorePlayers = default)
 	{
 		PlayerController target = null;
-		List<PlayerController> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
+		List<PlayerController> playersToSearch = new List<PlayerController>(sameTeam ? PlayersOnTeam : PlayersNotOnTeam);
 		float minDistance = float.MaxValue;
+		
+		if (ingnorePlayers != default)
+		{
+			foreach (var p in ingnorePlayers)
+			{
+				if(p == null) continue;
+				playersToSearch.Remove(p);
+			}
+		}
+		
 		for (int i = 0; i < playersToSearch.Count; i++)
 		{
 			PlayerController ctlr =  (PlayerController) playersToSearch[i];
@@ -440,7 +455,7 @@ public partial class PlayerController : Node3D
 	public PlayerController GetNearestPlayerByType(bool sameTeam, PlayerType playerType, bool prioritizeBall = false, PlayerController[] ingnorePlayers = default)
 	{
 		PlayerController target = null;
-		List<PlayerController> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
+		List<PlayerController> playersToSearch = new List<PlayerController>(sameTeam ? PlayersOnTeam : PlayersNotOnTeam);
 		float minDistance = float.MaxValue;
 
 		if (ingnorePlayers != default)
@@ -478,7 +493,22 @@ public partial class PlayerController : Node3D
 
 		for (int i = 0; i < target.Length; i++)
 		{
-			target[i] = GetNearestPlayerByType(sameTeam, playerType, prioritizeBall);
+			target[i] = GetNearestPlayerByType(sameTeam, playerType, prioritizeBall, target);
+		}
+
+		return target;
+	}
+	public PlayerController[] GetNearestPlayers(bool sameTeam, bool prioritizeBall = false)
+	{
+		
+		List<PlayerController> playersToSearch = sameTeam ? PlayersOnTeam : PlayersNotOnTeam;
+		PlayerController[] target = new PlayerController[playersToSearch.Count];
+
+		for (int i = 0; i < target.Length; i++)
+		{
+			target[i] = GetNearestPlayer(sameTeam, prioritizeBall, false, target);
+			//GD.Print("Found: " + target[i].Name);
+
 		}
 
 		return target;
@@ -609,13 +639,15 @@ public partial class PlayerController : Node3D
 		CanBlock = false;
 		PlayerController nearestPlayer = GetNearestPlayer(false);
 		Vector3 dir = GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition);
-		
-		if (nearestPlayer._moveDirection.Dot(dir) > .5f && ((nearestPlayer.playerStats.Strength + nearestPlayer.teamStats.Linemen) / 2) < blockStamina)
+		//GD.Print(nearestPlayer._moveDirection.Dot(dir) < 0.75f);
+		if (nearestPlayer._moveDirection.Dot(dir) < 0.75f && ((nearestPlayer.playerStats.Strength + nearestPlayer.teamStats.Linemen) / 2) < blockStamina)
 		{
 			nearestPlayer._moveDirection = Vector3.Zero;
+			nearestPlayer.IsBlocked = true;
 		}
 		else
 		{
+			nearestPlayer.IsBlocked = false;
 			BlockCoolDown();
 			IsBlocking = false;
 		}

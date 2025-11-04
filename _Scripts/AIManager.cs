@@ -191,8 +191,39 @@ public partial class AIManager : Node
     Vector3 Block()
     {
         if(block == 0) return Vector3.Zero;
+        
+        PlayerController[] nearestPlayers = player.GetNearestPlayers(false);
+        PlayerController nearestPlayer = targetPlayer;
+        //GD.Print(nearestPlayers.Length);
+        foreach (PlayerController p in nearestPlayers)
+        { 
+            if(targetPlayer == null)
+            {
+                if (p.IsTargeted)
+                {
+                    continue;
+                }
+            }
+            else if (targetPlayer.GlobalPosition.DistanceTo(ball.GlobalPosition) <
+                     p.GlobalPosition.DistanceTo(ball.GlobalPosition) 
+                     || p.IsBlocked || p.IsTargeted || (!p.isPlayerControlled && p.aiManager.rushBall < 1))
+            {
+                continue;
+            }
 
-        PlayerController nearestPlayer = player.GetNearestPlayer(false);
+            if (targetPlayer != null) targetPlayer.IsTargeted = false;
+            nearestPlayer = p;
+            targetPlayer = p;
+            p.IsTargeted = true;
+            break;
+        }
+        if(nearestPlayer == null && targetPlayer == null)
+        {
+            GD.Print("No nearest player");
+            return Vector3.Zero;
+        }
+        if(nearestPlayer == null && targetPlayer != null) nearestPlayer = targetPlayer;
+        
         Vector3 dir = player.GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition);
         if (player.GlobalPosition.DistanceTo(nearestPlayer.GlobalPosition) < 1f)
         {
@@ -250,7 +281,8 @@ public partial class AIManager : Node
         if (targetPlayer == null) return Vector3.Zero;
         
         Vector3 nearestPlayer = targetPlayer.GlobalPosition;
-        if (player.GlobalPosition.DistanceTo(nearestPlayer) < 1.5f)
+        if (player.GlobalPosition.DistanceTo(nearestPlayer) < 1.5f || 
+            targetPlayer._moveDirection.Dot(targetPlayer.GlobalPosition.DirectionTo(player.GlobalPosition)) > .85f)
         {
             return Vector3.Zero;
         }

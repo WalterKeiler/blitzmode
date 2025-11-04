@@ -27,6 +27,8 @@ public partial class PlayManager : Node
 	public float quarterTimer;
 	public int quarterNumber = 1;
 	
+	List<PlayerController> reciverPositions = new List<PlayerController>();
+	
 	public static event Action InitPlay;
 	public static event Action UpdateScore;
 	public static event Action<bool> EndPlay;
@@ -146,9 +148,12 @@ public partial class PlayManager : Node
 		Ball.Instance.ballState = BallState.Held;
 		Ball.Instance.GlobalPosition = Vector3.Up;
 
+		reciverPositions = new List<PlayerController>();
+		
 		int team1PlayerIndex = 0;
 		int team2PlayerIndex = 0;
-		
+
+		int r = 0;
 		int o = 0;
 		int d = 0;
 		for (int i = 0; i < gm.players.Length; i++)
@@ -167,7 +172,9 @@ public partial class PlayManager : Node
 				gm.players[i].Position = new Vector3(lineOfScrimmage + pos.Y * PlayDirection, 1, pos.X);
 				gm.players[i].playerStats = play.PlayerType;
 				
-				gm.players[i].Name = (play.PlayerType.PlayerType + " " + i);
+				gm.players[i].Name = (play.PlayerType.PlayerType + " " + o);
+				
+				if(gm.players[i].playerStats.canBeThrowTarget) reciverPositions.Add(gm.players[i]);
 				
 				if(play.StartsWithBall)
 				{
@@ -228,7 +235,15 @@ public partial class PlayManager : Node
 				gm.players[i].Position = (Vector3.Right * 1) + new Vector3(lineOfScrimmage + pos.Y * PlayDirection, 1, pos.X);
 				gm.players[i].playerStats = play.PlayerType;
 				
-				gm.players[i].Name = (play.PlayerType.PlayerType + " " + i);
+				gm.players[i].Name = (play.PlayerType.PlayerType + " " + d);
+				
+				if(play.followPlayer > 0 && r < reciverPositions.Count)
+				{
+					gm.players[i].Position = new Vector3(gm.players[i].Position.X + 2 * PlayDirection, gm.players[i].Position.Y,
+						reciverPositions[r].GlobalPosition.Z);
+					gm.players[i].aiManager.targetPlayer = reciverPositions[r];
+					r++;
+				}
 				
 				if(!play.IsPlayer)
 				{
