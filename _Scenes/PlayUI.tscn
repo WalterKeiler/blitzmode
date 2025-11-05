@@ -5,10 +5,16 @@
 [ext_resource type="LabelSettings" uid="uid://bn80hiao1bfo6" path="res://Fonts/PlayUI.tres" id="3_rhn13"]
 
 [node name="Play" type="Control" node_paths=PackedStringArray("image", "name")]
+custom_minimum_size = Vector2(175, 128)
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -977.0
+offset_bottom = -520.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
 script = ExtResource("1_61gsx")
 image = NodePath("PlayImage")
 name = NodePath("PlayName")
@@ -22,7 +28,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PlayImage" type="TextureRect" parent="."]
-custom_minimum_size = Vector2(128, 128)
+custom_minimum_size = Vector2(175, 128)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,15 +40,13 @@ texture = ExtResource("1_eisve")
 expand_mode = 2
 
 [node name="PlayName" type="Label" parent="."]
+z_index = 1
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
+anchors_preset = 12
 anchor_top = 1.0
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -93.5
 offset_top = -22.0
-offset_right = 93.5
 grow_horizontal = 2
 grow_vertical = 0
 text = "TestPlay"
@@ -52,6 +56,7 @@ vertical_alignment = 1
 
 [node name="NameBacker" type="Panel" parent="PlayName"]
 show_behind_parent = true
+z_index = -1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

@@ -11,6 +11,8 @@ public partial class PDUIManager : Control
     [Export] public Button selectZone;
     [Export] public Control selectedPlayerUIDef;
 
+    [Export] public LineEdit name;
+    
     bool selectPosition;
     PlayDesignManager pdm;
 
@@ -99,18 +101,27 @@ public partial class PDUIManager : Control
     public void Blitz()
     {
         selectedPlayerUIDef.Visible = false;
+        selectRoute.Disabled = true;
+        selectBlitz.Disabled = true;
+        selectZone.Disabled = true;
         pdm.Blitz();
     }
     
     public void NewZone()
     {
         selectedPlayerUIDef.Visible = false;
+        selectRoute.Disabled = true;
+        selectBlitz.Disabled = true;
+        selectZone.Disabled = true;
         pdm.MakeNewZone();
     }
     
     public void NewRoute()
     {
         selectedPlayerUIOff.Visible = false;
+        selectRoute.Disabled = true;
+        selectBlitz.Disabled = true;
+        selectZone.Disabled = true;
         pdm.MakeNewRoute();
     }
 }

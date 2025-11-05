@@ -151,6 +151,7 @@ public partial class PlayDesignManager : Node3D
 				c.QueueFree();
 		}
 
+		pdUI.name.Text = String.Empty;
 	}
 	
 	public override void _Input(InputEvent inEvent)
@@ -260,101 +261,73 @@ public partial class PlayDesignManager : Node3D
 				
 			}
 		}
-		if(inEvent.IsAction("move_left") || inEvent.IsAction("move_right"))
-        {
-        	if (inEvent is InputEventJoypadButton joyEvent)
-        	{
-		        if (inEvent.IsAction("move_left") && joyEvent.Pressed)
-		        {
-			        cursorPos.Z += -.5f;
-		        }
-		        else
-		        {
-			        cursorPos.Z += 0;
-		        }
-  
-		        if (inEvent.IsAction("move_right") && joyEvent.Pressed)
-		        {
-			        cursorPos.Z += .5f;
-		        }
-		        else
-		        {
-			        cursorPos.Z += 0;
-		        }
-        	}
-  
-        	if (inEvent is InputEventKey keyEvent)
-        	{
-        		if (inEvent.IsAction("move_left") && keyEvent.Pressed)
-        		{
-        			cursorPos.Z += -.5f;
-        		}
-        		else
-        		{
-        			cursorPos.Z += 0;
-        		}
-  
-        		if (inEvent.IsAction("move_right") && keyEvent.Pressed)
-        		{
-        			cursorPos.Z += .5f;
-        		}
-        		else
-        		{
-        			cursorPos.Z += 0;
-        		}
-        	}
-        }
-  
-        if (inEvent.IsAction("move_back") || inEvent.IsAction("move_forward"))
-        {
-        	if (inEvent is InputEventJoypadButton joyEvent)
-        	{
-		        if (inEvent.IsAction("move_back") && joyEvent.Pressed)
-		        {
-			        cursorPos.X += -.5f;
-		        }
-		        else
-		        {
-			        cursorPos.X += 0;
-		        }
-  
-		        if (inEvent.IsAction("move_forward") && joyEvent.Pressed)
-		        {
-			        cursorPos.X += .5f;
-		        }
-		        else
-		        {
-			        cursorPos.X += 0;
-		        }
-        	}
-        	
-        	if (inEvent is InputEventKey keyEvent)
-        	{
-        		if (inEvent.IsAction("move_back") && keyEvent.Pressed)
-        		{
-        			cursorPos.X += -.5f;
-        		}
-        		else
-        		{
-        			cursorPos.X += 0;
-        		}
-  
-        		if (inEvent.IsAction("move_forward") && keyEvent.Pressed)
-        		{
-        			cursorPos.X += .5f;
-        		}
-        		else
-        		{
-        			cursorPos.X += 0;
-        		}
-        	}
-        	
-        }
-        
-        cursorPos *= 2;
-        cursorPos = cursorPos.Round() / 2;
-        cursorPos = cursorPos.Clamp(CursorMinPos, CursorMaxPos);
-        cursorIcon.GlobalPosition = new Vector3(cursorPos.X, 1, cursorPos.Z);
+		//if(inEvent.GetDevice() == PlayerID)
+		{
+			if(inEvent.IsAction("move_left") || inEvent.IsAction("move_right"))
+			{
+				if (inEvent is InputEventJoypadMotion joyEvent)
+				{
+					GD.Print(joyEvent.AxisValue);
+					cursorPos.Z += (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f ? joyEvent.GetAxisValue() / 10 : 0);
+				}
+
+				if (inEvent is InputEventKey keyEvent)
+				{
+					if (inEvent.IsAction("move_left") && keyEvent.Pressed)
+					{
+						cursorPos.Z += -1;
+					}
+					else
+					{
+						cursorPos.Z += 0;
+					}
+
+					if (inEvent.IsAction("move_right") && keyEvent.Pressed)
+					{
+						cursorPos.Z += 1;
+					}
+					else
+					{
+						cursorPos.Z += 0;
+					}
+				}
+			}
+
+			if (inEvent.IsAction("move_back") || inEvent.IsAction("move_forward"))
+			{
+				if (inEvent is InputEventJoypadMotion joyEvent)
+				{
+					cursorPos.X += -(MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f ? joyEvent.GetAxisValue() / 10 : 0);
+				}
+				
+				if (inEvent is InputEventKey keyEvent)
+				{
+					if (inEvent.IsAction("move_back") && keyEvent.Pressed)
+					{
+						cursorPos.X += -1;
+					}
+					else
+					{
+						cursorPos.X += 0;
+					}
+
+					if (inEvent.IsAction("move_forward") && keyEvent.Pressed)
+					{
+						cursorPos.X += 1;
+					}
+					else
+					{
+						cursorPos.X += 0;
+					}
+				}
+				
+			}
+		}
+		Vector3 finalPos = cursorPos;
+        finalPos *= 2;
+        finalPos = finalPos.Round() / 2;
+        finalPos = finalPos.Clamp(CursorMinPos, CursorMaxPos);
+        cursorIcon.GlobalPosition = new Vector3(finalPos.X, 1, finalPos.Z);
 	}
 
 	public async void SavePlay()

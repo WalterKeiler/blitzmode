@@ -87,7 +87,7 @@ mesh = SubResource("QuadMesh_kv2qg")
 
 [node name="SubViewport" type="SubViewport" parent="."]
 handle_input_locally = false
-size = Vector2i(700, 512)
+size = Vector2i(1400, 1024)
 render_target_update_mode = 4
 
 [node name="ScreenShotCam" type="Camera3D" parent="SubViewport"]

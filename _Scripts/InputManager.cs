@@ -6,6 +6,8 @@ using System.Linq;
 
 public partial class InputManager : Node
 {
+	public static float JOYSTICKDEADZONE = .1f;
+	
 	[Export] public int PlayerID;
 	[Export] InputCombo[] _inputCombos;
 	[Export] float _inputBuffer;
@@ -17,7 +19,7 @@ public partial class InputManager : Node
 	double deltaTime;
 
 	public Vector3 directionalInput;
-	
+	bool keyChanged = false;
 	public static event Action<PlayerActions, int, bool, bool> InputPressAction;
 	public static event Action<PlayerActions, int, bool, bool> InputReleaseAction;
 	public override void _Ready()
@@ -39,35 +41,29 @@ public partial class InputManager : Node
 	public override void _Input(InputEvent iEvent)
 	{
 		base._Input(iEvent);
-		
-		
+		keyChanged = false;
 		if(iEvent.GetDevice() == PlayerID)
 		{
 			if(iEvent.IsAction("move_left") || iEvent.IsAction("move_right"))
 			{
 				if (iEvent is InputEventJoypadMotion joyEvent)
 				{
-					directionalInput.X = -joyEvent.GetAxisValue();
+					keyChanged = true;
+					directionalInput.X = -(MathF.Abs(joyEvent.GetAxisValue()) > JOYSTICKDEADZONE ? joyEvent.GetAxisValue() : 0);
 				}
 
 				if (iEvent is InputEventKey keyEvent)
 				{
 					if (iEvent.IsAction("move_left") && keyEvent.Pressed)
 					{
-						directionalInput.X = -1;
-					}
-					else
-					{
-						directionalInput.X = 0;
+						keyChanged = true;
+						directionalInput.X = 1;
 					}
 
 					if (iEvent.IsAction("move_right") && keyEvent.Pressed)
 					{
-						directionalInput.X = 1;
-					}
-					else
-					{
-						directionalInput.X = 0;
+						keyChanged = true;
+						directionalInput.X = -1;
 					}
 				}
 			}
@@ -76,34 +72,33 @@ public partial class InputManager : Node
 			{
 				if (iEvent is InputEventJoypadMotion joyEvent)
 				{
-					directionalInput.Z = -joyEvent.GetAxisValue();
+					keyChanged = true;
+					directionalInput.Z = -(MathF.Abs(joyEvent.GetAxisValue()) > JOYSTICKDEADZONE ? joyEvent.GetAxisValue() : 0);
 				}
 				
 				if (iEvent is InputEventKey keyEvent)
 				{
 					if (iEvent.IsAction("move_back") && keyEvent.Pressed)
 					{
+						keyChanged = true;
 						directionalInput.Z = -1;
-					}
-					else
-					{
-						directionalInput.Z = 0;
 					}
 
 					if (iEvent.IsAction("move_forward") && keyEvent.Pressed)
 					{
+						keyChanged = true;
 						directionalInput.Z = 1;
-					}
-					else
-					{
-						directionalInput.Z = 0;
 					}
 				}
 				
 			}
 			
-			
 		}
+		if (!keyChanged)
+		{
+			directionalInput = Vector3.Zero;
+		}
+		
 	}
 
 	void CustomInputs()

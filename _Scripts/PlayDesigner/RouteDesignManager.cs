@@ -61,6 +61,7 @@ public partial class RouteDesignManager : Node
         newLine.SetEndCapMode(Line2D.LineCapMode.Round);
         newLine.SetDefaultColor(Colors.Red);
         newLine.SetWidth(4.5f);
+        newLine.SetZIndex(-1);
     }
 
     public void RemoveRoute(int index)

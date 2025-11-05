@@ -51,7 +51,7 @@ custom_minimum_size = Vector2(175, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 placeholder_text = "Play Name"
-max_length = 20
+max_length = 17
 script = ExtResource("2_35btx")
 
 [node name="SavePlay" type="Button" parent="UISplit/Upper/Left"]
@@ -380,7 +380,8 @@ script = ExtResource("5_qmewk")
 
 [node name="Line2D" type="Line2D" parent="RouteManager"]
 visible = false
-points = PackedVector2Array(0, 0, 100, 0, 249, 413, 669, 144, 813, 460, 823, 455, 818, 469, 803, 465, 823, 455)
+z_index = -1
+points = PackedVector2Array(0, 0, 82, 64, 249, 413, 669, 144, 813, 460, 823, 455, 818, 469, 803, 465, 823, 455)
 joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2

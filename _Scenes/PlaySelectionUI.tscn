@@ -1,9 +1,27 @@
-[gd_scene load_steps=3 format=3 uid="uid://da44s0i0rtv5k"]
+[gd_scene load_steps=5 format=3 uid="uid://da44s0i0rtv5k"]
 
 [ext_resource type="PackedScene" uid="uid://sg8pqaimncg0" path="res://_Scenes/PlayUI.tscn" id="1_6vphr"]
 [ext_resource type="Script" uid="uid://c881t8pckhcgt" path="res://_Scripts/PlaySelection/PlaySelectionUIManager.cs" id="1_7566c"]
 
-[node name="PlaySelectionUI" type="Control" node_paths=PackedStringArray("team1Plays", "team2Plays")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7566c"]
+draw_center = false
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.069082156, 0.33868375, 0.9999998, 1)
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kjch2"]
+draw_center = false
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.7823125, 0.1511828, 4.813075e-07, 1)
+border_blend = true
+
+[node name="PlaySelectionUI" type="Control" node_paths=PackedStringArray("team1Plays", "team2Plays", "team1SelectionIndicator", "team2SelectionIndicator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,6 +31,8 @@ grow_vertical = 2
 script = ExtResource("1_7566c")
 team1Plays = [NodePath("VBoxContainer/Plays/PlaysTeam1/Play"), NodePath("VBoxContainer/Plays/PlaysTeam1/Play2"), NodePath("VBoxContainer/Plays/PlaysTeam1/Play3"), NodePath("VBoxContainer/Plays/PlaysTeam1/Play4"), NodePath("VBoxContainer/Plays/PlaysTeam1/Play5"), NodePath("VBoxContainer/Plays/PlaysTeam1/Play6"), NodePath("VBoxContainer/Plays/PlaysTeam1/Play7"), NodePath("VBoxContainer/Plays/PlaysTeam1/Play8"), NodePath("VBoxContainer/Plays/PlaysTeam1/Play9")]
 team2Plays = [NodePath("VBoxContainer/Plays/PlaysTeam2/Play"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play2"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play3"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play4"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play5"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play6"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play7"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play8"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play9")]
+team1SelectionIndicator = NodePath("SelectionTeam1")
+team2SelectionIndicator = NodePath("SelectionTeam2")
 OffencePlaysPath = "res://Resources/Plays/Offence/"
 DefencePlaysPath = "res://Resources/Plays/Defence/"
 
@@ -25,13 +45,17 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Header" type="Panel" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 225)
 layout_mode = 2
 size_flags_vertical = 0
 
 [node name="Plays" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="Split2" type="Panel" parent="VBoxContainer/Plays"]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
 
 [node name="PlaysTeam1" type="GridContainer" parent="VBoxContainer/Plays"]
 layout_mode = 2
@@ -100,3 +124,25 @@ layout_mode = 2
 
 [node name="Play9" parent="VBoxContainer/Plays/PlaysTeam2" instance=ExtResource("1_6vphr")]
 layout_mode = 2
+
+[node name="Split3" type="Panel" parent="VBoxContainer/Plays"]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
+
+[node name="SelectionTeam1" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7566c")
+
+[node name="SelectionTeam2" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_kjch2")
