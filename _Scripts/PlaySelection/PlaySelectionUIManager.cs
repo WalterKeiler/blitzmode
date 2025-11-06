@@ -29,13 +29,16 @@ public partial class PlaySelectionUIManager : Control
     private int team2InputID = 1;
 
     [Export] int maxPageNumOff;
+    [Export] int lastPageNumOff;
     [Export] int maxPageNumDef;
+    [Export] int lastPageNumDef;
     
     private GameManager gm;
     private PlayManager pm;
 
     bool h = false;
     bool holdingMotion = false;
+    bool holdForRelease = false;
     
     public override void _Ready()
     {
@@ -69,6 +72,9 @@ public partial class PlaySelectionUIManager : Control
 
         maxPageNumOff = Mathf.CeilToInt(OffencePlays.Length / PLAYS_PERPAGE);
         maxPageNumDef = Mathf.CeilToInt(DefencePlays.Length / PLAYS_PERPAGE);
+
+        lastPageNumOff = OffencePlays.Length % PLAYS_PERPAGE;
+        lastPageNumDef = DefencePlays.Length % PLAYS_PERPAGE;
         
         UpdateSelection();
         if(pm != null)
@@ -103,27 +109,65 @@ public partial class PlaySelectionUIManager : Control
 
     void HandleInput(ref int team, InputEvent inEvent)
     {
+        bool isOffence = team == team1Selection;
+        //isOffence = team == team1Selection && pm.PlayDirection == 1;
+
+        int lastPageIndex = isOffence ? lastPageNumOff : lastPageNumDef;
+        int maxPage = isOffence ? maxPageNumOff : maxPageNumDef;
+        int currentPageIndex = isOffence ? offencePage : defencePage;
+
+        bool isOnLastPage = currentPageIndex == maxPage;
+        // bool useCanMoveDown = true;
+        // if(isOnLastPage)
+        
         if (inEvent.IsAction("ui_accept"))
         {
-            LockTeamSelection(team == team1Selection);
+            LockTeamSelection(isOffence);
             return;
         }
         if (inEvent.IsAction("ui_cancel"))
         {
-            UnlockTeamSelection(team == team1Selection);
+            UnlockTeamSelection(isOffence);
             return;
         }
         if (inEvent.IsAction("ui_turn_page_left"))
         {
-            if(team == team1Selection)
+            switch (isOffence)
             {
-                if (offencePage - 1 >= 0) offencePage--;
+                case true:
+                {
+                    if(offencePage - 1 >= 0 && holdForRelease)
+                    {
+                        holdForRelease = false;
+                        offencePage--;
+                        if(offencePage == maxPageNumOff && team >= lastPageNumOff)
+                            team = 0;
+                    }
+                    if (offencePage - 1 >= 0 && !holdForRelease)
+                    {
+                        holdForRelease = true;
+                    }
+
+                    break;
+                }
+                case false:
+                {
+                    if(defencePage - 1 >= 0 && holdForRelease)
+                    {
+                        holdForRelease = false;
+                        defencePage--;
+                        if(defencePage == maxPageNumDef && team >= lastPageNumDef)
+                            team = 0;
+                    }
+                    if (defencePage - 1 >= 0 && !holdForRelease)
+                    {
+                        holdForRelease = true;
+                    }
+
+                    break;
+                }
             }
-            if(team != team1Selection)
-            {
-                if (defencePage - 1 >= 0) defencePage--;
-            }
-            
+
             if(pm != null)
             {
                 if (pm.PlayDirection == 1)
@@ -139,15 +183,42 @@ public partial class PlaySelectionUIManager : Control
         }
         if (inEvent.IsAction("ui_turn_page_right"))
         {
-            if(team == team1Selection)
+            switch (isOffence)
             {
-                if (offencePage + 1 <= maxPageNumOff) offencePage++;
+                case true:
+                {
+                    if(offencePage + 1 <= maxPageNumOff && holdForRelease)
+                    {
+                        holdForRelease = false;
+                        offencePage++;
+                        if(offencePage == maxPageNumOff && team >= lastPageNumOff)
+                            team = 0;
+                    }
+                    if (offencePage + 1 <= maxPageNumOff && !holdForRelease)
+                    {
+                        holdForRelease = true;
+                    }
+
+                    break;
+                }
+                case false:
+                {
+                    if(defencePage + 1 <= maxPageNumOff && holdForRelease)
+                    {
+                        holdForRelease = false;
+                        defencePage++;
+                        if(defencePage == maxPageNumDef && team >= lastPageNumDef)
+                            team = 0;
+                    }
+                    if (defencePage + 1 <= maxPageNumOff && !holdForRelease)
+                    {
+                        holdForRelease = true;
+                    }
+
+                    break;
+                }
             }
-            if(team != team1Selection)
-            {
-                if (defencePage + 1 <= maxPageNumOff) defencePage++;
-            }
-            
+
             if(pm != null)
             {
                 if (pm.PlayDirection == 1)
@@ -164,68 +235,79 @@ public partial class PlaySelectionUIManager : Control
         
         if(inEvent.IsAction("move_left") || inEvent.IsAction("move_right"))
         {
-            if (inEvent is InputEventJoypadMotion joyEvent)
+            switch (inEvent)
             {
-                if(((joyEvent.GetAxisValue() > 0 && (team + 1) % 3 != 0) ||
-                    (joyEvent.GetAxisValue() < 0 && team % 3 != 0)) && holdingMotion == false)
+                case InputEventJoypadMotion joyEvent:
                 {
-                    team += (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f
-                        ? (joyEvent.GetAxisValue() > 0 ? 1 : -1)
-                        : 0);
-                    if (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f)
+                    if(((joyEvent.GetAxisValue() > 0 && (team + 1) % 3 != 0 &&
+                         !(isOnLastPage && team + 1 >= lastPageIndex)) ||
+                        (joyEvent.GetAxisValue() < 0 && team % 3 != 0)) && holdingMotion == false)
                     {
-                        holdingMotion = true;
-                    }
+                        team += (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f
+                            ? (joyEvent.GetAxisValue() > 0 ? 1 : -1)
+                            : 0);
+                        if (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f)
+                        {
+                            holdingMotion = true;
+                        }
                         
-                }
-            }
+                    }
 
-            if (inEvent is InputEventKey keyEvent)
-            {
-                if (inEvent.IsAction("move_left") && keyEvent.Pressed)
-                {
-                    if(team % 3 != 0)
-                        team += -1;
+                    break;
                 }
-
-                if (inEvent.IsAction("move_right") && keyEvent.Pressed)
+                case InputEventKey keyEvent:
                 {
-                    if((team + 1) % 3 != 0)
-                        team += 1;
+                    if (inEvent.IsAction("move_left") && keyEvent.Pressed)
+                    {
+                        if(team % 3 != 0)
+                            team += -1;
+                    }
+
+                    if (inEvent.IsAction("move_right") && keyEvent.Pressed)
+                    {
+                        if((team + 1) % 3 != 0 && !(isOnLastPage && team + 1 >= lastPageIndex))
+                            team += 1;
+                    }
+
+                    break;
                 }
             }
         }
 
         if (inEvent.IsAction("move_back") || inEvent.IsAction("move_forward"))
         {
-            if (inEvent is InputEventJoypadMotion joyEvent)
+            switch (inEvent)
             {
-                if(((joyEvent.GetAxisValue() > 0 && team + 3 < PLAYS_PERPAGE) ||
-                    (joyEvent.GetAxisValue() < 0 && team - 3 >= 0)) && holdingMotion == false)
-                    team += -(MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f ? 
-                        (joyEvent.GetAxisValue() > 0 ? -3 : 3) : 0);
-                if (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f)
+                case InputEventJoypadMotion joyEvent:
                 {
-                    holdingMotion = true;
-                }
-                    
-            }
-			
-            if (inEvent is InputEventKey keyEvent)
-            {
-                if (inEvent.IsAction("move_back") && keyEvent.Pressed)
-                {
-                    if(team + 3 < PLAYS_PERPAGE)
-                        team += 3;
-                }
+                    if(((joyEvent.GetAxisValue() > 0 && team + 3 < PLAYS_PERPAGE && !(isOnLastPage && team + 3 >= lastPageIndex)) ||
+                        (joyEvent.GetAxisValue() < 0 && team - 3 >= 0)) && holdingMotion == false)
+                        team += -(MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f ? 
+                            (joyEvent.GetAxisValue() > 0 ? -3 : 3) : 0);
+                    if (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f)
+                    {
+                        holdingMotion = true;
+                    }
 
-                if (inEvent.IsAction("move_forward") && keyEvent.Pressed)
+                    break;
+                }
+                case InputEventKey keyEvent:
                 {
-                    if(team - 3 >= 0)
-                        team += -3;
+                    if (inEvent.IsAction("move_back") && keyEvent.Pressed)
+                    {
+                        if(team + 3 < PLAYS_PERPAGE && !(isOnLastPage && team + 3 >= lastPageIndex))
+                            team += 3;
+                    }
+
+                    if (inEvent.IsAction("move_forward") && keyEvent.Pressed)
+                    {
+                        if(team - 3 >= 0)
+                            team += -3;
+                    }
+
+                    break;
                 }
             }
-			
         }
 
         if (inEvent is InputEventJoypadMotion joyE)
