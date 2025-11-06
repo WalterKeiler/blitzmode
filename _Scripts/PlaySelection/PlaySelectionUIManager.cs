@@ -12,6 +12,9 @@ public partial class PlaySelectionUIManager : Control
 
     [Export] private Control team1SelectionIndicator;
     [Export] private Control team2SelectionIndicator;
+
+    [Export] private Label team1PageText;
+    [Export] private Label team2PageText;
     
     [Export] int team1Selection = 0;
     [Export] int team2Selection = 0;
@@ -22,20 +25,23 @@ public partial class PlaySelectionUIManager : Control
     [Export] int offencePage = 0;
     [Export] int defencePage = 0;
     
-    [Export] Play[] OffencePlays;
-    [Export] Play[] DefencePlays;
+    Play[] OffencePlays;
+    Play[] DefencePlays;
 
     private int team1InputID = 0;
     private int team2InputID = 1;
 
-    [Export] int maxPageNumOff;
-    [Export] int lastPageNumOff;
-    [Export] int maxPageNumDef;
-    [Export] int lastPageNumDef;
+    int maxPageNumOff;
+    int lastPageNumOff;
+    int maxPageNumDef;
+    int lastPageNumDef;
     
     private GameManager gm;
     private PlayManager pm;
 
+    private bool offenceSelected;
+    private bool defenceSelected;
+    
     bool h = false;
     bool holdingMotion = false;
     bool holdForRelease = false;
@@ -115,7 +121,7 @@ public partial class PlaySelectionUIManager : Control
         int lastPageIndex = isOffence ? lastPageNumOff : lastPageNumDef;
         int maxPage = isOffence ? maxPageNumOff : maxPageNumDef;
         int currentPageIndex = isOffence ? offencePage : defencePage;
-
+        
         bool isOnLastPage = currentPageIndex == maxPage;
         // bool useCanMoveDown = true;
         // if(isOnLastPage)
@@ -125,11 +131,7 @@ public partial class PlaySelectionUIManager : Control
             LockTeamSelection(isOffence);
             return;
         }
-        if (inEvent.IsAction("ui_cancel"))
-        {
-            UnlockTeamSelection(isOffence);
-            return;
-        }
+        
         if (inEvent.IsAction("ui_turn_page_left"))
         {
             switch (isOffence)
@@ -243,10 +245,13 @@ public partial class PlaySelectionUIManager : Control
                          !(isOnLastPage && team + 1 >= lastPageIndex)) ||
                         (joyEvent.GetAxisValue() < 0 && team % 3 != 0)) && holdingMotion == false)
                     {
-                        team += (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f
-                            ? (joyEvent.GetAxisValue() > 0 ? 1 : -1)
-                            : 0);
-                        if (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f)
+                        if(MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .75f)
+                        {
+                            team += (joyEvent.GetAxisValue() > 0 ? 1 : -1);
+                            UnlockTeamSelection(isOffence);
+                        }
+                        
+                        if (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .75f)
                         {
                             holdingMotion = true;
                         }
@@ -260,13 +265,19 @@ public partial class PlaySelectionUIManager : Control
                     if (inEvent.IsAction("move_left") && keyEvent.Pressed)
                     {
                         if(team % 3 != 0)
+                        {
                             team += -1;
+                            UnlockTeamSelection(isOffence);
+                        }
                     }
 
                     if (inEvent.IsAction("move_right") && keyEvent.Pressed)
                     {
                         if((team + 1) % 3 != 0 && !(isOnLastPage && team + 1 >= lastPageIndex))
+                        {
                             team += 1;
+                            UnlockTeamSelection(isOffence);
+                        }
                     }
 
                     break;
@@ -282,11 +293,18 @@ public partial class PlaySelectionUIManager : Control
                 {
                     if(((joyEvent.GetAxisValue() > 0 && team + 3 < PLAYS_PERPAGE && !(isOnLastPage && team + 3 >= lastPageIndex)) ||
                         (joyEvent.GetAxisValue() < 0 && team - 3 >= 0)) && holdingMotion == false)
-                        team += -(MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f ? 
-                            (joyEvent.GetAxisValue() > 0 ? -3 : 3) : 0);
-                    if (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .25f)
                     {
-                        holdingMotion = true;
+                        if(MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .75f)
+                        {
+                            team += -(joyEvent.GetAxisValue() > 0 ? -3 : 3);
+                            UnlockTeamSelection(isOffence);
+
+                        }
+                        
+                        if (MathF.Abs(joyEvent.GetAxisValue()) > InputManager.JOYSTICKDEADZONE + .75f)
+                        {
+                            holdingMotion = true;
+                        }
                     }
 
                     break;
@@ -296,13 +314,20 @@ public partial class PlaySelectionUIManager : Control
                     if (inEvent.IsAction("move_back") && keyEvent.Pressed)
                     {
                         if(team + 3 < PLAYS_PERPAGE && !(isOnLastPage && team + 3 >= lastPageIndex))
+                        {
                             team += 3;
+                            UnlockTeamSelection(isOffence);
+
+                        }
                     }
 
                     if (inEvent.IsAction("move_forward") && keyEvent.Pressed)
                     {
                         if(team - 3 >= 0)
+                        {
                             team += -3;
+                            UnlockTeamSelection(isOffence);
+                        }
                     }
 
                     break;
@@ -326,13 +351,17 @@ public partial class PlaySelectionUIManager : Control
         holdingMotion = false;
     }
 
-    void LockTeamSelection(bool isTeam1)
+    void LockTeamSelection(bool isOffence)
     {
-        
+        GD.Print("Lock");
+        if (isOffence) offenceSelected = true;
+        else defenceSelected = true;
     }
-    void UnlockTeamSelection(bool isTeam1)
+    void UnlockTeamSelection(bool isOffence)
     {
-        
+        GD.Print("Unlock");
+        if (isOffence) offenceSelected = false;
+        else defenceSelected = false;
     }
     
     void UpdateSelection()
@@ -345,6 +374,12 @@ public partial class PlaySelectionUIManager : Control
     
     public void LoadPlays(PSPlayUI[] offence, PSPlayUI[] defence)
     {
+        int team1Page = offence[0] == team1Plays[0] ? offencePage + 1 : defencePage + 1;
+        int team2Page = offence[0] == team2Plays[0] ? offencePage + 1 : defencePage + 1;
+
+        team1PageText.Text = $"Page {team1Page}";
+        team2PageText.Text = $"Page {team2Page}";
+        
         for (int i = 0; i < offence.Length; i++)
         {
             if(i > PLAYS_PERPAGE) break;

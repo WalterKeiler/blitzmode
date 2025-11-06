@@ -1,7 +1,14 @@
-[gd_scene load_steps=5 format=3 uid="uid://da44s0i0rtv5k"]
+[gd_scene load_steps=9 format=3 uid="uid://da44s0i0rtv5k"]
 
 [ext_resource type="PackedScene" uid="uid://sg8pqaimncg0" path="res://_Scenes/PlayUI.tscn" id="1_6vphr"]
 [ext_resource type="Script" uid="uid://c881t8pckhcgt" path="res://_Scripts/PlaySelection/PlaySelectionUIManager.cs" id="1_7566c"]
+[ext_resource type="Texture2D" uid="uid://ob4hjvynku0l" path="res://icon.svg" id="2_1xvwf"]
+[ext_resource type="FontFile" uid="uid://bx8fbr4nisvkq" path="res://Fonts/Doto,JetBrains_Mono/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf" id="3_g0saw"]
+[ext_resource type="LabelSettings" uid="uid://b15up6lstoawd" path="res://Fonts/PlaySelectionTitle.tres" id="4_ul1af"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_xh8ip"]
+font = ExtResource("3_g0saw")
+font_size = 100
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7566c"]
 draw_center = false
@@ -21,7 +28,7 @@ border_width_bottom = 10
 border_color = Color(0.7823125, 0.1511828, 4.813075e-07, 1)
 border_blend = true
 
-[node name="PlaySelectionUI" type="Control" node_paths=PackedStringArray("team1Plays", "team2Plays", "team1SelectionIndicator", "team2SelectionIndicator")]
+[node name="PlaySelectionUI" type="Control" node_paths=PackedStringArray("team1Plays", "team2Plays", "team1SelectionIndicator", "team2SelectionIndicator", "team1PageText", "team2PageText")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,6 +40,8 @@ team1Plays = [NodePath("VBoxContainer/Plays/PlaysTeam1/Play"), NodePath("VBoxCon
 team2Plays = [NodePath("VBoxContainer/Plays/PlaysTeam2/Play"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play2"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play3"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play4"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play5"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play6"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play7"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play8"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play9")]
 team1SelectionIndicator = NodePath("SelectionTeam1")
 team2SelectionIndicator = NodePath("SelectionTeam2")
+team1PageText = NodePath("VBoxContainer/Header/HBoxContainer/Team1/VBoxContainer/PageNumTeam1")
+team2PageText = NodePath("VBoxContainer/Header/HBoxContainer/Team2/VBoxContainer/PageNumTeam2")
 OffencePlaysPath = "res://Resources/Plays/Offence/"
 DefencePlaysPath = "res://Resources/Plays/Defence/"
 
@@ -48,6 +57,113 @@ grow_vertical = 2
 custom_minimum_size = Vector2(0, 225)
 layout_mode = 2
 size_flags_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Header"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 25.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Team1" type="HBoxContainer" parent="VBoxContainer/Header/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/Header/HBoxContainer/Team1"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_1xvwf")
+stretch_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Header/HBoxContainer/Team1"]
+layout_mode = 2
+
+[node name="Team1Score" type="Label" parent="VBoxContainer/Header/HBoxContainer/Team1/VBoxContainer"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_vertical = 2
+text = "0"
+label_settings = SubResource("LabelSettings_xh8ip")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="PageNumTeam1" type="Label" parent="VBoxContainer/Header/HBoxContainer/Team1/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "Page 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="GameInfo" type="VBoxContainer" parent="VBoxContainer/Header/HBoxContainer"]
+layout_mode = 2
+
+[node name="Yard and Down" type="Label" parent="VBoxContainer/Header/HBoxContainer/GameInfo"]
+layout_mode = 2
+text = "1st & 30 on The 50"
+label_settings = ExtResource("4_ul1af")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Quarter" type="Label" parent="VBoxContainer/Header/HBoxContainer/GameInfo"]
+layout_mode = 2
+text = "1st Quarter"
+label_settings = ExtResource("4_ul1af")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Time in Quarter" type="Label" parent="VBoxContainer/Header/HBoxContainer/GameInfo"]
+layout_mode = 2
+text = "1:43"
+label_settings = ExtResource("4_ul1af")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Time To Pick" type="Label" parent="VBoxContainer/Header/HBoxContainer/GameInfo"]
+layout_mode = 2
+text = "30"
+label_settings = ExtResource("4_ul1af")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="Team2" type="HBoxContainer" parent="VBoxContainer/Header/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Header/HBoxContainer/Team2"]
+layout_mode = 2
+
+[node name="Team2Score" type="Label" parent="VBoxContainer/Header/HBoxContainer/Team2/VBoxContainer"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_vertical = 2
+text = "0"
+label_settings = SubResource("LabelSettings_xh8ip")
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="PageNumTeam2" type="Label" parent="VBoxContainer/Header/HBoxContainer/Team2/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "Page 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/Header/HBoxContainer/Team2"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_1xvwf")
+stretch_mode = 3
 
 [node name="Plays" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
