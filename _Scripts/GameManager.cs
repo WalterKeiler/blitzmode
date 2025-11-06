@@ -17,7 +17,8 @@ public partial class GameManager : Node
 	[Export] public int ExtraPointKickScoreValue = 1;
 	[Export] public int ExtraPointPlayScoreValue = 2;
 	[Export] public int NumberOfQuarters = 4;
-	[Export] public int QuarterLength = 5;
+	[Export] public int QuarterLengthMin = 5;
+	[Export] public int timeToPickPlaySec = 30;
 	[Export, ExportGroup("Field")] public int fieldLength = 100;
 	[Export] public int fieldWidth = 53;
 	[Export] public int EndzoneDepth = 30;

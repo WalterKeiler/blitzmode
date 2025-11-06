@@ -35,12 +35,14 @@ public partial class AIManager : Node
     {
         base._EnterTree();
         PlayManager.InitPlay += Init;
+        PlayManager.EndPlay += Stop;
     }
 
     public override void _ExitTree()
     {
         base._ExitTree();
         PlayManager.InitPlay += Init;
+        PlayManager.EndPlay += Stop;
     }
 
     public override void _Ready()
@@ -62,6 +64,11 @@ public partial class AIManager : Node
         targetPlayer = null;
         overrideTargetPoint = Vector3.Inf;
         isOffence = player.isOffence;
+    }
+
+    void Stop(bool moveLineOfScrimmage)
+    {
+        
     }
     
     public override void _Process(double delta)

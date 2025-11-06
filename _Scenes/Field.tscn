@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://dkddmtmu5c3pb"]
+[gd_scene load_steps=28 format=3 uid="uid://dkddmtmu5c3pb"]
 
 [ext_resource type="Script" uid="uid://byeqa4htefu52" path="res://_Scripts/CameraController.cs" id="1_nb8lh"]
 [ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="2_acjaa"]
@@ -21,6 +21,7 @@
 [ext_resource type="PackedScene" uid="uid://bcmgvfcvwhc7b" path="res://_Scenes/PlayHUD.tscn" id="19_puul3"]
 [ext_resource type="Resource" uid="uid://bfsuyo3p3p5db" path="res://Resources/Plays/Offence/Saquon Up The Middle.tres" id="19_tnsxv"]
 [ext_resource type="Resource" uid="uid://bi7utm7mbpr17" path="res://Resources/Plays/Defence/All Out Blitz.tres" id="20_tnsxv"]
+[ext_resource type="PackedScene" uid="uid://da44s0i0rtv5k" path="res://_Scenes/PlaySelectionUI.tscn" id="22_gpq5w"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -85,12 +86,16 @@ team2 = ExtResource("15_bsuan")
 playerInputTeam1 = [NodePath("../InputManagerInstance")]
 playerInputTeam2 = []
 
-[node name="PlayManager" type="Node" parent="." node_paths=PackedStringArray("mainCam")]
+[node name="PlayManager" type="Node" parent="." node_paths=PackedStringArray("mainCam", "playSelectionUI")]
 script = ExtResource("14_tri8s")
 playerPrefab = ExtResource("3_jke3i")
 BallPrefab = ExtResource("5_weq6n")
 mainCam = NodePath("../CameraController")
+playSelectionUI = NodePath("../PlaySelectionUI")
 OffencePlay = ExtResource("19_tnsxv")
 DefencePlay = ExtResource("20_tnsxv")
 
 [node name="Control" parent="." instance=ExtResource("19_puul3")]
+
+[node name="PlaySelectionUI" parent="." instance=ExtResource("22_gpq5w")]
+visible = false

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://da44s0i0rtv5k"]
+[gd_scene load_steps=10 format=3 uid="uid://da44s0i0rtv5k"]
 
 [ext_resource type="PackedScene" uid="uid://sg8pqaimncg0" path="res://_Scenes/PlayUI.tscn" id="1_6vphr"]
 [ext_resource type="Script" uid="uid://c881t8pckhcgt" path="res://_Scripts/PlaySelection/PlaySelectionUIManager.cs" id="1_7566c"]
@@ -28,7 +28,10 @@ border_width_bottom = 10
 border_color = Color(0.7823125, 0.1511828, 4.813075e-07, 1)
 border_blend = true
 
-[node name="PlaySelectionUI" type="Control" node_paths=PackedStringArray("team1Plays", "team2Plays", "team1SelectionIndicator", "team2SelectionIndicator", "team1PageText", "team2PageText")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1xvwf"]
+bg_color = Color(0.15007517, 0.15007517, 0.15007511, 1)
+
+[node name="PlaySelectionUI" type="Control" node_paths=PackedStringArray("team1Plays", "team2Plays", "team1SelectionIndicator", "team2SelectionIndicator", "yardDownText", "quarterText", "timeInQuarterText", "selectionTimerText", "team1PageText", "team2PageText")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -40,6 +43,10 @@ team1Plays = [NodePath("VBoxContainer/Plays/PlaysTeam1/Play"), NodePath("VBoxCon
 team2Plays = [NodePath("VBoxContainer/Plays/PlaysTeam2/Play"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play2"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play3"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play4"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play5"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play6"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play7"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play8"), NodePath("VBoxContainer/Plays/PlaysTeam2/Play9")]
 team1SelectionIndicator = NodePath("SelectionTeam1")
 team2SelectionIndicator = NodePath("SelectionTeam2")
+yardDownText = NodePath("VBoxContainer/Header/HBoxContainer/GameInfo/Yard and Down")
+quarterText = NodePath("VBoxContainer/Header/HBoxContainer/GameInfo/Quarter")
+timeInQuarterText = NodePath("VBoxContainer/Header/HBoxContainer/GameInfo/Time in Quarter")
+selectionTimerText = NodePath("VBoxContainer/Header/HBoxContainer/GameInfo/Time To Pick")
 team1PageText = NodePath("VBoxContainer/Header/HBoxContainer/Team1/VBoxContainer/PageNumTeam1")
 team2PageText = NodePath("VBoxContainer/Header/HBoxContainer/Team2/VBoxContainer/PageNumTeam2")
 OffencePlaysPath = "res://Resources/Plays/Offence/"
@@ -262,3 +269,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_kjch2")
+
+[node name="Backer" type="Panel" parent="."]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_1xvwf")

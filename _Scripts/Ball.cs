@@ -34,12 +34,14 @@ public partial class Ball : RigidBody3D
     {
         base._EnterTree();
         PlayManager.InitPlay += Init;
+        PlayManager.EndPlay += EndPlay;
     }
 
     public override void _ExitTree()
     {
         base._ExitTree();
         PlayManager.InitPlay -= Init;
+        PlayManager.EndPlay -= EndPlay;
     }
 
     void Init()
@@ -48,6 +50,12 @@ public partial class Ball : RigidBody3D
         endPoint = Vector3.Inf;
         startPoint = Vector3.Inf;
     }
+
+    void EndPlay(bool b)
+    {
+        init = false;
+    }
+    
     public override void _Process(double delta)
     {
         if(!init) return;

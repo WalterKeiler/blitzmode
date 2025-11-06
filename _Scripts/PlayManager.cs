@@ -9,6 +9,8 @@ public partial class PlayManager : Node
 	[Export] private PackedScene playerPrefab;
 	[Export] private PackedScene BallPrefab;
 	[Export] private CameraController mainCam;
+
+	[Export] public Control playSelectionUI;
 	
 	[Export] public Play OffencePlay;
 	[Export] public Play DefencePlay;
@@ -34,7 +36,7 @@ public partial class PlayManager : Node
 	public static event Action<bool> EndPlay;
 	
 	private GameManager gm;
-
+	PlaySelectionUIManager psm;
 	public override void _EnterTree()
 	{
 		base._EnterTree();
@@ -51,6 +53,7 @@ public partial class PlayManager : Node
 	public override void _Ready()
 	{
 		gm = GameManager.Instance;
+		psm = PlaySelectionUIManager.Instance;
 		
 		var ball = BallPrefab.Instantiate<Node3D>();
 		ball.Position = Vector3.Zero;
@@ -60,7 +63,11 @@ public partial class PlayManager : Node
 		
 		SpawnPlayers();
 		FirstDown();
-		StartPlay();
+		
+		quarterTimer = gm.QuarterLengthMin * 60;
+		
+		playSelectionUI.Visible = true;
+		psm.Init();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -69,14 +76,14 @@ public partial class PlayManager : Node
 		if(timerRunning) quarterTimer -= (float)delta;
 		if(quarterTimer < 0)
 		{
-			quarterTimer = gm.QuarterLength * 60;
+			quarterTimer = gm.QuarterLengthMin * 60;
 			quarterNumber++;
 		}
 	}
 	
 	void SpawnPlayers()
 	{
-		quarterTimer = gm.QuarterLength * 60;
+		quarterTimer = gm.QuarterLengthMin * 60;
 		CurrentDown = gm.DownsTillTurnover;
 		PlayDirection = 1;
 		
@@ -333,14 +340,14 @@ public partial class PlayManager : Node
 			FirstDown();
 		}
 		
-		if ((newLos * PlayDirection >= GameManager.Instance.fieldLength / 2f &&
-		     newLos * PlayDirection <= (GameManager.Instance.fieldLength / 2f) + GameManager.Instance.EndzoneDepth))
+		if ((newLos * PlayDirection >= gm.fieldLength / 2f &&
+		     newLos * PlayDirection <= (gm.fieldLength / 2f) + gm.EndzoneDepth))
 		{
 			Touchdown();
 		}
 		
-		if ((newLos * -PlayDirection >= GameManager.Instance.fieldLength / 2f &&
-		     newLos * -PlayDirection <= (GameManager.Instance.fieldLength / 2f) + GameManager.Instance.EndzoneDepth))
+		if ((newLos * -PlayDirection >= gm.fieldLength / 2f &&
+		     newLos * -PlayDirection <= (gm.fieldLength / 2f) + gm.EndzoneDepth))
 		{
 			Safety();
 		}
@@ -356,13 +363,17 @@ public partial class PlayManager : Node
 		
 		if(!moveLineOfScrimmage)
 		{
-			StartPlay();
+			playSelectionUI.Visible = true;
+			psm.Init();
+			//StartPlay();
 			return;
 		}
 		
 		
 		lineOfScrimmage = newLos;
-		StartPlay();
+		playSelectionUI.Visible = true;
+		psm.Init();
+		//StartPlay();
 	}
 
 	void FirstDown()
@@ -426,7 +437,11 @@ public partial class PlayManager : Node
 		if(PlayDirection == 1) GD.Print("Team 1 off Team 2 Def");
 		if(PlayDirection == -1) GD.Print("Team 2 off Team 1 Def");
 		
-		StartPlay();
+		if(!playStillActive)
+		{
+			playSelectionUI.Visible = true;
+			psm.Init();
+		}
 	}
 	
 	public void StartTimer() {timerRunning = true;}

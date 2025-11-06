@@ -13,6 +13,10 @@ public partial class PlaySelectionUIManager : Control
     [Export] private Control team1SelectionIndicator;
     [Export] private Control team2SelectionIndicator;
 
+    [Export] private Label yardDownText;
+    [Export] private Label quarterText;
+    [Export] private Label timeInQuarterText;
+    [Export] private Label selectionTimerText;
     [Export] private Label team1PageText;
     [Export] private Label team2PageText;
     
@@ -31,13 +35,15 @@ public partial class PlaySelectionUIManager : Control
     private int team1InputID = 0;
     private int team2InputID = 1;
 
+    float playSelectionTimer;
+    
     int maxPageNumOff;
     int lastPageNumOff;
     int maxPageNumDef;
     int lastPageNumDef;
     
-    private GameManager gm;
-    private PlayManager pm;
+    GameManager gm;
+    PlayManager pm;
 
     private bool offenceSelected;
     private bool defenceSelected;
@@ -46,6 +52,16 @@ public partial class PlaySelectionUIManager : Control
     bool holdingMotion = false;
     bool holdForRelease = false;
     
+    string[] suffixLookup = ["st","nd","rd","th"];
+
+    bool ready = false;
+    
+    public override void _EnterTree()
+    {
+        base._EnterTree();
+        Instance = this;
+    }
+
     public override void _Ready()
     {
         base._Ready();
@@ -81,8 +97,35 @@ public partial class PlaySelectionUIManager : Control
 
         lastPageNumOff = OffencePlays.Length % PLAYS_PERPAGE;
         lastPageNumDef = DefencePlays.Length % PLAYS_PERPAGE;
-        
+        ready = true;
         UpdateSelection();
+        //Init();
+    }
+
+    public void Init()
+    {
+        if(!ready) _Ready();
+        
+        team1Selection = 0;
+        team2Selection = 0;
+        offencePage = 0;
+        defencePage = 0;
+        
+        int min = Mathf.FloorToInt(pm.quarterTimer / 60);
+        int sec = Mathf.FloorToInt(pm.quarterTimer) - (min * 60);
+        
+        int suffixD = Mathf.Clamp((gm.DownsTillTurnover - (pm.CurrentDown)), 0, suffixLookup.Length - 1);
+        int suffix = Mathf.Clamp(pm.quarterNumber - 1, 0, suffixLookup.Length - 1);
+        
+        yardDownText.Text =
+            $"{gm.DownsTillTurnover - (pm.CurrentDown - 1)}{suffixLookup[suffixD]} & " +
+            $"{Mathf.RoundToInt(Mathf.Abs(pm.firstDownLine - pm.lineOfScrimmage))} on the " +
+            $"{Mathf.RoundToInt((pm.PlayDirection * pm.lineOfScrimmage) + gm.fieldLength / 2f)}";
+        quarterText.Text = $"{pm.quarterNumber}{suffixLookup[suffix]} Quarter";
+        timeInQuarterText.Text = $"{min}:{sec:D2}";
+
+        playSelectionTimer = gm.timeToPickPlaySec;
+        
         if(pm != null)
         {
             if (pm.PlayDirection == 1)
@@ -94,6 +137,15 @@ public partial class PlaySelectionUIManager : Control
         {
             LoadPlays(team1Plays, team2Plays);
         }
+    }
+
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
+        if(!Visible) return;
+        playSelectionTimer -= (float) delta;
+        selectionTimerText.Text = $"{Mathf.CeilToInt(playSelectionTimer):D2}";
+        if(playSelectionTimer < 0) StartPlay();
     }
 
     public override void _Input(InputEvent inEvent)
@@ -356,6 +408,8 @@ public partial class PlaySelectionUIManager : Control
         GD.Print("Lock");
         if (isOffence) offenceSelected = true;
         else defenceSelected = true;
+        
+        if(offenceSelected && defenceSelected) StartPlay();
     }
     void UnlockTeamSelection(bool isOffence)
     {
@@ -427,5 +481,21 @@ public partial class PlaySelectionUIManager : Control
             defence[play].image.Texture = imtex;
         }
     }
-    
+
+    public void StartPlay()
+    {
+        if (pm.PlayDirection == 1)
+        {
+            pm.OffencePlay = OffencePlays[team1Selection];
+            pm.DefencePlay = DefencePlays[team2Selection];
+        }
+        else
+        {
+            pm.OffencePlay = OffencePlays[team2Selection];
+            pm.DefencePlay = DefencePlays[team1Selection];
+        }
+        
+        pm.StartPlay();
+        Visible = false;
+    }
 }
