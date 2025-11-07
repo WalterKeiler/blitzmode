@@ -365,6 +365,7 @@ public partial class PlayManager : Node
 		{
 			playSelectionUI.Visible = true;
 			psm.Init();
+			mainCam.GlobalPosition = Vector3.Right * lineOfScrimmage;
 			//StartPlay();
 			return;
 		}
@@ -373,13 +374,14 @@ public partial class PlayManager : Node
 		lineOfScrimmage = newLos;
 		playSelectionUI.Visible = true;
 		psm.Init();
+		mainCam.GlobalPosition = Vector3.Right * lineOfScrimmage;
 		//StartPlay();
 	}
 
 	void FirstDown()
 	{
 		GD.Print("FirstDown");
-		CurrentDown = gm.DownsTillTurnover;
+		CurrentDown = gm.DownsTillTurnover + 1;
 		firstDownLine = lineOfScrimmage + gm.yardsToFirstDown * PlayDirection;
 	}
 
@@ -441,6 +443,7 @@ public partial class PlayManager : Node
 		{
 			playSelectionUI.Visible = true;
 			psm.Init();
+			mainCam.GlobalPosition = Vector3.Right * lineOfScrimmage;
 		}
 	}
 	

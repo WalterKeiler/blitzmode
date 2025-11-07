@@ -12,8 +12,6 @@ public partial class InputManager : Node
 	[Export] InputCombo[] _inputCombos;
 	[Export] float _inputBuffer;
 	[Export] public bool isOffence;
-
-	bool isFirstController;
 	
 	List<InputCombo> activeInputs;
 	double deltaTime;
@@ -52,7 +50,6 @@ public partial class InputManager : Node
 	public override void _Ready()
 	{
 		activeInputs = new List<InputCombo>();
-		isFirstController = (PlayerID == 1);
 		
 		GD.Print(Input.GetConnectedJoypads().Count);
 	}

@@ -45,8 +45,8 @@ public partial class PlaySelectionUIManager : Control
     GameManager gm;
     PlayManager pm;
 
-    private bool offenceSelected;
-    private bool defenceSelected;
+    [Export] bool offenceSelected;
+    [Export] bool defenceSelected;
     
     bool h = false;
     bool holdingMotion = false;
@@ -172,21 +172,20 @@ public partial class PlaySelectionUIManager : Control
         if(!Visible) return;
         if (inEvent.GetDevice() == team1InputID)
         {
-            HandleInput(ref team1Selection, inEvent);
+            HandleInput(ref team1Selection, inEvent, inEvent.GetDevice());
         }
 
         if (inEvent.GetDevice() == team2InputID)
         {
-            HandleInput(ref team2Selection, inEvent);
+            HandleInput(ref team2Selection, inEvent, inEvent.GetDevice());
         }
 
         UpdateSelection();
     }
 
-    void HandleInput(ref int team, InputEvent inEvent)
+    void HandleInput(ref int team, InputEvent inEvent, int deviceID)
     {
-        bool isOffence = team == team1Selection;
-        //isOffence = team == team1Selection && pm.PlayDirection == 1;
+        bool isOffence = (deviceID == team1InputID && pm.PlayDirection == 1);
 
         int lastPageIndex = isOffence ? lastPageNumOff : lastPageNumDef;
         int maxPage = isOffence ? maxPageNumOff : maxPageNumDef;
@@ -199,8 +198,11 @@ public partial class PlaySelectionUIManager : Control
         if (inEvent.IsAction("ui_accept"))
         {
             LockTeamSelection(isOffence);
-            return;
         }
+        // if (inEvent.IsAction("ui_cancel"))
+        // {
+        //     UnlockTeamSelection(isOffence);
+        // }
         
         if (inEvent.IsAction("ui_turn_page_left"))
         {
@@ -304,6 +306,8 @@ public partial class PlaySelectionUIManager : Control
             }
             return;
         }
+        //GD.Print(inEvent.GetDevice() + " is off: " + isOffence);
+        //if(isOffence && offenceSelected || !isOffence && defenceSelected) return;
         
         if(inEvent.IsAction("move_left") || inEvent.IsAction("move_right"))
         {
@@ -423,7 +427,7 @@ public partial class PlaySelectionUIManager : Control
 
     void LockTeamSelection(bool isOffence)
     {
-        GD.Print("Lock");
+        GD.Print("Lock isOff: " + isOffence);
         if (isOffence) offenceSelected = true;
         else defenceSelected = true;
         
@@ -431,7 +435,7 @@ public partial class PlaySelectionUIManager : Control
     }
     void UnlockTeamSelection(bool isOffence)
     {
-        GD.Print("Unlock");
+        GD.Print("UnlockisOff: " + isOffence);
         if (isOffence) offenceSelected = false;
         else defenceSelected = false;
     }
