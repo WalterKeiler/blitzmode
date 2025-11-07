@@ -51,10 +51,13 @@ public partial class PlaySelectionUIManager : Control
     bool h = false;
     bool holdingMotion = false;
     bool holdForRelease = false;
+    bool AITeam;
     
     string[] suffixLookup = ["st","nd","rd","th"];
 
     bool ready = false;
+
+    private Random rng;
     
     public override void _EnterTree()
     {
@@ -75,6 +78,11 @@ public partial class PlaySelectionUIManager : Control
                 team1InputID = gm.playerInputTeam1[0].PlayerID;
             if(gm.playerInputTeam2.Length > 0)
                 team2InputID = gm.playerInputTeam2[0].PlayerID;
+            else
+            {
+                AITeam = true;
+                rng = new Random();
+            }
         }
         
         
@@ -110,6 +118,9 @@ public partial class PlaySelectionUIManager : Control
         team2Selection = 0;
         offencePage = 0;
         defencePage = 0;
+
+        offenceSelected = false;
+        defenceSelected = false;
         
         int min = Mathf.FloorToInt(pm.quarterTimer / 60);
         int sec = Mathf.FloorToInt(pm.quarterTimer) - (min * 60);
@@ -137,6 +148,13 @@ public partial class PlaySelectionUIManager : Control
         {
             LoadPlays(team1Plays, team2Plays);
         }
+        
+        if(AITeam)
+        {
+            if (pm.PlayDirection == 1) team2Selection = rng.Next(0, DefencePlays.Length);
+            if (pm.PlayDirection != 1) team2Selection = rng.Next(0, OffencePlays.Length);
+            LockTeamSelection(pm.PlayDirection != 1);
+        }
     }
 
     public override void _Process(double delta)
@@ -151,7 +169,7 @@ public partial class PlaySelectionUIManager : Control
     public override void _Input(InputEvent inEvent)
     {
         base._Input(inEvent);
-
+        if(!Visible) return;
         if (inEvent.GetDevice() == team1InputID)
         {
             HandleInput(ref team1Selection, inEvent);
@@ -422,6 +440,11 @@ public partial class PlaySelectionUIManager : Control
     {
         team1SelectionIndicator.Reparent(team1Plays[team1Selection]);
         team1SelectionIndicator.Position = Vector2.Zero;
+        if (AITeam)
+        {
+            team2SelectionIndicator.Visible = false;
+            return;
+        }
         team2SelectionIndicator.Reparent(team2Plays[team2Selection]);
         team2SelectionIndicator.Position = Vector2.Zero;
     }
@@ -482,8 +505,12 @@ public partial class PlaySelectionUIManager : Control
         }
     }
 
-    public void StartPlay()
+    public async void StartPlay()
     {
+        if(!Visible) return;
+        await ToSignal(GetTree().CreateTimer(.25f), "timeout");
+        if(!Visible) return;
+        Visible = false;
         if (pm.PlayDirection == 1)
         {
             pm.OffencePlay = OffencePlays[team1Selection];
@@ -496,6 +523,6 @@ public partial class PlaySelectionUIManager : Control
         }
         
         pm.StartPlay();
-        Visible = false;
+        
     }
 }

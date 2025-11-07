@@ -1,11 +1,10 @@
 [gd_resource type="Resource" load_steps=2 format=3 uid="uid://bx2h0hskxnnli"]
 
-[ext_resource type="Script" path="res://_Scripts/InputCombo.cs" id="1_ar332"]
+[ext_resource type="Script" uid="uid://c3fydb0n34ntr" path="res://_Scripts/InputCombo.cs" id="1_ar332"]
 
 [resource]
 script = ExtResource("1_ar332")
 Action = 8
 InputActions = PackedStringArray("Pass-ChangePlayer")
-PressCount = 1
+InputActionsKey = 32
 isOffence = true
-isUniversal = false

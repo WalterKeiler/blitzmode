@@ -325,7 +325,7 @@ public partial class PlayerController : Node3D
 	{
 		if (inputID == -1 || !canTakeInput) return;
 		
-		Vector3 inputDir = inputManager.directionalInput;
+		Vector3 inputDir = inputManager.GetDirectionalInput();
 		Vector3 xDir = Vector3.Zero;
 		Vector3 zDir = Vector3.Zero;
 		

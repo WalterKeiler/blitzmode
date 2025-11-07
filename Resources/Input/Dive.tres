@@ -1,11 +1,10 @@
 [gd_resource type="Resource" load_steps=2 format=3 uid="uid://bkmyjysofqm7m"]
 
-[ext_resource type="Script" path="res://_Scripts/InputCombo.cs" id="1_42tly"]
+[ext_resource type="Script" uid="uid://c3fydb0n34ntr" path="res://_Scripts/InputCombo.cs" id="1_42tly"]
 
 [resource]
 script = ExtResource("1_42tly")
 Action = 6
 InputActions = PackedStringArray("StiffArm-Dive")
-PressCount = 1
-isOffence = false
-isUniversal = false
+InputActionsKey = 75
+InputActionsJoy = 1

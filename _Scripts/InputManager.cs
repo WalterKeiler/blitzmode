@@ -18,15 +18,41 @@ public partial class InputManager : Node
 	List<InputCombo> activeInputs;
 	double deltaTime;
 
-	public Vector3 directionalInput;
 	bool keyChanged = false;
+
+	private bool canTakeInput = false;
+	
 	public static event Action<PlayerActions, int, bool, bool> InputPressAction;
 	public static event Action<PlayerActions, int, bool, bool> InputReleaseAction;
+
+	public override void _EnterTree()
+	{
+		base._EnterTree();
+		PlayManager.InitPlay += Start;
+		PlayManager.EndPlay -= Stop;
+	}
+
+	public override void _ExitTree()
+	{
+		base._ExitTree();
+		PlayManager.InitPlay += Start;
+		PlayManager.EndPlay -= Stop;
+	}
+
+	void Start()
+	{
+		canTakeInput = true;
+	}
+
+	void Stop(bool b)
+	{
+		canTakeInput = false;
+	}
+	
 	public override void _Ready()
 	{
 		activeInputs = new List<InputCombo>();
 		isFirstController = (PlayerID == 1);
-		directionalInput = Vector3.Zero;
 		
 		GD.Print(Input.GetConnectedJoypads().Count);
 	}
@@ -34,103 +60,43 @@ public partial class InputManager : Node
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		if(!canTakeInput) return;
 		deltaTime = delta;
 		CustomInputs();
-	}
-
-	public override void _Input(InputEvent iEvent)
-	{
-		base._Input(iEvent);
-		keyChanged = false;
-		if(iEvent.GetDevice() == PlayerID)
-		{
-			if(iEvent.IsAction("move_left") || iEvent.IsAction("move_right"))
-			{
-				if (iEvent is InputEventJoypadMotion joyEvent)
-				{
-					keyChanged = true;
-					directionalInput.X = -(MathF.Abs(joyEvent.GetAxisValue()) > JOYSTICKDEADZONE ? joyEvent.GetAxisValue() : 0);
-				}
-
-				if (iEvent is InputEventKey keyEvent)
-				{
-					if (iEvent.IsAction("move_left") && keyEvent.Pressed)
-					{
-						keyChanged = true;
-						directionalInput.X = 1;
-					}
-
-					if (iEvent.IsAction("move_right") && keyEvent.Pressed)
-					{
-						keyChanged = true;
-						directionalInput.X = -1;
-					}
-				}
-			}
-
-			if (iEvent.IsAction("move_back") || iEvent.IsAction("move_forward"))
-			{
-				if (iEvent is InputEventJoypadMotion joyEvent)
-				{
-					keyChanged = true;
-					directionalInput.Z = -(MathF.Abs(joyEvent.GetAxisValue()) > JOYSTICKDEADZONE ? joyEvent.GetAxisValue() : 0);
-				}
-				
-				if (iEvent is InputEventKey keyEvent)
-				{
-					if (iEvent.IsAction("move_back") && keyEvent.Pressed)
-					{
-						keyChanged = true;
-						directionalInput.Z = -1;
-					}
-
-					if (iEvent.IsAction("move_forward") && keyEvent.Pressed)
-					{
-						keyChanged = true;
-						directionalInput.Z = 1;
-					}
-				}
-				
-			}
-			
-		}
-		if (!keyChanged)
-		{
-			directionalInput = Vector3.Zero;
-		}
-		
 	}
 
 	void CustomInputs()
 	{
 		for (int i = 0; i < _inputCombos.Length; i++)
 		{
-			for (int j = 0; j < _inputCombos[i].InputActions.Length; j++)
+			if ((Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].InputActionsJoy) || Input.IsKeyPressed(_inputCombos[i].InputActionsKey)) && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence))
 			{
-				if (Input.IsActionJustPressed(_inputCombos[i].InputActions[j]) && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence))
+				//if(Input.Ac)
+				if(_inputCombos[i].PressCount > 1)
 				{
-					if(_inputCombos[i].PressCount > 1)
-					{
-						activeInputs.Add(_inputCombos[i]);
-						if (activeInputs.FindAll(x => x.InputActions == _inputCombos[i].InputActions).Count ==
-						    _inputCombos[i].PressCount)
-						{
-							InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true);
-							_inputCombos[i].isActive = true;
-						}
-					}
-					else
+					activeInputs.Add(_inputCombos[i]);
+					if (activeInputs.FindAll(x => x.InputActions == _inputCombos[i].InputActions).Count ==
+					    _inputCombos[i].PressCount)
 					{
 						InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true);
 						_inputCombos[i].isActive = true;
 					}
 				}
-				if (Input.IsActionJustReleased(_inputCombos[i].InputActions[j]) && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence))
+				else
 				{
-					WaitForMoreInput(_inputCombos[i]);
-					if(_inputCombos[i].isActive)
-						InputReleaseAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true);
+					InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true);
+					_inputCombos[i].isActive = true;
 				}
+			}
+		}
+
+		for (int i = 0; i < activeInputs.Count; i++)
+		{
+			if(!(Input.IsJoyButtonPressed(PlayerID, activeInputs[i].InputActionsJoy) && !Input.IsKeyPressed(activeInputs[i].InputActionsKey)) && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence))
+			{
+				WaitForMoreInput(activeInputs[i]);
+				if(activeInputs[i].isActive)
+					InputReleaseAction?.Invoke(activeInputs[i].Action, PlayerID, false, true);
 			}
 		}
 	}
@@ -141,118 +107,24 @@ public partial class InputManager : Node
 		activeInputs.Remove(inputCombo);
 	}
 	
-	// public Vector3 GetDirectionalInput()
-	// {
-	// 	bool canMove = false;
-	// 	
-	// 	Vector2 input = directionalInput;
-	// 	
-	// 	
-	// 	//if(!canMove) return Vector3.Zero;
-	// 	//Vector2 input = Input.GetVector("move_right", "move_left", "move_back", "move_forward");
-	// 	return new Vector3(input.X,0,input.Y);
-	// }
 	
 	public Vector3 GetDirectionalInput()
 	{
+		if(!canTakeInput) return Vector3.Zero;
 		bool canMove = false;
-		float left = directionalInput.X;
-		float right = directionalInput.X;
-		float forw = directionalInput.Z;
-		float back = directionalInput.Z;
-		foreach (var inEvent in InputMap.ActionGetEvents("move_right"))
-		{
-			if (inEvent.GetDevice() == PlayerID)
-			{
-				// InputEventJoypadMotion joyEvent = (InputEventJoypadMotion) inEvent;
-				//
-				// right = joyEvent.AxisValue;
-				
-				// string e = inEvent.AsText();
-				//
-				// float val = 0;
-				//
-				// val += Convert.ToInt32(e[^1]) * .01f;
-				// val += Convert.ToInt32(e[^2]) * .1f;
-				// val += Convert.ToInt32(e[^4]) * 1f;
-				// if (e[^5] == "-"[0]) val *= -1;
-				//
-				// right = val;
-				break;
-			}
-		}
-		foreach (var inEvent in InputMap.ActionGetEvents("move_left"))
-		{
-			if (inEvent.GetDevice() == PlayerID)
-			{
-				//((InputEventKey)inEvent).
-				if(inEvent is InputEventJoypadMotion joyEvent)
-				{
-					GD.Print("FUck");
-					left = joyEvent.GetAxisValue();
-				}
-				
-				// string e = inEvent.AsText();
-				//
-				// float val = 0;
-				//
-				// val += Convert.ToInt32(e[^1]) * .01f;
-				// val += Convert.ToInt32(e[^2]) * .1f;
-				// val += Convert.ToInt32(e[^4]) * 1f;
-				// if (e[^5] == "-"[0]) val *= -1;
-				//
-				// left = val;
-				break;
-			}
-		}
-		foreach (var inEvent in InputMap.ActionGetEvents("move_back"))
-		{
-			if (inEvent.GetDevice() == PlayerID)
-			{
-				// InputEventJoypadMotion joyEvent = (InputEventJoypadMotion) inEvent;
-				//
-				// back = joyEvent.AxisValue;
-				
-				// string e = inEvent.AsText();
-				//
-				// float val = 0;
-				//
-				// val += (int)e[^1] * .01f;
-				// val += (int)e[^2] * .1f;
-				// val += (int)e[^4] * 1f;
-				// if (e[^5] == "-"[0]) val *= -1;
-				//
-				// forw = val;
-				break;
-			}
-		}
-		foreach (var inEvent in InputMap.ActionGetEvents("move_forward"))
-		{
-			if (inEvent.GetDevice() == PlayerID)
-			{
-				if(inEvent is InputEventJoypadMotion joyEvent)
-				{
-					forw = joyEvent.AxisValue;
-				}
-				
-				// string e = inEvent.AsText();
-				//
-				// float val = 0;
-				//
-				// val += (int)e[^1] * .01f;
-				// val += (int)e[^2] * .1f;
-				// val += (int)e[^4] * 1f;
-				// if (e[^5] == "-"[0]) val *= -1;
-				//
-				// back = val;
-				break;
-			}
-		}
+		Vector3 input = Vector3.Zero;
 
-		directionalInput = new Vector3(left, 0, forw);
-		GD.Print(directionalInput);
-		//Vector2 input = Input.GetVector("move_right", "move_left", "move_back", "move_forward");
-		return directionalInput;
-		//return new Vector3(input.X,0,input.Y);
+		input.X = Mathf.Abs(Input.GetJoyAxis(PlayerID, JoyAxis.LeftX)) > JOYSTICKDEADZONE
+			? -Input.GetJoyAxis(PlayerID, JoyAxis.LeftX) : 0;
+		input.Z = Mathf.Abs(Input.GetJoyAxis(PlayerID, JoyAxis.LeftY)) > JOYSTICKDEADZONE
+			? -Input.GetJoyAxis(PlayerID, JoyAxis.LeftY) : 0;
+
+		if (PlayerID != 0) return input;
+		if (Input.IsKeyPressed(Key.W)) input.Z = 1;
+		if (Input.IsKeyPressed(Key.S)) input.Z = -1;
+		if (Input.IsKeyPressed(Key.A)) input.X = 1;
+		if (Input.IsKeyPressed(Key.D)) input.X = -1;
+		
+		return input;
 	}
 }
