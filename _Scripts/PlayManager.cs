@@ -63,7 +63,7 @@ public partial class PlayManager : Node
 		
 		SpawnPlayers();
 		FirstDown();
-		
+		CurrentDown--;
 		quarterTimer = gm.QuarterLengthMin * 60;
 		
 		playSelectionUI.Visible = true;
@@ -374,6 +374,7 @@ public partial class PlayManager : Node
 		lineOfScrimmage = newLos;
 		playSelectionUI.Visible = true;
 		psm.Init();
+		Ball.Instance.GlobalPosition = Vector3.Right * lineOfScrimmage;
 		mainCam.GlobalPosition = Vector3.Right * lineOfScrimmage;
 		//StartPlay();
 	}

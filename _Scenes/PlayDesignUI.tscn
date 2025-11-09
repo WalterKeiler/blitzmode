@@ -15,7 +15,7 @@
 [ext_resource type="Script" uid="uid://cqrjcgw613gkm" path="res://_Scripts/PlayDesigner/PDZone.cs" id="11_anhj4"]
 [ext_resource type="Script" uid="uid://dm1bmkhrr40gx" path="res://_Scripts/PlayDesigner/PDBlitz.cs" id="12_4cm4h"]
 
-[node name="PDUI" type="Control" node_paths=PackedStringArray("selectRoute", "selectedPlayerUIOff", "selectBlitz", "selectZone", "selectedPlayerUIDef")]
+[node name="PDUI" type="Control" node_paths=PackedStringArray("selectRoute", "selectedPlayerUIOff", "selectBlitz", "selectZone", "selectedPlayerUIDef", "name")]
 visibility_layer = 3
 layout_mode = 3
 anchors_preset = 15
@@ -29,6 +29,7 @@ selectedPlayerUIOff = NodePath("SelectedPlayerUIOff")
 selectBlitz = NodePath("SelectedPlayerUIDef/Blitz")
 selectZone = NodePath("SelectedPlayerUIDef/Zone")
 selectedPlayerUIDef = NodePath("SelectedPlayerUIDef")
+name = NodePath("UISplit/Upper/Left/LineEdit")
 
 [node name="UISplit" type="VBoxContainer" parent="."]
 layout_mode = 1

@@ -102,6 +102,11 @@ public partial class Ball : RigidBody3D
         {
             PlayManager.InvokeEndPlay(true);
         }
+
+        if (Mathf.Abs(GlobalPosition.Z) >= (GameManager.Instance.fieldWidth + 1.5f) / 2f)
+        {
+            PlayManager.InvokeEndPlay(ballState == BallState.Held);
+        }
     }
 
     void Move(double delta)
