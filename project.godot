@@ -122,7 +122,3 @@ ui_turn_page_right={
 3d_physics/layer_2="TackleBoxes"
 3d_physics/layer_3="HitBoxes"
 3d_physics/layer_4="Ball"
-
-[rendering]
-
-renderer/rendering_method="mobile"

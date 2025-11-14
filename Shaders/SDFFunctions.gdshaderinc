@@ -50,12 +50,25 @@ float smin(float a, float b, float k)
     {
         float d = 1000000000000.0;
         int yardIndex = -1;
+
+		bool flip = false;
+		bool f = false;
+
         for(int i = 0; i <= totalLength / 2; i += interval)
         {
-            float nextDist = sdBox(pos,vec2(float(i),float(totalWidth)));
-            d = min(d,abs(nextDist));
+			float nextDist = sdBox(pos,vec2(float(i),float(totalWidth)));
+			d = min(d,abs(nextDist));
 
-            if(d == abs(nextDist) && i < totalLength / 2) yardIndex = i;
+			if(i == 0)
+			{
+				yardIndex = 0;
+				continue;
+			}
+
+            if(d == abs(nextDist) && i < totalLength / 2)
+			{
+				yardIndex = i;
+			}
         }
 
         closestYard = yardIndex;

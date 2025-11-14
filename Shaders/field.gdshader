@@ -283,19 +283,47 @@ float Nine(vec2 offset, bool inverted)
 	return x;
 }
 
+float Arrow(vec2 offset, bool inverted)
+{
+	vec2[arrayMaxLength] points = {
+		vec2(0,-.5),
+		vec2(.24,0),
+		vec2(0,.5),
+		vec2(4,0),
+		vec2(5,0),
+		vec2(6,0),
+		vec2(7,0),
+		vec2(8,0),
+		vec2(9,0),
+		vec2(10,0),
+		vec2(11,0),
+		vec2(12,0),
+		vec2(13,0),
+		vec2(14,0),
+		vec2(15,0)
+	};
+	float x = ArrayToSegment(fieldPos,points,3,offset,inverted) - .1;
+
+	return x;
+}
+
 float DrawNumbers(float xpos, float ypos, float spacing)
 {
 	float[5] b;
 
 	float[5] t;
 
+	spacing /= 1.0;
+
 	int yard = (yardsLength / 2) - int(xpos);
+	
+	if(yard == 0) return 0.0;
 	//yard /= 10;
 	int[5] digits;
 	int digitNum = 0;
 	while (float(yard) > 0.1)
 	{
-	    int digit = yard%10;
+	    int digit = yard % 10;
 	    yard /= 10;
 	    digits[digitNum] = digit;
 		digitNum++;
@@ -361,6 +389,14 @@ float DrawNumbers(float xpos, float ypos, float spacing)
 		d = min(d,s);
 	}
 
+	float arrB = min(Arrow(vec2(xpos - (space / 2.0) - .15,-ypos) , false), Arrow(vec2(-xpos - (space / 2.0) - .15, -ypos), false));
+	float arrT = min(Arrow(vec2(xpos + (space / 2.0) + .15,ypos) , true), Arrow(vec2(-xpos + (space / 2.0) + .15,ypos) , true));
+	float arr = min(arrT, arrB);
+	//float sa = sdBox(vec2(xpos + space,ypos), vec2(05,05));
+	//arr = Arrow(vec2(xpos + -space - .25,ypos) , true);
+
+	d = min(d,arr);
+
 	return d;
 }
 
@@ -395,12 +431,16 @@ void fragment()
 	col += step(1,edgeDist);
 
 	vec3 onLine = (abs(fullLines) < .5) ? vec3(1,1,1) : vec3(0,0,0);
-	float onTenYard = ((closestLargeYard) % 10 == 0) ? 1.0 : 0.0;
+
 
 	vec3 onEdge = vec3(step(0, partialLineBox + float(numberIndent))).xxx;
 	onEdge *= vec3(step((partialLineBox + float(numberIndent)) - 1.0, 0)).xxx;
 
-	float d = DrawNumbers(float(closestLargeYard) * onTenYard,halfWidth - float(numberIndent),numberSpacing);
+	float yard = round(float(closestSmallYard) / 10.0) * 10.0;
+	
+	if(int(yard) - closestSmallYard == 4) yard = float(closestLargeYard + 5);
+
+	float d = DrawNumbers(yard, halfWidth - float(numberIndent),numberSpacing);
 
 	col += (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
 
@@ -422,7 +462,7 @@ void fragment()
 	vec3 losCol = losVec * lineOfScrimmageColor;
 	vec3 fdCol = fdVec * firstDownColor;
 
-	vec3 finalCol = lineCol + clamp(fieldColor * grassNoise, 0, 1) + losCol + fdCol;
+	vec3 finalCol = clamp(lineCol * grassNoise, 0, 1) + clamp(fieldColor * grassNoise, 0, 1) + losCol + fdCol;
 
 	finalCol = clamp(finalCol,0,1);
 
