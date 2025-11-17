@@ -8,5 +8,6 @@ Action = 1
 InputActions = PackedStringArray("Sprint")
 InputActionsKey = 4194325
 InputActionsJoy = 10
+SecondaryInputActionsJoy = -1
 PressCount = 2
 isOffence = true

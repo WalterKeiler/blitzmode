@@ -8,3 +8,4 @@ Action = 4
 InputActions = PackedStringArray("Jump-Tackle")
 InputActionsKey = 76
 InputActionsJoy = 2
+SecondaryInputActionsJoy = -1

@@ -79,12 +79,6 @@ _inputCombos = Array[Resource]([ExtResource("7_5jy3s"), ExtResource("8_cy3xd"), 
 _inputBuffer = 0.1
 isOffence = true
 
-[node name="InputManagerInstance2" parent="." instance=ExtResource("6_rn8ec")]
-PlayerID = 1
-_inputCombos = Array[Resource]([ExtResource("7_5jy3s"), ExtResource("8_cy3xd"), ExtResource("9_y1vnq"), ExtResource("10_ekhn6"), ExtResource("11_1quqr"), ExtResource("12_2ifbs"), ExtResource("13_anypg"), ExtResource("14_bggh7")])
-_inputBuffer = 0.1
-isOffence = true
-
 [node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("playerInputTeam1", "playerInputTeam2")]
 script = ExtResource("13_vno2e")
 team1 = ExtResource("14_cg1ps")

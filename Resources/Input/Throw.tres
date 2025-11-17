@@ -7,4 +7,5 @@ script = ExtResource("1_ar332")
 Action = 8
 InputActions = PackedStringArray("Pass-ChangePlayer")
 InputActionsKey = 32
+SecondaryInputActionsJoy = 2
 isOffence = true

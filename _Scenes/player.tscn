@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://c4884nm7e6oit"]
 
-[ext_resource type="Script" path="res://_Scripts/PlayerController.cs" id="1_areti"]
+[ext_resource type="Script" uid="uid://cfxtv87lmtpr6" path="res://_Scripts/PlayerController.cs" id="1_areti"]
 [ext_resource type="Material" uid="uid://k4x7eqdcrbjq" path="res://Materials/TestMat.tres" id="2_tyapl"]
 [ext_resource type="PackedScene" uid="uid://bph8u704hl88n" path="res://_Scenes/AIManager.tscn" id="3_hud2f"]
 
@@ -18,18 +18,25 @@ radius = 3.0
 [node name="Player" type="Node3D" node_paths=PackedStringArray("aiManager", "mesh")]
 script = ExtResource("1_areti")
 aiManager = NodePath("AIManager")
-mesh = NodePath("CharacterBody3D/MeshInstance3D")
+mesh = NodePath("RigidBody3D/MeshInstance3D")
 mat = ExtResource("2_tyapl")
 debugMode = true
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+[node name="RigidBody3D" type="RigidBody3D" parent="."]
+axis_lock_linear_x = true
+axis_lock_linear_y = true
+axis_lock_linear_z = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBody3D"]
 material_override = ExtResource("2_tyapl")
 mesh = SubResource("CapsuleMesh_ljm3w")
+skeleton = NodePath("")
 surface_material_override/0 = ExtResource("2_tyapl")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody3D"]
 shape = SubResource("CapsuleShape3D_p1g61")
 
 [node name="HitBox" type="Area3D" parent="."]

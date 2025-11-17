@@ -8,3 +8,4 @@ Action = 6
 InputActions = PackedStringArray("StiffArm-Dive")
 InputActionsKey = 75
 InputActionsJoy = 1
+SecondaryInputActionsJoy = -1

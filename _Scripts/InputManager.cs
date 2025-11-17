@@ -12,8 +12,9 @@ public partial class InputManager : Node
 	[Export] InputCombo[] _inputCombos;
 	[Export] float _inputBuffer;
 	[Export] public bool isOffence;
+
+	bool[] inputPressed;
 	
-	List<InputCombo> activeInputs;
 	double deltaTime;
 
 	bool keyChanged = false;
@@ -49,7 +50,12 @@ public partial class InputManager : Node
 	
 	public override void _Ready()
 	{
-		activeInputs = new List<InputCombo>();
+		for (int i = 0; i < _inputCombos.Length; i++)
+		{
+			_inputCombos[i] = (InputCombo) _inputCombos[i].Duplicate();
+		}
+		
+		inputPressed = new bool[_inputCombos.Length];
 		
 		GD.Print(Input.GetConnectedJoypads().Count);
 	}
@@ -66,42 +72,59 @@ public partial class InputManager : Node
 	{
 		for (int i = 0; i < _inputCombos.Length; i++)
 		{
-			if ((Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].InputActionsJoy) || Input.IsKeyPressed(_inputCombos[i].InputActionsKey)) && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence))
+			if ((Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].InputActionsJoy) || Input.IsKeyPressed(_inputCombos[i].InputActionsKey) ||
+			     Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].SecondaryInputActionsJoy) || Input.IsKeyPressed(_inputCombos[i].SecondaryInputActionsKey))
+			    && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence))
 			{
-				//if(Input.Ac)
-				if(_inputCombos[i].PressCount > 1)
+				if(_inputCombos[i].PressCount > 1 && !inputPressed[i])
 				{
-					activeInputs.Add(_inputCombos[i]);
-					if (activeInputs.FindAll(x => x.InputActions == _inputCombos[i].InputActions).Count ==
-					    _inputCombos[i].PressCount)
+					_inputCombos[i].isActive = true;
+					_inputCombos[i].currentPress++;
+					inputPressed[i] = true;
+					if (_inputCombos[i].currentPress == _inputCombos[i].PressCount)
 					{
 						InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true);
 						_inputCombos[i].isActive = true;
 					}
 				}
-				else
+				else if(!inputPressed[i])
 				{
+					//GD.Print("Add: " + _inputCombos[i].Action);
 					InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true);
+					_inputCombos[i].isActive = true;
+					_inputCombos[i].currentPress++;
+					inputPressed[i] = true;
 					_inputCombos[i].isActive = true;
 				}
 			}
-		}
-
-		for (int i = 0; i < activeInputs.Count; i++)
-		{
-			if(!(Input.IsJoyButtonPressed(PlayerID, activeInputs[i].InputActionsJoy) && !Input.IsKeyPressed(activeInputs[i].InputActionsKey)) && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence))
+			
+			if(!Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].InputActionsJoy) && !Input.IsKeyPressed(_inputCombos[i].InputActionsKey) && 
+			   !Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].SecondaryInputActionsJoy) && !Input.IsKeyPressed(_inputCombos[i].SecondaryInputActionsKey)
+			   && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence) && inputPressed[i])
 			{
-				WaitForMoreInput(activeInputs[i]);
-				if(activeInputs[i].isActive)
-					InputReleaseAction?.Invoke(activeInputs[i].Action, PlayerID, false, true);
+				WaitForMoreInput(i);
 			}
 		}
+		
 	}
 
-	async void WaitForMoreInput(InputCombo inputCombo)
+	async void WaitForMoreInput(int inputCombo)
 	{
+		inputPressed[inputCombo] = false;
+		
 		await ToSignal(GetTree().CreateTimer(_inputBuffer), "timeout");
-		activeInputs.Remove(inputCombo);
+		
+		if(!Input.IsJoyButtonPressed(PlayerID, _inputCombos[inputCombo].InputActionsJoy) && !Input.IsKeyPressed(_inputCombos[inputCombo].InputActionsKey) && 
+		   !Input.IsJoyButtonPressed(PlayerID, _inputCombos[inputCombo].SecondaryInputActionsJoy) && !Input.IsKeyPressed(_inputCombos[inputCombo].SecondaryInputActionsKey)
+		   && (_inputCombos[inputCombo].isUniversal || _inputCombos[inputCombo].isOffence == isOffence))
+		{
+			InputReleaseAction?.Invoke(_inputCombos[inputCombo].Action, PlayerID, false, true);
+			_inputCombos[inputCombo].isActive = false;
+			_inputCombos[inputCombo].currentPress = 0;
+		}
+
+
+		//activeInputs[inputCombo].isActive = false;
 	}
 	
 	

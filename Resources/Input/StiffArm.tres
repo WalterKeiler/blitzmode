@@ -8,4 +8,5 @@ Action = 2
 InputActions = PackedStringArray("StiffArm-Dive")
 InputActionsKey = 75
 InputActionsJoy = 1
+SecondaryInputActionsJoy = 2
 isOffence = true

@@ -389,9 +389,10 @@ float DrawNumbers(float xpos, float ypos, float spacing)
 		d = min(d,s);
 	}
 
-	float arrB = min(Arrow(vec2(xpos - (space / 2.0) - .15,-ypos) , false), Arrow(vec2(-xpos - (space / 2.0) - .15, -ypos), false));
-	float arrT = min(Arrow(vec2(xpos + (space / 2.0) + .15,ypos) , true), Arrow(vec2(-xpos + (space / 2.0) + .15,ypos) , true));
+	float arrB = min(Arrow(vec2(xpos + (space / 2.0) - .15,-ypos) , true), Arrow(vec2(-xpos - (space / 2.0) - .15, -ypos), false));
+	float arrT = min(Arrow(vec2(xpos + (space / 2.0) + .15,ypos) , true), Arrow(vec2(-xpos - (space / 2.0) + .15,ypos) , false));
 	float arr = min(arrT, arrB);
+	if(xpos < 1.0) arr = 1000000.0;
 	//float sa = sdBox(vec2(xpos + space,ypos), vec2(05,05));
 	//arr = Arrow(vec2(xpos + -space - .25,ypos) , true);
 

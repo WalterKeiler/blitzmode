@@ -7,3 +7,4 @@ script = ExtResource("1_5rofe")
 Action = 10
 InputActions = PackedStringArray("Pass-ChangePlayer")
 InputActionsKey = 32
+SecondaryInputActionsJoy = -1
