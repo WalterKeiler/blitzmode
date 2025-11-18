@@ -11,13 +11,13 @@
 script = ExtResource("2_saxlx")
 IsPlayer = true
 PlayerType = ExtResource("1_f1adn")
-StartsWithBall = true
 block = 1.0
 Position = Vector2(0, -3)
 
 [sub_resource type="Resource" id="Resource_oevk4"]
 script = ExtResource("2_saxlx")
 PlayerType = ExtResource("3_0yfai")
+StartsWithBall = true
 block = 1.0
 Position = Vector2(0, -1)
 

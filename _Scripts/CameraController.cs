@@ -22,7 +22,7 @@ public partial class CameraController : Node3D
 		PlayManager.EndPlay -= Stop;
 	}
 
-	void Start()
+	void Start(bool isST)
 	{
 		moveCam = true;
 	}

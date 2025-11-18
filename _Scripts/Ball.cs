@@ -34,6 +34,7 @@ public partial class Ball : RigidBody3D
     {
         base._EnterTree();
         PlayManager.InitPlay += Init;
+        PlayerController.Snapped += Snap;
         PlayManager.EndPlay += EndPlay;
     }
 
@@ -41,10 +42,11 @@ public partial class Ball : RigidBody3D
     {
         base._ExitTree();
         PlayManager.InitPlay -= Init;
+        PlayerController.Snapped -= Snap;
         PlayManager.EndPlay -= EndPlay;
     }
 
-    void Init()
+    void Init(bool isST)
     {
         init = true;
         endPoint = Vector3.Inf;
@@ -54,6 +56,23 @@ public partial class Ball : RigidBody3D
     void EndPlay(bool b)
     {
         init = false;
+    }
+
+    void Snap()
+    {
+        if(ballState == BallState.Free) return;
+        
+        GD.Print("Snap");
+        
+        PlayerController qb = GameManager.Instance.offencePlayers.Find(x => x.playerStats.PlayerType == PlayerType.Quarterback);
+        endPoint = qb.GlobalPosition + Vector3.Up;
+        Vector3 moveDirection = GlobalPosition.DirectionTo(endPoint);
+        ballState = BallState.Free;
+        Freeze = false;
+        //GlobalPosition = endPoint;
+        ApplyCentralImpulse(moveDirection * 10);
+        init = true;
+        //ApplyImpulse(moveDirection * ballSpeed);
     }
     
     public override void _Process(double delta)
@@ -94,6 +113,12 @@ public partial class Ball : RigidBody3D
                 ballState = BallState.Held;
             }
         }
+
+        if (ballState == BallState.Free)
+        {
+            Freeze = false;
+        }
+        
         //GD.Print(GlobalPosition.X * PlayManager.Instance.PlayDirection >= GameManager.Instance.fieldLength / 2f);
         if (ballState == BallState.Held &&
             (GlobalPosition.X * PlayManager.Instance.PlayDirection >= GameManager.Instance.fieldLength / 2f &&

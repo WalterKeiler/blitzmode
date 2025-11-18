@@ -126,12 +126,12 @@ public partial class PlayDesignManager : Node3D
 			cursorIcon.GlobalPosition = QBStartPos;
 			SpawnNewPlayer();
 			players[0].playerDataOff.IsPlayer = true;
-			players[0].playerDataOff.StartsWithBall = true;
 			players[0].canBeEditied = false;
 
 			selectedPlayerType = PlayerType.OLineman;
 			cursorIcon.GlobalPosition = CBStartPos;
 			SpawnNewPlayer();
+			players[1].playerDataOff.StartsWithBall = true;
 			players[1].canBeEditied = false;
 		}
 	}

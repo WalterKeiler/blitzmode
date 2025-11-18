@@ -31,7 +31,7 @@ public partial class PlayManager : Node
 	
 	List<PlayerController> reciverPositions = new List<PlayerController>();
 	
-	public static event Action InitPlay;
+	public static event Action<bool> InitPlay;
 	public static event Action UpdateScore;
 	public static event Action<bool> EndPlay;
 	
@@ -156,6 +156,8 @@ public partial class PlayManager : Node
 		Ball.Instance.GlobalPosition = Vector3.Up;
 
 		reciverPositions = new List<PlayerController>();
+
+		bool isSpecialTeams = false;
 		
 		int team1PlayerIndex = 0;
 		int team2PlayerIndex = 0;
@@ -175,6 +177,9 @@ public partial class PlayManager : Node
 			{
 				gm.offencePlayers.Add(gm.players[i]);
 				PlayerDataOffence play = OffencePlay.PlayerDataOffence[o];
+
+				isSpecialTeams = play.IsSpecialTeams;
+				
 				Vector2 pos = OffencePlay.PlayerDataOffence[o].Position;
 				gm.players[i].Position = new Vector3(lineOfScrimmage + pos.Y * PlayDirection, 1, pos.X);
 				gm.players[i].playerStats = play.PlayerType;
@@ -297,7 +302,7 @@ public partial class PlayManager : Node
 		FieldManager.Instance.SetFieldLines(lineOfScrimmage, firstDownLine);
 		inbetweenPlays = false;
 		StartTimer();
-		InitPlay?.Invoke();
+		InitPlay?.Invoke(isSpecialTeams);
 	}
 
 	void SetPlayerInitalVars(bool isOffence, int i, PlayerDataOffence pO, PlayerDataDefence pD)

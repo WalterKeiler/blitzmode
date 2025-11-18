@@ -34,14 +34,14 @@ public partial class AIManager : Node
     public override void _EnterTree()
     {
         base._EnterTree();
-        PlayManager.InitPlay += Init;
+        //PlayManager.InitPlay += Init;
         PlayManager.EndPlay += Stop;
     }
 
     public override void _ExitTree()
     {
         base._ExitTree();
-        PlayManager.InitPlay += Init;
+        //PlayManager.InitPlay += Init;
         PlayManager.EndPlay += Stop;
     }
 
@@ -58,7 +58,7 @@ public partial class AIManager : Node
         RandomDirection();
     }
 
-    void Init()
+    public void Init()
     {
         init = true;
         targetPlayer = null;

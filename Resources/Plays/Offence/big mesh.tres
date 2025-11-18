@@ -1,23 +1,23 @@
-[gd_resource type="Resource" script_class="Play" load_steps=16 format=4]
+[gd_resource type="Resource" script_class="Play" load_steps=16 format=4 uid="uid://cp3bsidfvayrg"]
 
-[ext_resource type="Resource" path="res://Resources/Stats/Players/Quarterback.tres" id="1_vrnrs"]
-[ext_resource type="Script" path="res://_Scripts/Resources/PlayerDataOffence.cs" id="2_me30e"]
-[ext_resource type="Resource" path="res://Resources/Stats/Players/OLinebacker.tres" id="3_46xfm"]
-[ext_resource type="Resource" path="res://Resources/Stats/Players/WideReceiver.tres" id="4_vurk8"]
-[ext_resource type="Script" path="res://_Scripts/Resources/Route.cs" id="5_rt7es"]
-[ext_resource type="Script" path="res://_Scripts/Resources/Play.cs" id="6_o5urx"]
+[ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="1_vrnrs"]
+[ext_resource type="Script" uid="uid://dys3y3oj7sr6d" path="res://_Scripts/Resources/PlayerDataOffence.cs" id="2_me30e"]
+[ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/OLinebacker.tres" id="3_46xfm"]
+[ext_resource type="Resource" uid="uid://c3iwmer7t8bnr" path="res://Resources/Stats/Players/WideReceiver.tres" id="4_vurk8"]
+[ext_resource type="Script" uid="uid://cbqyfumputku2" path="res://_Scripts/Resources/Route.cs" id="5_rt7es"]
+[ext_resource type="Script" uid="uid://dcvk4jwtiq13o" path="res://_Scripts/Resources/Play.cs" id="6_o5urx"]
 
 [sub_resource type="Resource" id="Resource_6q75w"]
 script = ExtResource("2_me30e")
 IsPlayer = true
 PlayerType = ExtResource("1_vrnrs")
-StartsWithBall = true
 block = 1.0
 Position = Vector2(0, -3)
 
 [sub_resource type="Resource" id="Resource_hevul"]
 script = ExtResource("2_me30e")
 PlayerType = ExtResource("3_46xfm")
+StartsWithBall = true
 block = 1.0
 Position = Vector2(0, -1)
 

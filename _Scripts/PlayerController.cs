@@ -27,7 +27,7 @@ public partial class PlayerController : Node3D
 	[Export] public bool HasBall;
 	public bool CanCatch;
 	public bool CanAct;
-	public bool CanThrow;
+	[Export] public bool CanThrow;
 	public bool CanMove;
 	public bool IsBlocking;
 	public bool CanBlock;
@@ -49,6 +49,7 @@ public partial class PlayerController : Node3D
 	List<PlayerController> PlayersNotOnTeam;
 
 	bool init = false;
+	bool snap = false;
 	bool canTakeInput = true;
 	float _sprintMultiplier;
 	float switchTargetTimer;
@@ -63,6 +64,7 @@ public partial class PlayerController : Node3D
 	Node3D debugBox2;
 
 	public static event Action<bool> CrossedLOS;
+	public static event Action Snapped;
 	
 	public override void _Ready()
 	{
@@ -84,7 +86,8 @@ public partial class PlayerController : Node3D
 		Ball.BallCaught += BallOnBallCaught;
 		CrossedLOS += BallOnBallCaught;
 		PlayManager.EndPlay += OnPlayerWithBallTackled;
-		PlayManager.InitPlay += Init;
+		Snapped += Init;
+		PlayManager.InitPlay += InitSnap;
 	}
 
 	public override void _ExitTree()
@@ -95,12 +98,14 @@ public partial class PlayerController : Node3D
 		Ball.BallCaught -= BallOnBallCaught;
 		CrossedLOS -= BallOnBallCaught;
 		PlayManager.EndPlay -= OnPlayerWithBallTackled;
-		PlayManager.InitPlay -= Init;
+		Snapped -= Init;
+		PlayManager.InitPlay -= InitSnap;
 	}
-
+	
 	// Called when the node enters the scene tree for the first time.
 	public void Init()
 	{
+		//snap = false;
 		//GD.Print(mat.ResourceName);
 		PlayerAction = new List<PlayerActions>();
 		if (inputManager != null)
@@ -114,6 +119,7 @@ public partial class PlayerController : Node3D
 		CanCatch = true;
 		CanAct = true;
 		CanMove = true;
+		CanThrow = true;
 		IsTargeted = false;
 		IsBlocked = false;
 		IsBlocking = false;
@@ -123,18 +129,15 @@ public partial class PlayerController : Node3D
 
 		teamStats = IsTeam1 ? gm.team1 : gm.team2;
 		
+		ball = Ball.Instance;
+		
+		if (!isOffence) HasBall = false;
+		
 		blockStamina = playerStats.Strength + teamStats.Linemen;
 		blockCooldown = 0;
 		IsBlocking = false;
 		
 		testMat.SetAlbedo(StartColor);
-
-		if (!isOffence) HasBall = false;
-		
-		ball = Ball.Instance;
-		//GD.Print("Ball: "  + ball.GetParent().Name);
-		ball.Position = Vector3.Up;
-		if(HasBall) ((Node)ball).Reparent(this, false);
 
 		if (isOffence)
 		{
@@ -147,8 +150,37 @@ public partial class PlayerController : Node3D
 			PlayersNotOnTeam = gm.offencePlayers;
 		}
 		init = true;
+
+		aiManager.Init();
 	}
 
+	void InitSnap(bool isSpecialTeams)
+	{
+		if (!HasBall) return;
+
+		if (isSpecialTeams)
+		{
+			return;
+		}
+		
+		if (!isOffence) HasBall = false;
+		
+		ball = Ball.Instance;
+		//GD.Print("Ball: "  + ball.GetParent().Name);
+		ball.Position = Vector3.Up;
+		
+		((Node)ball).Reparent(this, false);
+
+		snap = true;
+	}
+
+	void SnapBall()
+	{
+		((Node)ball).Reparent(GetTree().Root.GetChild(0));
+		HasBall = false;
+		Snapped?.Invoke();
+	}
+	
 	private void BallOnBallCaught(bool caughtByOffence)
 	{
 		if (caughtByOffence)
@@ -177,6 +209,9 @@ public partial class PlayerController : Node3D
 	public override void _Process(double delta)
 	{
 		if(!init) return;
+
+		if (snap && ball.ballState == BallState.Held) snap = false;
+		
 		GetInput();
 		
 		if(CanMove)
@@ -216,7 +251,7 @@ public partial class PlayerController : Node3D
 			CheckForCatch();
 		}
 		
-		if (ball.ballState is BallState.Free or BallState.Fumbled)
+		if (ball.ballState is BallState.Free or BallState.Fumbled && !snap)
 		{
 			float dist = ball.GlobalPosition.DistanceTo(GlobalPosition);
 
@@ -550,6 +585,26 @@ public partial class PlayerController : Node3D
 	
 	public void DoAction(PlayerActions action, int calledPlayerId, bool forceAction = false, bool playerAction = false)
 	{
+		if (snap)
+		{
+			InputManager[] inputs = IsTeam1 ? gm.playerInputTeam1 : gm.playerInputTeam2;
+			bool c = false;
+
+			foreach (var im in inputs)
+			{
+				if (im.PlayerID == calledPlayerId)
+				{
+					c = true;
+					break;
+				}
+			}
+
+			if (c && action == PlayerActions.Throw)
+			{
+				SnapBall();
+			}
+		}
+		
 		if(!CanAct)return;
 		
 		if(!forceAction)
@@ -898,14 +953,13 @@ public partial class PlayerController : Node3D
 		}
 
 		((Node)ball).Reparent(GetTree().Root.GetChild(0));
-		
 		ball.startPoint = startPoint;
 		ball.endPoint = endPoint;
 		ball.ballSpeed = throwSpeed;// * (float)GetProcessDeltaTime();
 		ball.ballState = BallState.Thrown;
 		ball.throwingPlayer = this;
 		ball.ResetCatchData();
-
+		GD.Print(ball.ballState);
 		//if (debugBox == null)
 		{
 			MeshInstance3D testMesh = new MeshInstance3D();

@@ -5,6 +5,7 @@ using System;
 public partial class PlayerDataOffence : Resource
 {
     [Export] public bool IsPlayer;
+    [Export] public bool IsSpecialTeams;
     [Export] public PlayerStats PlayerType;
     [Export] public bool StartsWithBall;
     [Export(PropertyHint.Range, "0,1,")] public float followRoute;

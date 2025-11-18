@@ -38,7 +38,7 @@ public partial class InputManager : Node
 		PlayManager.EndPlay -= Stop;
 	}
 
-	void Start()
+	void Start(bool isSpecialTeams)
 	{
 		canTakeInput = true;
 	}
