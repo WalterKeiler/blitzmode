@@ -42,4 +42,39 @@ public partial class GameManager : Node
 	public override void _Process(double delta)
 	{
 	}
+	
+	public PlayerController GetPlayerControlledPlayer(bool offence)
+	{
+		if(offence)
+		{
+			foreach (var player in offencePlayers)
+			{
+				if (player.isPlayerControlled) return player;
+			}
+		}
+		else
+		{
+			foreach (var player in defencePlayers)
+			{
+				if (player.isPlayerControlled) return player;
+			}
+		}
+
+		return null;
+	}
+
+	public InputManager GetInputByPlayerID(int ID)
+	{
+		foreach (var p1 in playerInputTeam1)
+		{
+			if (p1.PlayerID == ID) return p1;
+		}
+		foreach (var p2 in playerInputTeam2)
+		{
+			if (p2.PlayerID == ID) return p2;
+		}
+
+		return null;
+	}
+	
 }

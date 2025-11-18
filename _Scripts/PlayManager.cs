@@ -42,12 +42,14 @@ public partial class PlayManager : Node
 		base._EnterTree();
 		Instance = this;
 		EndPlay += PlayEnded;
+		Ball.BallCaught += BallCaught;
 	}
 
 	public override void _ExitTree()
 	{
 		base._ExitTree();
 		EndPlay -= PlayEnded;
+		Ball.BallCaught -= BallCaught;
 	}
 
 	public override void _Ready()
@@ -234,6 +236,7 @@ public partial class PlayManager : Node
 					if(input == null) continue;
 					
 					gm.players[i].inputManager = input;
+					gm.players[i].inputID = input.PlayerID;
 					gm.players[i].isPlayerControlled = true;
 					
 				}
@@ -293,6 +296,7 @@ public partial class PlayManager : Node
 					if(input == null) continue;
 					
 					gm.players[i].inputManager = input;
+					gm.players[i].inputID = input.PlayerID;
 					gm.players[i].isPlayerControlled = true;
 				}
 				d++;
@@ -455,6 +459,11 @@ public partial class PlayManager : Node
 	
 	public void StartTimer() {timerRunning = true;}
 	public void StopTimer() {timerRunning = false;}
+	
+	private void BallCaught(bool isOff)
+	{
+		if(!isOff) Turnover(true);
+	}
 	
 	public static void InvokeEndPlay(bool moveLineOfScrimmage)
 	{

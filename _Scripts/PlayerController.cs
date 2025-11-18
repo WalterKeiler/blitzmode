@@ -108,10 +108,10 @@ public partial class PlayerController : Node3D
 		//snap = false;
 		//GD.Print(mat.ResourceName);
 		PlayerAction = new List<PlayerActions>();
-		if (inputManager != null)
-		{
-			inputID = inputManager.PlayerID;
-		}
+		// if (inputManager != null)
+		// {
+		// 	inputID = inputManager.PlayerID;
+		// }
 		
 		PlayersOnTeam = new List<PlayerController>();
 		PlayersNotOnTeam = new List<PlayerController>();
@@ -127,6 +127,8 @@ public partial class PlayerController : Node3D
 		testMat = (StandardMaterial3D)mat.Duplicate();
 		mesh.MaterialOverride = testMat;
 
+		if (playerStats.PlayerType == PlayerType.OLineman) snap = true;
+		
 		teamStats = IsTeam1 ? gm.team1 : gm.team2;
 		
 		ball = Ball.Instance;
@@ -166,8 +168,9 @@ public partial class PlayerController : Node3D
 		if (!isOffence) HasBall = false;
 		
 		ball = Ball.Instance;
+		ball.Freeze = true;
 		//GD.Print("Ball: "  + ball.GetParent().Name);
-		ball.Position = Vector3.Up;
+		ball.Position = new Vector3(-.5f, -.25f, 0) * PlayManager.Instance.PlayDirection;
 		
 		((Node)ball).Reparent(this, false);
 
@@ -257,8 +260,7 @@ public partial class PlayerController : Node3D
 
 			if (dist <= 1.25f)
 			{
-				ball.Reparent(this, true);
-				ball.ballState = BallState.Held;
+				ball.Caught(this);
 			}
 		}
 		
@@ -297,12 +299,13 @@ public partial class PlayerController : Node3D
 		Vector3 endPoint = Vector3.Zero;
 		for (int i = 0; i < PlayersOnTeam.Count; i++)
 		{
+			if(PlayersOnTeam[i] == this) continue;
 			//if(throwTarget != null) break;
 			if(!((PlayerController)PlayersOnTeam[i]).playerStats.canBeThrowTarget) continue;
 			
 			Vector3 dir = GlobalPosition.DirectionTo(PlayersOnTeam[i].GlobalPosition);
 			float dot = dir.Dot(_moveDirection);
-
+			
 			if (dot >= closest)
 			{
 				//GD.Print(dot);
@@ -575,11 +578,17 @@ public partial class PlayerController : Node3D
 	{
 		if (otherPlayer != null && otherPlayer != this)
 		{
-			otherPlayer.inputID = inputID;
-			otherPlayer.inputManager = inputManager;
-			otherPlayer.PlayerAction = PlayerAction;
+			int id = inputID;
+			InputManager im = inputManager;
+			List<PlayerActions> pa = PlayerAction;
+			
 			inputID = -1;
 			_moveDirection = Vector3.Zero;
+			inputManager = null;
+			PlayerAction = new List<PlayerActions>();
+			otherPlayer.inputID = id;
+			otherPlayer.inputManager = im;
+			otherPlayer.PlayerAction = pa;
 		}
 	}
 	

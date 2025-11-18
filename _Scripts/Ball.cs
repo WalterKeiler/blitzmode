@@ -22,6 +22,8 @@ public partial class Ball : RigidBody3D
     public List<BallCatchData> catchOptions;
     public static event Action<bool> BallCaught;
 
+    private bool crossedLOS = false;
+    
     private bool init = false;
     
     public override void _Ready()
@@ -35,6 +37,7 @@ public partial class Ball : RigidBody3D
         base._EnterTree();
         PlayManager.InitPlay += Init;
         PlayerController.Snapped += Snap;
+        PlayerController.CrossedLOS += PlayerControllerOnCrossedLOS;
         PlayManager.EndPlay += EndPlay;
     }
 
@@ -43,12 +46,21 @@ public partial class Ball : RigidBody3D
         base._ExitTree();
         PlayManager.InitPlay -= Init;
         PlayerController.Snapped -= Snap;
+        PlayerController.CrossedLOS -= PlayerControllerOnCrossedLOS;
         PlayManager.EndPlay -= EndPlay;
+    }
+
+    private void PlayerControllerOnCrossedLOS(bool obj)
+    {
+        crossedLOS = true;
     }
 
     void Init(bool isST)
     {
         init = true;
+        Freeze = true;
+        crossedLOS = false;
+        ballState = BallState.Held;
         endPoint = Vector3.Inf;
         startPoint = Vector3.Inf;
     }
@@ -65,7 +77,7 @@ public partial class Ball : RigidBody3D
         GD.Print("Snap");
         
         PlayerController qb = GameManager.Instance.offencePlayers.Find(x => x.playerStats.PlayerType == PlayerType.Quarterback);
-        endPoint = qb.GlobalPosition + Vector3.Up;
+        endPoint = qb.GlobalPosition + Vector3.Up * .75f;
         Vector3 moveDirection = GlobalPosition.DirectionTo(endPoint);
         ballState = BallState.Free;
         Freeze = false;
@@ -96,21 +108,8 @@ public partial class Ball : RigidBody3D
             if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 1f)
             {
                 GD.Print("Caught");
-                bestOption.Player.HasBall = true;
-                Reparent(bestOption.Player);
-                if (throwingPlayer.PlayerAction.Contains(PlayerActions.Throw))
-                    throwingPlayer.PlayerAction.Remove(PlayerActions.Throw);
-                
-                if(bestOption.Player.isOffence)
-                {
-                    throwingPlayer.ChangePlayer(bestOption.Player);
-                    BallCaught?.Invoke(true);
-                }
-                else
-                {
-                    BallCaught?.Invoke(false);
-                }
-                ballState = BallState.Held;
+                //bestOption.Player.HasBall = true;
+                Caught(bestOption.Player);
             }
         }
 
@@ -134,6 +133,31 @@ public partial class Ball : RigidBody3D
         }
     }
 
+    public void Caught(PlayerController catchPlayer)
+    {
+        catchPlayer.HasBall = true;
+        Reparent(catchPlayer);
+        if (throwingPlayer != null && throwingPlayer.PlayerAction.Contains(PlayerActions.Throw))
+            throwingPlayer.PlayerAction.Remove(PlayerActions.Throw);
+        
+        if(catchPlayer.isOffence)
+        {
+            throwingPlayer ??= GameManager.Instance.GetPlayerControlledPlayer(true);
+            
+            if(throwingPlayer != catchPlayer)
+                throwingPlayer.ChangePlayer(catchPlayer);
+            
+            if(ballState == BallState.Thrown || crossedLOS)
+                BallCaught?.Invoke(true);
+        }
+        else
+        {
+            BallCaught?.Invoke(false);
+        }
+        Position = Vector3.Up;
+        ballState = BallState.Held;
+    }
+    
     void Move(double delta)
     {
         Vector3 moveDirection = CalculateBallDirection();
