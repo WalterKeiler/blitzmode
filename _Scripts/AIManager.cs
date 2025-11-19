@@ -4,6 +4,7 @@ using System;
 public partial class AIManager : Node
 {
     public static float DISTANCE_FROM_SIDELINE = 1;
+    public const int PATHFINDING_STEPS = 32;
     
     [Export] public bool isOffence;
 
@@ -28,9 +29,13 @@ public partial class AIManager : Node
     private Ball ball;
     private bool setup = false;
 
+    private PathfindingManager pm;
+    
     RandomNumberGenerator rng;
     Vector3 ranDir;
 
+    Node3D debugBox;
+    
     public override void _EnterTree()
     {
         base._EnterTree();
@@ -49,6 +54,7 @@ public partial class AIManager : Node
     {
         player = (PlayerController)GetParent();
         player.aiManager = this;
+        pm = PathfindingManager.Instance;
         //currentZone = new Zone(new Vector3(15, 0, -10), 10);
 
         rng = new RandomNumberGenerator();
@@ -112,7 +118,7 @@ public partial class AIManager : Node
             rushBall *= 1;
             finalDir = ((FollowPlayer() * followPlayer) + (CoverZone() * coverZone) + (RushBall() * rushBall));
             
-            if(player.GlobalPosition.DistanceTo(ball.GlobalPosition) < 2f)
+            if(player.GlobalPosition.DistanceTo(ball.GlobalPosition) < 1.5f)
             {
                 player.DoAction(PlayerActions.Tackle, player.playerID);
             }
@@ -199,46 +205,95 @@ public partial class AIManager : Node
     {
         if(block == 0) return Vector3.Zero;
         
+        if (debugBox == null)
+        {
+            MeshInstance3D testMesh = new MeshInstance3D();
+            testMesh.Mesh = new BoxMesh();
+            testMesh.MaterialOverride = new Material();
+            testMesh.Position = Vector3.Zero;
+            GetParent().AddChild(testMesh);
+            debugBox = testMesh;
+        }
+        
         PlayerController[] nearestPlayers = player.GetNearestPlayers(false);
         PlayerController nearestPlayer = targetPlayer;
         //GD.Print(nearestPlayers.Length);
-        foreach (PlayerController p in nearestPlayers)
-        { 
-            if(targetPlayer == null)
+        if(targetPlayer == null)
+        {
+            foreach (PlayerController p in nearestPlayers)
             {
-                if (p.IsTargeted)
+                if (targetPlayer == null)
                 {
+                    if (p.IsTargeted)
+                    {
+                        GD.Print("Targeted Already");
+                        continue;
+                    }
+                }
+                else if (targetPlayer.GlobalPosition.DistanceTo(ball.GlobalPosition) <
+                         p.GlobalPosition.DistanceTo(ball.GlobalPosition)
+                         || p.IsBlocked || p.IsTargeted || (!p.isPlayerControlled && p.aiManager.rushBall < 1))
+                {
+                    GD.Print("Something");
                     continue;
                 }
-            }
-            else if (targetPlayer.GlobalPosition.DistanceTo(ball.GlobalPosition) <
-                     p.GlobalPosition.DistanceTo(ball.GlobalPosition) 
-                     || p.IsBlocked || p.IsTargeted || (!p.isPlayerControlled && p.aiManager.rushBall < 1))
-            {
-                continue;
-            }
 
-            if (targetPlayer != null) targetPlayer.IsTargeted = false;
-            nearestPlayer = p;
-            targetPlayer = p;
-            p.IsTargeted = true;
-            break;
+                if (targetPlayer != null) targetPlayer.IsTargeted = false;
+                nearestPlayer = p;
+                targetPlayer = p;
+                p.IsTargeted = true;
+                GD.Print(player.Name + " Targeting: " + p.Name);
+                break;
+            }
         }
-        if(nearestPlayer == null && targetPlayer == null)
-        {
-            GD.Print("No nearest player");
-            return Vector3.Zero;
-        }
-        if(nearestPlayer == null && targetPlayer != null) nearestPlayer = targetPlayer;
         
-        Vector3 dir = player.GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition);
+        switch (nearestPlayer)
+        {
+            case null when targetPlayer == null:
+                GD.Print("No nearest player");
+                return Vector3.Zero;
+            case null when targetPlayer != null:
+                nearestPlayer = targetPlayer;
+                break;
+        }
+
+        float minWeight = float.MaxValue;
+        Vector3 dir = Vector3.Zero;
+        for (int i = 0; i < PATHFINDING_STEPS; i++)
+        {
+            Vector3 unitDir = new Vector3(
+                Mathf.Cos((2 * Mathf.Pi * (float) i) / (float) PATHFINDING_STEPS), 0,
+                Mathf.Sin((2 * Mathf.Pi * (float) i) / (float) PATHFINDING_STEPS));
+            
+            float testWeight = pm.QuerySDF(player.GlobalPosition + unitDir * .1f, nearestPlayer.GlobalPosition, player);
+            
+            if (minWeight > testWeight)
+            {
+                minWeight = testWeight;
+                dir = unitDir;
+            }
+        }
+
         if (player.GlobalPosition.DistanceTo(nearestPlayer.GlobalPosition) < 1f)
         {
             player.Block();
             if(player.IsBlocking)
                 return Vector3.Zero;
         }
+        else
+        {
+            float dist = player.GlobalPosition.DistanceTo(ball.GlobalPosition);
+            float nearestDist = nearestPlayer.GlobalPosition.DistanceTo(ball.GlobalPosition);
 
+            if (dist < nearestDist - 2)
+            {
+                Vector3 ballToNearestDir = ball.GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition);
+
+                //dir = player.GlobalPosition.DirectionTo(ball.GlobalPosition + ballToNearestDir * nearestDist / 2);
+            }
+        }
+        debugBox.GlobalPosition = nearestPlayer.GlobalPosition;
+        debugBox.Scale = Vector3.One;
         return dir;
     }
     
@@ -299,10 +354,30 @@ public partial class AIManager : Node
     {
         if(rushBall == 0) return Vector3.Zero;
 
+        float minWeight = float.MaxValue;
+        Vector3 finalDir = Vector3.Zero;
+        for (int i = 0; i < PATHFINDING_STEPS; i++)
+        {
+            Vector3 unitDir = new Vector3(
+                Mathf.Cos((2 * Mathf.Pi * (float) i) / (float) PATHFINDING_STEPS), 0,
+                Mathf.Sin((2 * Mathf.Pi * (float) i) / (float) PATHFINDING_STEPS));
+            
+            float testWeight = pm.QuerySDF(player.GlobalPosition + unitDir * .1f, ball.GlobalPosition, player);
+            
+            if (minWeight > testWeight)
+            {
+                minWeight = testWeight;
+                finalDir = unitDir;
+            }
+        }
+
+        return finalDir;
+        
         if(ball.ballState == BallState.Free)
         {
             return player.GlobalPosition.DirectionTo(ball.GlobalPosition);
         }
+        
         
         Vector3 nearestPlayer = player.GetNearestPlayerToBall(false).GlobalPosition;
         

@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://dkddmtmu5c3pb"]
+[gd_scene load_steps=29 format=3 uid="uid://dkddmtmu5c3pb"]
 
 [ext_resource type="Script" uid="uid://byeqa4htefu52" path="res://_Scripts/CameraController.cs" id="1_nb8lh"]
 [ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="2_acjaa"]
@@ -21,6 +21,7 @@
 [ext_resource type="PackedScene" uid="uid://bcmgvfcvwhc7b" path="res://_Scenes/PlayHUD.tscn" id="19_puul3"]
 [ext_resource type="Resource" uid="uid://bfsuyo3p3p5db" path="res://Resources/Plays/Offence/Saquon Up The Middle.tres" id="19_tnsxv"]
 [ext_resource type="Resource" uid="uid://bi7utm7mbpr17" path="res://Resources/Plays/Defence/All Out Blitz.tres" id="20_tnsxv"]
+[ext_resource type="Script" uid="uid://cvc6gb3kekrlu" path="res://_Scripts/PathfindingManager.cs" id="21_omn81"]
 [ext_resource type="PackedScene" uid="uid://da44s0i0rtv5k" path="res://_Scenes/PlaySelectionUI.tscn" id="22_gpq5w"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
@@ -95,6 +96,9 @@ mainCam = NodePath("../CameraController")
 playSelectionUI = NodePath("../PlaySelectionUI")
 OffencePlay = ExtResource("19_tnsxv")
 DefencePlay = ExtResource("20_tnsxv")
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("21_omn81")
 
 [node name="Control" parent="." instance=ExtResource("19_puul3")]
 

@@ -40,7 +40,6 @@ public partial class PlayerController : Node3D
 	
 	Area3D tackleBox;
 	Area3D nearbyPayersBox;
-	Area3D CatchZone;
 	Ball ball;
 
 	TeamData teamStats;
@@ -73,7 +72,7 @@ public partial class PlayerController : Node3D
 		gm = GameManager.Instance;
 		
 		//Init();
-		//CanMove = true;
+		CanMove = false;
 		tackleBox = GetNode<Area3D>("TackleBox");
 		nearbyPayersBox = GetNode<Area3D>("NearbyPayersBox");
 	}
@@ -576,7 +575,7 @@ public partial class PlayerController : Node3D
 
 	public void ChangePlayer(PlayerController otherPlayer)
 	{
-		if (otherPlayer != null && otherPlayer != this)
+		if (otherPlayer != null && otherPlayer != this && otherPlayer.inputManager == null)
 		{
 			int id = inputID;
 			InputManager im = inputManager;
@@ -590,6 +589,8 @@ public partial class PlayerController : Node3D
 			otherPlayer.inputManager = im;
 			otherPlayer.PlayerAction = pa;
 		}
+
+		if (inputManager == null && inputID != -1) inputManager = gm.GetInputByPlayerID(inputID);
 	}
 	
 	public void DoAction(PlayerActions action, int calledPlayerId, bool forceAction = false, bool playerAction = false)
@@ -705,7 +706,7 @@ public partial class PlayerController : Node3D
 		PlayerController nearestPlayer = GetNearestPlayer(false);
 		Vector3 dir = GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition);
 		//GD.Print(nearestPlayer._moveDirection.Dot(dir) < 0.75f);
-		if (nearestPlayer._moveDirection.Dot(dir) < 0.75f && ((nearestPlayer.playerStats.Strength + nearestPlayer.teamStats.Linemen) / 2) < blockStamina)
+		if (nearestPlayer._moveDirection.Dot(dir) < 0.95f && ((nearestPlayer.playerStats.Strength + nearestPlayer.teamStats.Linemen) / 2) < blockStamina)
 		{
 			nearestPlayer._moveDirection = Vector3.Zero;
 			nearestPlayer.IsBlocked = true;
@@ -723,6 +724,12 @@ public partial class PlayerController : Node3D
 		movementMultiplier = .5f;
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		CanBlock = true;
+		if (!isPlayerControlled && aiManager.targetPlayer != null)
+		{
+			aiManager.targetPlayer.IsTargeted = false;
+			aiManager.targetPlayer = null;
+		}
+		blockStamina = playerStats.Strength + teamStats.Linemen;
 		movementMultiplier = 1;
 	}
 	
@@ -809,7 +816,8 @@ public partial class PlayerController : Node3D
 		if(!CanDoAction(PlayerActions.Tackle, restrictions)) return;
 		
 		testMat.SetAlbedo((Colors.Green));
-		PlayerController tackleTarget = GetNearestPlayer(tackleBox, false, true);
+		//PlayerController tackleTarget = GetNearestPlayer(tackleBox, false, true);
+		PlayerController tackleTarget = GetNearestPlayer(false, true);
 		if (tackleTarget != null)
 		{
 			tackleTarget.DoAction(PlayerActions.Tackled, tackleTarget.inputID, true);

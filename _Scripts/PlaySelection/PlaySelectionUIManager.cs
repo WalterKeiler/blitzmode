@@ -527,6 +527,9 @@ public partial class PlaySelectionUIManager : Control
         }
         
         pm.StartPlay();
-        
+        team1SelectionIndicator.Reparent(team1Plays[0]);
+        team1SelectionIndicator.Position = Vector2.Zero;
+        team2SelectionIndicator.Reparent(team2Plays[0]);
+        team2SelectionIndicator.Position = Vector2.Zero;
     }
 }

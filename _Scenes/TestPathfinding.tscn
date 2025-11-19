@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://cu73qkwharatx"]
+
+[ext_resource type="Shader" uid="uid://dov8g6hom246w" path="res://Materials/PathfindingTest Shader.gdshader" id="1_01ktj"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ljuef"]
+render_priority = 0
+shader = ExtResource("1_01ktj")
+shader_parameter/Target = Vector3(-1.115, 0, -3.535)
+shader_parameter/P1 = Vector3(-3.345, 0, 0)
+shader_parameter/P2 = Vector3(2.99, 0, 0)
+shader_parameter/P3 = Vector3(0, 0, 3.3)
+
+[sub_resource type="QuadMesh" id="QuadMesh_u4r2w"]
+material = SubResource("ShaderMaterial_ljuef")
+size = Vector2(10, 10)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("QuadMesh_u4r2w")

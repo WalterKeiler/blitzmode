@@ -6,8 +6,8 @@
 render_priority = 0
 shader = ExtResource("1_5vsit")
 shader_parameter/useWorldSpace = true
-shader_parameter/fieldColor = Color(0, 0.411765, 0, 1)
-shader_parameter/lineColor = Color(1, 1, 1, 1)
+shader_parameter/fieldColor = Color(9.866804e-07, 0.32533118, 0, 1)
+shader_parameter/lineColor = Color(0.6528635, 0.6528636, 0.6528636, 1)
 shader_parameter/lineOfScrimmageColor = Color(0, 0.720126, 0.774425, 1)
 shader_parameter/firstDownColor = Color(1, 0.67451, 0, 1)
 shader_parameter/noiseEffect = 1.0
