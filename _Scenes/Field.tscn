@@ -97,7 +97,7 @@ playSelectionUI = NodePath("../PlaySelectionUI")
 OffencePlay = ExtResource("19_tnsxv")
 DefencePlay = ExtResource("20_tnsxv")
 
-[node name="Node" type="Node" parent="."]
+[node name="PathfindingManager" type="Node" parent="."]
 script = ExtResource("21_omn81")
 
 [node name="Control" parent="." instance=ExtResource("19_puul3")]

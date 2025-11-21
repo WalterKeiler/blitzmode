@@ -5,7 +5,7 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ljuef"]
 render_priority = 0
 shader = ExtResource("1_01ktj")
-shader_parameter/Target = Vector3(-1.115, 0, -3.535)
+shader_parameter/Target = Vector3(0, 0, 0)
 shader_parameter/P1 = Vector3(-3.345, 0, 0)
 shader_parameter/P2 = Vector3(2.99, 0, 0)
 shader_parameter/P3 = Vector3(0, 0, 3.3)

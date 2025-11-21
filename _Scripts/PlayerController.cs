@@ -37,6 +37,8 @@ public partial class PlayerController : Node3D
 	public float blockStamina;
 	public float movementMultiplier = 1;
 	public bool IsTeam1;
+
+	private Vector3 lastFrameMoveDir;
 	
 	Area3D tackleBox;
 	Area3D nearbyPayersBox;
@@ -125,7 +127,9 @@ public partial class PlayerController : Node3D
 		switchTargetTimer = 0;
 		testMat = (StandardMaterial3D)mat.Duplicate();
 		mesh.MaterialOverride = testMat;
-
+		lastFrameMoveDir = Vector3.Zero;
+		
+		
 		if (playerStats.PlayerType == PlayerType.OLineman) snap = true;
 		
 		teamStats = IsTeam1 ? gm.team1 : gm.team2;
@@ -384,7 +388,12 @@ public partial class PlayerController : Node3D
 	void Move(double delta)
 	{
 		_moveDirection.Normalized();
+
+		_moveDirection = _moveDirection.Lerp(lastFrameMoveDir, .75f);
+		_moveDirection = _moveDirection.LimitLength();
+		
 		Translate(_moveDirection * (float)delta * ((playerStats.Speed + teamStats.Running) + _sprintMultiplier) * movementMultiplier);
+		lastFrameMoveDir = _moveDirection;
 	}
 	
 	
@@ -593,7 +602,7 @@ public partial class PlayerController : Node3D
 		if (inputManager == null && inputID != -1) inputManager = gm.GetInputByPlayerID(inputID);
 	}
 	
-	public void DoAction(PlayerActions action, int calledPlayerId, bool forceAction = false, bool playerAction = false)
+	public void DoAction(PlayerActions action, int calledPlayerId, bool forceAction = false, bool playerAction = false, bool isSecondaryAction = false)
 	{
 		if (snap)
 		{
@@ -639,6 +648,7 @@ public partial class PlayerController : Node3D
 				SpinMove();
 				break;
 			case PlayerActions.Jump :
+				if(isSecondaryAction && CanThrow) break;
 				Jump();
 				break;
 			case PlayerActions.StiffArm :

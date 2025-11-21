@@ -139,7 +139,7 @@ public partial class PlayManager : Node
 					((PlayerController)player).StartColor = Colors.Firebrick;
 					break;
 				case PlayerType.Safety :
-					((PlayerController)player).StartColor = Colors.Plum;
+					((PlayerController) player).StartColor = DefencePlay.PlayerDataDefence[i].coverZone > .5f ? Colors.Gold : Colors.Plum;
 					break;
 			}
 			
@@ -328,6 +328,7 @@ public partial class PlayManager : Node
 		gm.players[i].aiManager.rushBall = pD.rushBall;
 		gm.players[i].aiManager.block = 1;
 		gm.players[i].aiManager.targetPlayer = null;
+		gm.players[i].aiManager.currentZone = pD.Zone;
 		gm.players[i].inputManager = null;
 		gm.players[i].isPlayerControlled = false;
 		gm.players[i].inputID = -1;

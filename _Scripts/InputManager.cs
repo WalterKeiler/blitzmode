@@ -21,7 +21,7 @@ public partial class InputManager : Node
 
 	private bool canTakeInput = false;
 	
-	public static event Action<PlayerActions, int, bool, bool> InputPressAction;
+	public static event Action<PlayerActions, int, bool, bool, bool> InputPressAction;
 	public static event Action<PlayerActions, int, bool, bool> InputReleaseAction;
 
 	public override void _EnterTree()
@@ -72,8 +72,13 @@ public partial class InputManager : Node
 	{
 		for (int i = 0; i < _inputCombos.Length; i++)
 		{
-			if ((Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].InputActionsJoy) || Input.IsKeyPressed(_inputCombos[i].InputActionsKey) ||
-			     Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].SecondaryInputActionsJoy) || Input.IsKeyPressed(_inputCombos[i].SecondaryInputActionsKey))
+
+			bool isPrimaryInput = Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].InputActionsJoy) ||
+			                      Input.IsKeyPressed(_inputCombos[i].InputActionsKey);
+			bool isSecondaryInput = Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].SecondaryInputActionsJoy) ||
+			                        Input.IsKeyPressed(_inputCombos[i].SecondaryInputActionsKey);
+			
+			if ((isPrimaryInput || isSecondaryInput)
 			    && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence))
 			{
 				if(_inputCombos[i].PressCount > 1 && !inputPressed[i])
@@ -83,14 +88,14 @@ public partial class InputManager : Node
 					inputPressed[i] = true;
 					if (_inputCombos[i].currentPress == _inputCombos[i].PressCount)
 					{
-						InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true);
+						InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true, isSecondaryInput);
 						_inputCombos[i].isActive = true;
 					}
 				}
 				else if(!inputPressed[i])
 				{
 					//GD.Print("Add: " + _inputCombos[i].Action);
-					InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true);
+					InputPressAction?.Invoke(_inputCombos[i].Action, PlayerID, false, true, isSecondaryInput);
 					_inputCombos[i].isActive = true;
 					_inputCombos[i].currentPress++;
 					inputPressed[i] = true;
@@ -98,9 +103,7 @@ public partial class InputManager : Node
 				}
 			}
 			
-			if(!Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].InputActionsJoy) && !Input.IsKeyPressed(_inputCombos[i].InputActionsKey) && 
-			   !Input.IsJoyButtonPressed(PlayerID, _inputCombos[i].SecondaryInputActionsJoy) && !Input.IsKeyPressed(_inputCombos[i].SecondaryInputActionsKey)
-			   && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence) && inputPressed[i])
+			if(!isPrimaryInput && !isSecondaryInput && (_inputCombos[i].isUniversal || _inputCombos[i].isOffence == isOffence) && inputPressed[i])
 			{
 				WaitForMoreInput(i);
 			}
@@ -114,9 +117,12 @@ public partial class InputManager : Node
 		
 		await ToSignal(GetTree().CreateTimer(_inputBuffer), "timeout");
 		
-		if(!Input.IsJoyButtonPressed(PlayerID, _inputCombos[inputCombo].InputActionsJoy) && !Input.IsKeyPressed(_inputCombos[inputCombo].InputActionsKey) && 
-		   !Input.IsJoyButtonPressed(PlayerID, _inputCombos[inputCombo].SecondaryInputActionsJoy) && !Input.IsKeyPressed(_inputCombos[inputCombo].SecondaryInputActionsKey)
-		   && (_inputCombos[inputCombo].isUniversal || _inputCombos[inputCombo].isOffence == isOffence))
+		bool isPrimaryInput = Input.IsJoyButtonPressed(PlayerID, _inputCombos[inputCombo].InputActionsJoy) ||
+		                      Input.IsKeyPressed(_inputCombos[inputCombo].InputActionsKey);
+		bool isSecondaryInput = Input.IsJoyButtonPressed(PlayerID, _inputCombos[inputCombo].SecondaryInputActionsJoy) ||
+		                        Input.IsKeyPressed(_inputCombos[inputCombo].SecondaryInputActionsKey);
+		
+		if(!isPrimaryInput && !isSecondaryInput && (_inputCombos[inputCombo].isUniversal || _inputCombos[inputCombo].isOffence == isOffence))
 		{
 			InputReleaseAction?.Invoke(_inputCombos[inputCombo].Action, PlayerID, false, true);
 			_inputCombos[inputCombo].isActive = false;

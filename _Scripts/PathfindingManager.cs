@@ -4,8 +4,6 @@ using System;
 public partial class PathfindingManager : Node
 {
     public static PathfindingManager Instance;
-    
-    private Vector3 target;
 
     private PlayerController[] Players;
     
@@ -23,10 +21,34 @@ public partial class PathfindingManager : Node
         Players = GameManager.Instance.players;
     }
 
+    public float QueryZone(Vector3 samplePos, Zone zone, PlayerController ignore)
+    {
+        float psdf = PlayerSDF(samplePos, ignore);
+        
+        float zoneSD = sdCircle(samplePos - zone.center, zone.radius);
+        //if(zoneSD < 0) zoneSD += zone.radius;
+        
+        float targetSDF = float.MaxValue;
+        foreach (var player in Players)
+        {
+            if (player.playerStats.PlayerType == PlayerType.Receiver ||
+                player.playerStats.PlayerType == PlayerType.Quarterback)
+            {
+                targetSDF = Mathf.Min(targetSDF, TargetSDF(samplePos, player.GlobalPosition));
+            }
+        }
+
+        if (zoneSD > 0) return (zoneSD + 1) * 10000;
+        
+        return Mathf.Max(psdf, targetSDF);
+    }
+    
     public float QuerySDF(Vector3 samplePos, Vector3 target, PlayerController ignore)
     {
-        this.target = target;
-        return Mathf.Max(PlayerSDF(samplePos, ignore), TargetSDF(samplePos));
+        float tsdf = TargetSDF(samplePos, target);
+        float psdf = PlayerSDF(samplePos, ignore);
+        
+        return Mathf.Max(tsdf + psdf, tsdf);
     }
 
     float PlayerSDF(Vector3 samplePos, PlayerController ignore)
@@ -37,16 +59,17 @@ public partial class PathfindingManager : Node
         {
             if(player == ignore) continue;
             
-            d = Mathf.Min(d, sdCircle(player.GlobalPosition - samplePos, .5f));
+            d = Mathf.Min(d, sdCircle(player.GlobalPosition - samplePos, .65f));
         }
 
         if (d < 0) d = -(d * 10000);
+        //else if(d < .5f) d = (d * 1000);
         else d = 0;
 
         return d;
     }
 
-    float TargetSDF(Vector3 samplePos)
+    float TargetSDF(Vector3 samplePos, Vector3 target)
     {
         return sdCircle(target - samplePos, 0f);
     }

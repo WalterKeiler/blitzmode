@@ -169,8 +169,8 @@ public partial class AIManager : Node
                 //followRoute = 0;
                 //findOpenSpace = 1;
                 case EndRouteAction.Continue:
-                    if(MathF.Abs(player.GlobalPosition.Z) >= (GameManager.Instance.fieldWidth / 2f) - DISTANCE_FROM_SIDELINE) return Vector3.Right * PlayManager.Instance.PlayDirection;
-                    return currentRoute.targetPoints[^2].DirectionTo(currentRoute.targetPoints[^1]);
+                    if(MathF.Abs(player.GlobalPosition.Z) >= (GameManager.Instance.fieldWidth / 2f) - DISTANCE_FROM_SIDELINE) return QuerySDF(player.GlobalPosition + Vector3.Right * PlayManager.Instance.PlayDirection);
+                    return QuerySDF(player.GlobalPosition + currentRoute.targetPoints[^2].DirectionTo(currentRoute.targetPoints[^1]));
                 case EndRouteAction.Block:
                     followRoute = 0;
                     block = 1;
@@ -188,7 +188,7 @@ public partial class AIManager : Node
             currentRoute.currentIndex++;
             //GD.Print("Moving to next Index: " + currentRoute.currentIndex);
         }
-        return currentRoute.currentIndex >= currentRoute.targetPoints.Length ? Vector3.Zero : player.GlobalPosition.DirectionTo(currentRoute.GetLOSTargetPoint(currentRoute.currentIndex));
+        return currentRoute.currentIndex >= currentRoute.targetPoints.Length ? Vector3.Zero : QuerySDF(currentRoute.GetLOSTargetPoint(currentRoute.currentIndex));
     }
     
     Vector3 FindOpenSpace()
@@ -257,22 +257,7 @@ public partial class AIManager : Node
                 break;
         }
 
-        float minWeight = float.MaxValue;
-        Vector3 dir = Vector3.Zero;
-        for (int i = 0; i < PATHFINDING_STEPS; i++)
-        {
-            Vector3 unitDir = new Vector3(
-                Mathf.Cos((2 * Mathf.Pi * (float) i) / (float) PATHFINDING_STEPS), 0,
-                Mathf.Sin((2 * Mathf.Pi * (float) i) / (float) PATHFINDING_STEPS));
-            
-            float testWeight = pm.QuerySDF(player.GlobalPosition + unitDir * .1f, nearestPlayer.GlobalPosition, player);
-            
-            if (minWeight > testWeight)
-            {
-                minWeight = testWeight;
-                dir = unitDir;
-            }
-        }
+        Vector3 dir = QuerySDF(nearestPlayer.GlobalPosition);
 
         if (player.GlobalPosition.DistanceTo(nearestPlayer.GlobalPosition) < 1f)
         {
@@ -300,6 +285,9 @@ public partial class AIManager : Node
     Vector3 CoverZone()
     {
         if(coverZone == 0 || currentZone == null) return Vector3.Zero;
+
+        return QueryZoneSDF(currentZone);
+        
         PlayerController nearestPlayer = player.GetNearestPlayerByType(false, PlayerType.Receiver);
         PlayerController nearestQB = player.GetNearestPlayerByType(false, PlayerType.Quarterback);
 
@@ -348,30 +336,16 @@ public partial class AIManager : Node
         {
             return Vector3.Zero;
         }
+
+        return QuerySDF(nearestPlayer + targetPlayer._moveDirection);
         return player.GlobalPosition.DirectionTo(nearestPlayer + targetPlayer._moveDirection);
     }
     Vector3 RushBall()
     {
         if(rushBall == 0) return Vector3.Zero;
+        
 
-        float minWeight = float.MaxValue;
-        Vector3 finalDir = Vector3.Zero;
-        for (int i = 0; i < PATHFINDING_STEPS; i++)
-        {
-            Vector3 unitDir = new Vector3(
-                Mathf.Cos((2 * Mathf.Pi * (float) i) / (float) PATHFINDING_STEPS), 0,
-                Mathf.Sin((2 * Mathf.Pi * (float) i) / (float) PATHFINDING_STEPS));
-            
-            float testWeight = pm.QuerySDF(player.GlobalPosition + unitDir * .1f, ball.GlobalPosition, player);
-            
-            if (minWeight > testWeight)
-            {
-                minWeight = testWeight;
-                finalDir = unitDir;
-            }
-        }
-
-        return finalDir;
+        return QuerySDF(ball.GlobalPosition);
         
         if(ball.ballState == BallState.Free)
         {
@@ -387,5 +361,55 @@ public partial class AIManager : Node
         }
         
         return player.GlobalPosition.DirectionTo(ball.GlobalPosition);;
+    }
+
+    Vector3 QuerySDF(Vector3 target)
+    {
+        float minWeight = float.MaxValue;
+        Vector3 finalDir = Vector3.Zero;
+        for (int i = 0; i < PATHFINDING_STEPS; i++)
+        {
+            Vector3 unitDir = MathW.PointOnUnitCircleXZ(i,i,PATHFINDING_STEPS);
+            
+            float testWeight = pm.QuerySDF(player.GlobalPosition + unitDir * .1f, target, player);
+            
+            if (minWeight > testWeight)
+            {
+                minWeight = testWeight;
+                finalDir = unitDir;
+            }
+        }
+
+        return finalDir;
+    }
+
+    Vector3 QueryZoneSDF(Zone zone)
+    {
+        float minWeight = float.MaxValue;
+        Vector3 finalDir = Vector3.Zero;
+        for (int i = 0; i < PATHFINDING_STEPS; i++)
+        {
+            Vector3 unitDir = MathW.PointOnUnitCircleXZ(i, i, PATHFINDING_STEPS);
+
+            float testWeight = pm.QueryZone(player.GlobalPosition + unitDir * .1f, zone, player);
+
+            if (minWeight > testWeight)
+            {
+                minWeight = testWeight;
+                finalDir = unitDir;
+            }
+        }
+
+        return finalDir;
+    }
+}
+
+public class MathW
+{
+    public static Vector3 PointOnUnitCircleXZ(float x, float z, float steps)
+    {
+        return new Vector3(
+            Mathf.Cos((2 * Mathf.Pi * (float) x) / (float) steps), 0,
+            Mathf.Sin((2 * Mathf.Pi * (float) z) / (float) steps));
     }
 }
