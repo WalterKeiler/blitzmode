@@ -51,6 +51,14 @@ public partial class PathfindingManager : Node
         return Mathf.Max(tsdf + psdf, tsdf);
     }
 
+    public float QueryBlockSDF(Vector3 samplePos, Vector3 targetA, Vector3 targetB, PlayerController ignore)
+    {
+        float tsdf = Mathf.Min(TargetSDF(samplePos, targetA), sdSegment(samplePos, targetA, targetB));
+        float psdf = PlayerSDF(samplePos, ignore);
+        
+        return Mathf.Max(tsdf + psdf, tsdf);
+    }
+    
     float PlayerSDF(Vector3 samplePos, PlayerController ignore)
     {
         float d = float.MaxValue;
@@ -74,9 +82,26 @@ public partial class PathfindingManager : Node
         return sdCircle(target - samplePos, 0f);
     }
     
+
+    float TargetLineSDF(Vector3 samplePos, Vector3 target)
+    {
+        return sdCircle(target - samplePos, 0f);
+    }
+    
     float sdCircle( Vector3 p, float r )
     {
         Vector2 pxz = new Vector2(p.X, p.Z);
         return pxz.Length() - r;
+    }
+    
+    float sdSegment(Vector3 p, Vector3 a, Vector3 b )
+    {
+        Vector2 pxz = new Vector2(p.X, p.Z);
+        Vector2 axz = new Vector2(a.X, a.Z);
+        Vector2 bxz = new Vector2(b.X, b.Z);
+        
+        Vector2 pa = pxz-axz, ba = bxz-axz;
+        float h = (float) Mathf.Clamp((pa.Dot(ba) / ba.Dot(ba)), 0.0, 1.0 );
+        return (pa - ba*h).Length();
     }
 }

@@ -15,6 +15,8 @@ public partial class PlayManager : Node
 	[Export] public Play OffencePlay;
 	[Export] public Play DefencePlay;
 	
+	[Export] public Play KickoffPlay;
+	
 	[Export] public float lineOfScrimmage = 0;
 	[Export] public float firstDownLine = 0;
 
@@ -25,6 +27,8 @@ public partial class PlayManager : Node
 
 	private bool inbetweenPlays;
 
+	bool isExtraPointPlay;
+	
 	bool timerRunning = false;
 	public float quarterTimer;
 	public int quarterNumber = 1;
@@ -62,16 +66,26 @@ public partial class PlayManager : Node
 		AddChild(ball);
 
 		mainCam.target = ball;
+
+		isExtraPointPlay = false;
 		
 		SpawnPlayers();
 		FirstDown();
 		CurrentDown--;
 		quarterTimer = gm.QuarterLengthMin * 60;
 		
-		playSelectionUI.Visible = true;
-		psm.Init();
+		
+		StartGame();
 	}
 
+	async void StartGame()
+	{
+		await ToSignal(GetTree().CreateTimer(.25f), "timeout");
+		Kickoff(1);
+		//playSelectionUI.Visible = true;
+		//psm.Init(false);
+	}
+	
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
@@ -149,7 +163,7 @@ public partial class PlayManager : Node
 		}
 	}
 	
-	public void StartPlay()
+	public void StartPlay(bool isKickoff = false)
 	{
 		gm.offencePlayers = new List<PlayerController>();
 		gm.defencePlayers = new List<PlayerController>();
@@ -185,7 +199,13 @@ public partial class PlayManager : Node
 				Vector2 pos = OffencePlay.PlayerDataOffence[o].Position;
 				gm.players[i].Position = new Vector3(lineOfScrimmage + pos.Y * PlayDirection, 1, pos.X);
 				gm.players[i].playerStats = play.PlayerType;
-				
+
+				if (isKickoff)
+				{
+					gm.players[i].Position = new Vector3((gm.fieldLength / 6f) * pos.Y * PlayDirection, 1,(gm.fieldLength / 6f) * pos.X);
+					Ball.Instance.endPoint = gm.players[i].GlobalPosition;
+				}
+				//GD.Print(play.PlayerType.);
 				gm.players[i].Name = (play.PlayerType.PlayerType + " " + o);
 				
 				if(gm.players[i].playerStats.canBeThrowTarget) reciverPositions.Add(gm.players[i]);
@@ -249,6 +269,16 @@ public partial class PlayManager : Node
 				Vector2 pos = play.Position;
 				gm.players[i].Position = (Vector3.Right * 1) + new Vector3(lineOfScrimmage + pos.Y * PlayDirection, 1, pos.X);
 				gm.players[i].playerStats = play.PlayerType;
+				
+				if (isKickoff)
+				{
+					gm.players[i].Position = new Vector3(((gm.fieldLength / 6f) * pos.Y - 2) * PlayDirection, 1,(gm.fieldLength / 6f) * pos.X);
+					if (i == 0)
+					{
+						gm.players[i].HasBall = true;
+						Ball.Instance.startPoint = gm.players[i].GlobalPosition;
+					}
+				}
 				
 				gm.players[i].Name = (play.PlayerType.PlayerType + " " + d);
 				
@@ -340,6 +370,9 @@ public partial class PlayManager : Node
 
 		inbetweenPlays = true;
 
+		bool kickoff = false;
+		bool score = false;
+		
 		StopTimer();
 		
 		float newLos = MathF.Round(Ball.Instance.GlobalPosition.X * 10) / 10;
@@ -353,13 +386,30 @@ public partial class PlayManager : Node
 		if ((newLos * PlayDirection >= gm.fieldLength / 2f &&
 		     newLos * PlayDirection <= (gm.fieldLength / 2f) + gm.EndzoneDepth))
 		{
-			Touchdown();
+			if(!isExtraPointPlay)
+			{
+				Touchdown();
+				score = true;
+				isExtraPointPlay = true;
+			}
+			else
+			{
+				ExtraPointPlay();
+				kickoff = true;
+				isExtraPointPlay = false;
+			}
 		}
 		
 		if ((newLos * -PlayDirection >= gm.fieldLength / 2f &&
 		     newLos * -PlayDirection <= (gm.fieldLength / 2f) + gm.EndzoneDepth))
 		{
+			kickoff = true;
 			Safety();
+		}
+
+		if (kickoff)
+		{
+			Kickoff();
 		}
 		
 		CurrentDown--;
@@ -374,7 +424,7 @@ public partial class PlayManager : Node
 		if(!moveLineOfScrimmage)
 		{
 			playSelectionUI.Visible = true;
-			psm.Init();
+			psm.Init(CurrentDown == 1 || score);
 			mainCam.GlobalPosition = Vector3.Right * lineOfScrimmage;
 			//StartPlay();
 			return;
@@ -383,7 +433,7 @@ public partial class PlayManager : Node
 		
 		lineOfScrimmage = newLos;
 		playSelectionUI.Visible = true;
-		psm.Init();
+		psm.Init(CurrentDown == 1 || score);
 		Ball.Instance.GlobalPosition = Vector3.Right * lineOfScrimmage;
 		mainCam.GlobalPosition = Vector3.Right * lineOfScrimmage;
 		//StartPlay();
@@ -396,12 +446,26 @@ public partial class PlayManager : Node
 		firstDownLine = lineOfScrimmage + gm.yardsToFirstDown * PlayDirection;
 	}
 
+	void Kickoff(int playDirection = 0)
+	{
+		Turnover(true, playDirection);
+		OffencePlay = KickoffPlay;
+		DefencePlay = KickoffPlay;
+		StartPlay(true);
+	}
+
 	void Touchdown()
 	{
 		GD.Print("Touchdown");
 		Score(PlayDirection == 1, gm.TouchdownScoreValue);
 	}
 
+	void ExtraPointPlay()
+	{
+		GD.Print("ExtraPointPlay");
+		Score(PlayDirection == 1, gm.ExtraPointPlayScoreValue);
+	}
+	
 	void Safety()
 	{
 		GD.Print("Safety");
@@ -417,7 +481,7 @@ public partial class PlayManager : Node
 		UpdateScore?.Invoke();
 	}
 	
-	public async void Turnover(bool playStillActive)
+	public async void Turnover(bool playStillActive, int forcePlayDirection = 0)
 	{
 		GD.Print("Turnover");
 
@@ -425,7 +489,13 @@ public partial class PlayManager : Node
 		
 		foreach (var p in gm.players)
 		{
-			p.isOffence = !p.isOffence;
+			if(forcePlayDirection != 0)
+			{
+				if (p.IsTeam1) p.isOffence = forcePlayDirection == 1;
+				else p.isOffence = forcePlayDirection == -1;
+			}
+			else
+				p.isOffence = !p.isOffence;
 			p.CanMove = false;
 			p.CanAct = false;
 		}
@@ -435,16 +505,27 @@ public partial class PlayManager : Node
 		await ToSignal(tween, "finished");
 		//mainCam.RotationDegrees += Vector3.Up * 180;
 		PlayDirection *= -1;
+		if (forcePlayDirection != 0) PlayDirection = forcePlayDirection;
 		
 		FirstDown();
 
 		foreach (var i in gm.playerInputTeam1)
 		{
-			i.isOffence = !i.isOffence;
+			if (forcePlayDirection != 0)
+			{
+				i.isOffence = forcePlayDirection == 1;
+			}
+			else
+				i.isOffence = !i.isOffence;
 		}
 		foreach (var i in gm.playerInputTeam2)
 		{
-			i.isOffence = !i.isOffence;
+			if (forcePlayDirection != 0)
+			{
+				i.isOffence = forcePlayDirection == -1;
+			}
+			else
+				i.isOffence = !i.isOffence;
 		}
 		
 		if(PlayDirection == 1) GD.Print("Team 1 off Team 2 Def");
@@ -453,7 +534,7 @@ public partial class PlayManager : Node
 		if(!playStillActive)
 		{
 			playSelectionUI.Visible = true;
-			psm.Init();
+			psm.Init(false);
 			mainCam.GlobalPosition = Vector3.Right * lineOfScrimmage;
 		}
 	}

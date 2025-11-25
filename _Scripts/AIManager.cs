@@ -265,18 +265,6 @@ public partial class AIManager : Node
             if(player.IsBlocking)
                 return Vector3.Zero;
         }
-        else
-        {
-            float dist = player.GlobalPosition.DistanceTo(ball.GlobalPosition);
-            float nearestDist = nearestPlayer.GlobalPosition.DistanceTo(ball.GlobalPosition);
-
-            if (dist < nearestDist - 2)
-            {
-                Vector3 ballToNearestDir = ball.GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition);
-
-                //dir = player.GlobalPosition.DirectionTo(ball.GlobalPosition + ballToNearestDir * nearestDist / 2);
-            }
-        }
         debugBox.GlobalPosition = nearestPlayer.GlobalPosition;
         debugBox.Scale = Vector3.One;
         return dir;
@@ -383,6 +371,26 @@ public partial class AIManager : Node
         return finalDir;
     }
 
+    Vector3 QueryBlockSDF(Vector3 target)
+    {
+        float minWeight = float.MaxValue;
+        Vector3 finalDir = Vector3.Zero;
+        for (int i = 0; i < PATHFINDING_STEPS; i++)
+        {
+            Vector3 unitDir = MathW.PointOnUnitCircleXZ(i,i,PATHFINDING_STEPS);
+
+            float testWeight = pm.QueryBlockSDF(player.GlobalPosition + unitDir * .1f, target, ball.GlobalPosition, player);
+            
+            if (minWeight > testWeight)
+            {
+                minWeight = testWeight;
+                finalDir = unitDir;
+            }
+        }
+
+        return finalDir;
+    }
+    
     Vector3 QueryZoneSDF(Zone zone)
     {
         float minWeight = float.MaxValue;
@@ -393,6 +401,12 @@ public partial class AIManager : Node
 
             float testWeight = pm.QueryZone(player.GlobalPosition + unitDir * .1f, zone, player);
 
+            float ballTarget = float.MaxValue;
+
+            if (ball.ballState == BallState.Thrown)
+                ballTarget = pm.QuerySDF(player.GlobalPosition + unitDir * .1f, ball.endPoint, player) - 10;
+
+            testWeight = Mathf.Min(testWeight, ballTarget);
             if (minWeight > testWeight)
             {
                 minWeight = testWeight;

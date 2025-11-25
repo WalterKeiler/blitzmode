@@ -9,6 +9,8 @@ public partial class PlayerController : Node3D
 {
 	public const float MAXTHROWDISTANCE = 60;
 	public const float SWITCHTARGETCOOLDOWN = .25f;
+	public const int PATHFINDING_STEPS = 32;
+	
 	
 	[Export] public int playerID = -1;
 	[Export] public int inputID = -1;
@@ -61,6 +63,7 @@ public partial class PlayerController : Node3D
 	
 	StandardMaterial3D testMat;
 	GameManager gm;
+	PathfindingManager pm;
 	Node3D debugBox;
 	Node3D debugBox2;
 
@@ -72,6 +75,7 @@ public partial class PlayerController : Node3D
 		base._Ready();
 		
 		gm = GameManager.Instance;
+		pm = PathfindingManager.Instance;
 		
 		//Init();
 		CanMove = false;
@@ -165,6 +169,18 @@ public partial class PlayerController : Node3D
 
 		if (isSpecialTeams)
 		{
+			if (HasBall)
+			{
+				ball = Ball.Instance;
+				((Node)ball).Reparent(this, false);
+				ball.Position = new Vector3(.5f, -.25f, 0) * PlayManager.Instance.PlayDirection;
+				snap = true;
+				ball.ballSpeed = 5;
+				ball.ballState = BallState.Thrown;
+				ball.throwingPlayer = this;
+				ball.ResetCatchData();
+				Snapped?.Invoke();
+			}
 			return;
 		}
 		
@@ -373,6 +389,9 @@ public partial class PlayerController : Node3D
 		zDir = inputDir.Z * _mainCam.GetGlobalBasis().X.Normalized();
 		xDir = -inputDir.X * _mainCam.GetGlobalBasis().Z.Normalized();
 		_moveDirection = xDir + zDir;
+
+		if(_moveDirection.Length() > .1f)
+			_moveDirection = QuerySDF(GlobalPosition + _moveDirection).Normalized();
 		
 		_moveDirection.Y = 0;
 	}
@@ -1014,6 +1033,26 @@ public partial class PlayerController : Node3D
 		testMat.SetAlbedo(StartColor);
 		if (PlayerAction.Contains(PlayerActions.ChangePlayer))
 			PlayerAction.Remove(PlayerActions.ChangePlayer);
+	}
+	
+	Vector3 QuerySDF(Vector3 target)
+	{
+		float minWeight = float.MaxValue;
+		Vector3 finalDir = Vector3.Zero;
+		for (int i = 0; i < PATHFINDING_STEPS; i++)
+		{
+			Vector3 unitDir = MathW.PointOnUnitCircleXZ(i,i,PATHFINDING_STEPS);
+            
+			float testWeight = pm.QuerySDF(GlobalPosition + unitDir * .1f, target, this);
+            
+			if (minWeight > testWeight)
+			{
+				minWeight = testWeight;
+				finalDir = unitDir;
+			}
+		}
+
+		return finalDir;
 	}
 }
 

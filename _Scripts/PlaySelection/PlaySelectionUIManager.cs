@@ -48,6 +48,7 @@ public partial class PlaySelectionUIManager : Control
     [Export] bool offenceSelected;
     [Export] bool defenceSelected;
     
+    bool isSpecialTeams;
     bool h = false;
     bool holdingMotion = false;
     bool holdForRelease = false;
@@ -110,7 +111,7 @@ public partial class PlaySelectionUIManager : Control
         //Init();
     }
 
-    public void Init()
+    public void Init(bool specialTeams)
     {
         if(!ready) _Ready();
         
@@ -121,6 +122,8 @@ public partial class PlaySelectionUIManager : Control
 
         offenceSelected = false;
         defenceSelected = false;
+
+        isSpecialTeams = specialTeams;
         
         int min = Mathf.FloorToInt(pm.quarterTimer / 60);
         int sec = Mathf.FloorToInt(pm.quarterTimer) - (min * 60);
@@ -460,14 +463,20 @@ public partial class PlaySelectionUIManager : Control
 
         team1PageText.Text = $"Page {team1Page}";
         team2PageText.Text = $"Page {team2Page}";
-        
+        int o = 0;
         for (int i = 0; i < offence.Length; i++)
         {
             if(i > PLAYS_PERPAGE) break;
-            int play = offencePage * PLAYS_PERPAGE + i;
+            int play = offencePage * PLAYS_PERPAGE + i + o;
             if (play >= OffencePlays.Length)
             {
                 offence[i].Visible = false;
+                continue;
+            }
+
+            if (OffencePlays[play].IsSpecialTeams && !isSpecialTeams)
+            {
+                o++;
                 continue;
             }
             
@@ -484,16 +493,24 @@ public partial class PlaySelectionUIManager : Control
             
             offence[i].image.Texture = imtex;
         }
-        
+
+        int d = 0;
         for (int i = defencePage * PLAYS_PERPAGE; i < defence.Length; i++)
         {
             if(i > (defencePage + 1) * PLAYS_PERPAGE) break;
-            int play = defencePage * PLAYS_PERPAGE + i;
+            int play = defencePage * PLAYS_PERPAGE + i + d;
             if (play >= DefencePlays.Length)
             {
                 defence[i].Visible = false;
                 continue;
             }
+            
+            if (DefencePlays[play].IsSpecialTeams && !isSpecialTeams)
+            {
+                d++;
+                continue;
+            }
+            
             defence[i].Visible = true;
             defence[i].name.Text = DefencePlays[play].Name;
 
