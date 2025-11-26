@@ -16,6 +16,7 @@ public partial class GameManager : Node
 	[Export] public int SafetyScoreValue = 2;
 	[Export] public int ExtraPointKickScoreValue = 1;
 	[Export] public int ExtraPointPlayScoreValue = 2;
+	[Export] public int ExtraPointLineOfScrimmage = 10;
 	[Export] public int NumberOfQuarters = 4;
 	[Export] public int QuarterLengthMin = 5;
 	[Export] public int timeToPickPlaySec = 30;

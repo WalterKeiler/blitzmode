@@ -25,7 +25,7 @@ public partial class PlayManager : Node
 	[Export] public int PlayDirection = 1;
 	[Export] public int CurrentDown = 1;
 
-	private bool inbetweenPlays;
+	public bool inbetweenPlays;
 
 	bool isExtraPointPlay;
 	public bool isKickoff;
@@ -382,9 +382,7 @@ public partial class PlayManager : Node
 	
 	public void PlayEnded(bool moveLineOfScrimmage)
 	{
-		if(inbetweenPlays) return;
-
-		inbetweenPlays = true;
+		
 
 		bool kickoff = false;
 		bool score = false;
@@ -408,12 +406,19 @@ public partial class PlayManager : Node
 				Touchdown();
 				score = true;
 				isExtraPointPlay = true;
+				playSelectionUI.Visible = true;
+				psm.Init(CurrentDown == 1 || score);
+				Ball.Instance.GlobalPosition = Vector3.Right * lineOfScrimmage;
+				mainCam.GlobalPosition = Vector3.Right * lineOfScrimmage;
+				isKickoff = false;
+				return;
 			}
 			else
 			{
 				ExtraPointPlay();
-				kickoff = true;
 				isExtraPointPlay = false;
+				Kickoff();
+				return;
 			}
 		}
 		
@@ -424,7 +429,7 @@ public partial class PlayManager : Node
 			Safety();
 		}
 
-		if (kickoff)
+		if (kickoff || isExtraPointPlay)
 		{
 			Kickoff();
 			return;
@@ -471,6 +476,7 @@ public partial class PlayManager : Node
 		OffencePlay = KickoffPlay;
 		DefencePlay = KickoffPlay;
 		isKickoff = true;
+		playSelectionUI.Visible = false;
 		CurrentDown = 0;
 		StartPlay();
 	}
@@ -479,6 +485,7 @@ public partial class PlayManager : Node
 	{
 		GD.Print("Touchdown");
 		Score(PlayDirection == 1, gm.TouchdownScoreValue);
+		lineOfScrimmage = (gm.fieldLength / 2f - gm.ExtraPointLineOfScrimmage) * PlayDirection;
 	}
 
 	void ExtraPointPlay()
@@ -581,8 +588,10 @@ public partial class PlayManager : Node
 		if(!isOff) Turnover(true);
 	}
 	
-	public static void InvokeEndPlay(bool moveLineOfScrimmage)
+	public async void InvokeEndPlay(bool moveLineOfScrimmage)
 	{
+		inbetweenPlays = true;
+		await ToSignal(GetTree().CreateTimer(.25f), "timeout");
 		EndPlay?.Invoke(moveLineOfScrimmage);
 	}
 }

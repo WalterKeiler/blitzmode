@@ -30,7 +30,7 @@ public partial class PlayerController : Node3D
 	public bool CanCatch;
 	public bool CanAct;
 	[Export] public bool CanThrow;
-	public bool CanMove;
+	[Export] public bool CanMove;
 	public bool IsBlocking;
 	public bool CanBlock;
 	public bool IsBlocked;
@@ -51,7 +51,7 @@ public partial class PlayerController : Node3D
 	List<PlayerController> PlayersOnTeam;
 	List<PlayerController> PlayersNotOnTeam;
 
-	bool init = false;
+	[Export] bool init = false;
 	bool snap = false;
 	bool canTakeInput = true;
 	float _sprintMultiplier;
@@ -179,7 +179,8 @@ public partial class PlayerController : Node3D
 				ball.ballState = BallState.Thrown;
 				ball.throwingPlayer = this;
 				ball.ResetCatchData();
-				Snapped?.Invoke(isSpecialTeams);
+				snap = false;
+				Snapped?.Invoke(true);
 			}
 			return;
 		}
@@ -226,6 +227,7 @@ public partial class PlayerController : Node3D
 
 	void OnPlayerWithBallTackled(bool incompletePass)
 	{
+		if(snap) return;
 		init = false;
 		CanAct = false;
 	}
@@ -872,9 +874,9 @@ public partial class PlayerController : Node3D
 		CanCatch = false;
 		CanMove = false;
 		
-		if(HasBall && ball.ballState == BallState.Held)
+		if(HasBall && ball.ballState == BallState.Held && !PlayManager.Instance.inbetweenPlays)
 		{
-			PlayManager.InvokeEndPlay(true);
+			PlayManager.Instance.InvokeEndPlay(true);
 			return;
 		}
 		

@@ -80,7 +80,7 @@ public partial class Ball : RigidBody3D
     {
         if(isSpecialTeams)
         {
-            //init = true;
+            init = true;
             //ballState = BallState.Thrown;
             return;
         }
@@ -131,15 +131,15 @@ public partial class Ball : RigidBody3D
         }
         
         //GD.Print(GlobalPosition.X * pm.PlayDirection >= GameManager.Instance.fieldLength / 2f);
-        if (ballState == BallState.Held && !pm.midTurnover &&
+        if (ballState == BallState.Held && !pm.midTurnover && !pm.inbetweenPlays && 
             (GlobalPosition.X * pm.PlayDirection >= GameManager.Instance.fieldLength / 2f &&
              GlobalPosition.X * pm.PlayDirection <=
              (GameManager.Instance.fieldLength / 2f) + GameManager.Instance.EndzoneDepth))
         {
-            PlayManager.InvokeEndPlay(true);
+            pm.InvokeEndPlay(true);
         }
 
-        if (ballState == BallState.Free && pm.isKickoff &&
+        if (ballState == BallState.Free && pm.isKickoff && !pm.inbetweenPlays && 
             (GlobalPosition.X * pm.PlayDirection >= GameManager.Instance.fieldLength / 2f &&
              GlobalPosition.X * pm.PlayDirection <=
              (GameManager.Instance.fieldLength / 2f) + GameManager.Instance.EndzoneDepth))
@@ -147,12 +147,12 @@ public partial class Ball : RigidBody3D
             GlobalPosition = Vector3.Right * ((GameManager.Instance.fieldLength / 2f) +
                                               (GameManager.Instance.touchBackDistance * pm.PlayDirection));
             pm.Turnover(false);
-            PlayManager.InvokeEndPlay(true);
+            pm.InvokeEndPlay(true);
         }
         
-        if (Mathf.Abs(GlobalPosition.Z) >= (GameManager.Instance.fieldWidth + 1.5f) / 2f)
+        if (Mathf.Abs(GlobalPosition.Z) >= (GameManager.Instance.fieldWidth + 1.5f) / 2f && !pm.inbetweenPlays)
         {
-            PlayManager.InvokeEndPlay(ballState == BallState.Held);
+            pm.InvokeEndPlay(ballState == BallState.Held);
         }
     }
 
@@ -193,10 +193,10 @@ public partial class Ball : RigidBody3D
         }
         else
         {
-            if(ballState == BallState.Thrown && !pm.isKickoff)
+            if(ballState == BallState.Thrown && !pm.isKickoff && !pm.inbetweenPlays)
             {
                 GD.Print("Incomplete Pass");
-                PlayManager.InvokeEndPlay(false);
+                pm.InvokeEndPlay(false);
                 return;
             }
             

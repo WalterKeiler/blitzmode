@@ -117,8 +117,10 @@ public partial class AIManager : Node
             coverZone *= 1;
             rushBall *= 1;
             finalDir = ((FollowPlayer() * followPlayer) + (CoverZone() * coverZone) + (RushBall() * rushBall));
+
+            PlayerController tp = player.GetNearestPlayerToBall(false);
             
-            if(player.GlobalPosition.DistanceTo(player.GetNearestPlayerToBall(false).GlobalPosition) < 1.65f)
+            if(tp != null && player.GlobalPosition.DistanceTo(tp.GlobalPosition) < 1.65f)
             {
                 player.DoAction(PlayerActions.Tackle, player.playerID);
             }
@@ -226,7 +228,7 @@ public partial class AIManager : Node
                 {
                     if (p.IsTargeted)
                     {
-                        GD.Print("Targeted Already");
+                        //GD.Print("Targeted Already");
                         continue;
                     }
                 }
@@ -242,7 +244,7 @@ public partial class AIManager : Node
                 nearestPlayer = p;
                 targetPlayer = p;
                 p.IsTargeted = true;
-                GD.Print(player.Name + " Targeting: " + p.Name);
+                // GD.Print(player.Name + " Targeting: " + p.Name);
                 break;
             }
         }
@@ -250,7 +252,7 @@ public partial class AIManager : Node
         switch (nearestPlayer)
         {
             case null when targetPlayer == null:
-                GD.Print("No nearest player");
+                //GD.Print("No nearest player");
                 return Vector3.Zero;
             case null when targetPlayer != null:
                 nearestPlayer = targetPlayer;
