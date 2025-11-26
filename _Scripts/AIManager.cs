@@ -118,7 +118,7 @@ public partial class AIManager : Node
             rushBall *= 1;
             finalDir = ((FollowPlayer() * followPlayer) + (CoverZone() * coverZone) + (RushBall() * rushBall));
             
-            if(player.GlobalPosition.DistanceTo(ball.GlobalPosition) < 1.5f)
+            if(player.GlobalPosition.DistanceTo(player.GetNearestPlayerToBall(false).GlobalPosition) < 1.65f)
             {
                 player.DoAction(PlayerActions.Tackle, player.playerID);
             }

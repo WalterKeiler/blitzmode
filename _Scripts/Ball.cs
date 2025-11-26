@@ -11,9 +11,9 @@ public partial class Ball : RigidBody3D
     private RigidBody3D rb;
     
     [Export] public BallState ballState;
-    public float ballSpeed;
-    public Vector3 startPoint;
-    public Vector3 endPoint;
+    [Export] public float ballSpeed;
+    [Export] public Vector3 startPoint;
+    [Export] public Vector3 endPoint;
 
     public PlayerController throwingPlayer;
     
@@ -25,15 +25,18 @@ public partial class Ball : RigidBody3D
     private bool crossedLOS = false;
     
     private bool init = false;
+
+    private PlayManager pm;
     
     public override void _Ready()
     {
-        Instance = this;
         Freeze = true;
+        pm = PlayManager.Instance;
     }
     
     public override void _EnterTree()
     {
+        Instance = this;
         base._EnterTree();
         PlayManager.InitPlay += Init;
         PlayerController.Snapped += Snap;
@@ -60,9 +63,12 @@ public partial class Ball : RigidBody3D
         init = true;
         Freeze = true;
         crossedLOS = false;
-        ballState = BallState.Held;
-        endPoint = Vector3.Inf;
-        startPoint = Vector3.Inf;
+        if(!isST)
+        {
+            ballState = BallState.Held;
+            endPoint = Vector3.Inf;
+            startPoint = Vector3.Inf;
+        }
     }
 
     void EndPlay(bool b)
@@ -70,8 +76,14 @@ public partial class Ball : RigidBody3D
         init = false;
     }
 
-    void Snap()
+    void Snap(bool isSpecialTeams)
     {
+        if(isSpecialTeams)
+        {
+            //init = true;
+            //ballState = BallState.Thrown;
+            return;
+        }
         if(ballState == BallState.Free) return;
         
         GD.Print("Snap");
@@ -118,15 +130,26 @@ public partial class Ball : RigidBody3D
             Freeze = false;
         }
         
-        //GD.Print(GlobalPosition.X * PlayManager.Instance.PlayDirection >= GameManager.Instance.fieldLength / 2f);
-        if (ballState == BallState.Held &&
-            (GlobalPosition.X * PlayManager.Instance.PlayDirection >= GameManager.Instance.fieldLength / 2f &&
-             GlobalPosition.X * PlayManager.Instance.PlayDirection <=
+        //GD.Print(GlobalPosition.X * pm.PlayDirection >= GameManager.Instance.fieldLength / 2f);
+        if (ballState == BallState.Held && !pm.midTurnover &&
+            (GlobalPosition.X * pm.PlayDirection >= GameManager.Instance.fieldLength / 2f &&
+             GlobalPosition.X * pm.PlayDirection <=
              (GameManager.Instance.fieldLength / 2f) + GameManager.Instance.EndzoneDepth))
         {
             PlayManager.InvokeEndPlay(true);
         }
 
+        if (ballState == BallState.Free && pm.isKickoff &&
+            (GlobalPosition.X * pm.PlayDirection >= GameManager.Instance.fieldLength / 2f &&
+             GlobalPosition.X * pm.PlayDirection <=
+             (GameManager.Instance.fieldLength / 2f) + GameManager.Instance.EndzoneDepth))
+        {
+            GlobalPosition = Vector3.Right * ((GameManager.Instance.fieldLength / 2f) +
+                                              (GameManager.Instance.touchBackDistance * pm.PlayDirection));
+            pm.Turnover(false);
+            PlayManager.InvokeEndPlay(true);
+        }
+        
         if (Mathf.Abs(GlobalPosition.Z) >= (GameManager.Instance.fieldWidth + 1.5f) / 2f)
         {
             PlayManager.InvokeEndPlay(ballState == BallState.Held);
@@ -140,7 +163,7 @@ public partial class Ball : RigidBody3D
         if (throwingPlayer != null && throwingPlayer.PlayerAction.Contains(PlayerActions.Throw))
             throwingPlayer.PlayerAction.Remove(PlayerActions.Throw);
         
-        if(catchPlayer.isOffence)
+        if(throwingPlayer != null && catchPlayer.isOffence == throwingPlayer.isOffence)
         {
             throwingPlayer ??= GameManager.Instance.GetPlayerControlledPlayer(true);
             
@@ -161,7 +184,7 @@ public partial class Ball : RigidBody3D
     void Move(double delta)
     {
         Vector3 moveDirection = CalculateBallDirection();
-        if(GlobalPosition.Y >= .25f)
+        if(GlobalPosition.Y >= .15f)
         {
             GlobalPosition += moveDirection * ballSpeed;
 
@@ -170,7 +193,7 @@ public partial class Ball : RigidBody3D
         }
         else
         {
-            if(ballState == BallState.Thrown)
+            if(ballState == BallState.Thrown && !pm.isKickoff)
             {
                 GD.Print("Incomplete Pass");
                 PlayManager.InvokeEndPlay(false);
@@ -191,6 +214,7 @@ public partial class Ball : RigidBody3D
     
     public void AddCatchOption(BallCatchData data)
     {
+        catchOptions ??= new List<BallCatchData>();
         catchOptions.Add(data);
         EvaluateCatchOptions();
     }
@@ -215,6 +239,8 @@ public partial class Ball : RigidBody3D
     
     public Vector3 CalculateBallDirection()
     {
+        if (bestOption is {CatchPriority: > 10000000}) endPoint = bestOption.Player.GlobalPosition;
+        
         Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
         float distance = startPoint.DistanceTo(endPoint);
         midPoint.Y = Mathf.Clamp(BALLHEIGHTMULTIPLIER * distance, 1, 10);

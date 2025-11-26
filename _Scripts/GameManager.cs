@@ -19,6 +19,7 @@ public partial class GameManager : Node
 	[Export] public int NumberOfQuarters = 4;
 	[Export] public int QuarterLengthMin = 5;
 	[Export] public int timeToPickPlaySec = 30;
+	[Export] public int touchBackDistance = 30;
 	[Export, ExportGroup("Field")] public int fieldLength = 100;
 	[Export] public int fieldWidth = 53;
 	[Export] public int EndzoneDepth = 30;

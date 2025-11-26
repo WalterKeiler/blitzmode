@@ -68,7 +68,7 @@ public partial class PlayerController : Node3D
 	Node3D debugBox2;
 
 	public static event Action<bool> CrossedLOS;
-	public static event Action Snapped;
+	public static event Action<bool> Snapped;
 	
 	public override void _Ready()
 	{
@@ -108,7 +108,7 @@ public partial class PlayerController : Node3D
 	}
 	
 	// Called when the node enters the scene tree for the first time.
-	public void Init()
+	public void Init(bool isSpecialTeams)
 	{
 		//snap = false;
 		//GD.Print(mat.ResourceName);
@@ -159,7 +159,7 @@ public partial class PlayerController : Node3D
 			PlayersNotOnTeam = gm.offencePlayers;
 		}
 		init = true;
-
+		if (PlayManager.Instance.isKickoff) CanMove = false;
 		aiManager.Init();
 	}
 
@@ -175,11 +175,11 @@ public partial class PlayerController : Node3D
 				((Node)ball).Reparent(this, false);
 				ball.Position = new Vector3(.5f, -.25f, 0) * PlayManager.Instance.PlayDirection;
 				snap = true;
-				ball.ballSpeed = 5;
+				ball.ballSpeed = .25f;
 				ball.ballState = BallState.Thrown;
 				ball.throwingPlayer = this;
 				ball.ResetCatchData();
-				Snapped?.Invoke();
+				Snapped?.Invoke(isSpecialTeams);
 			}
 			return;
 		}
@@ -200,7 +200,7 @@ public partial class PlayerController : Node3D
 	{
 		((Node)ball).Reparent(GetTree().Root.GetChild(0));
 		HasBall = false;
-		Snapped?.Invoke();
+		Snapped?.Invoke(false);
 	}
 	
 	private void BallOnBallCaught(bool caughtByOffence)
@@ -220,6 +220,8 @@ public partial class PlayerController : Node3D
 				aiManager.rushBall = 1;
 			}
 		}
+
+		//if (PlayManager.Instance.isKickoff) CanMove = true;
 	}
 
 	void OnPlayerWithBallTackled(bool incompletePass)
@@ -418,6 +420,7 @@ public partial class PlayerController : Node3D
 	
 	void CheckForCatch()
 	{
+		if (HasBall || snap) return;
 		float distanceToBall = ball.GlobalPosition.DistanceTo(GlobalPosition);
 		float distanceToTarget = ball.endPoint.DistanceTo(GlobalPosition);
 		float dot = GetGlobalBasis().Z.Dot(ball.GlobalPosition.DirectionTo(GlobalPosition));
@@ -869,7 +872,7 @@ public partial class PlayerController : Node3D
 		CanCatch = false;
 		CanMove = false;
 		
-		if(HasBall)
+		if(HasBall && ball.ballState == BallState.Held)
 		{
 			PlayManager.InvokeEndPlay(true);
 			return;
