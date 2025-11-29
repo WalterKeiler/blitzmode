@@ -65,9 +65,17 @@ public partial class PlaySelectionUIManager : Control
     public override void _EnterTree()
     {
         base._EnterTree();
+        PlayManager.UpdateScore += UpdateScoreBoard;
         Instance = this;
     }
 
+    public override void _ExitTree()
+    {
+        base._ExitTree();
+        PlayManager.UpdateScore -= UpdateScoreBoard;
+    }
+
+    
     public override void _Ready()
     {
         base._Ready();
@@ -113,6 +121,12 @@ public partial class PlaySelectionUIManager : Control
         //Init();
     }
 
+    void UpdateScoreBoard()
+    {
+        team1ScoreText.Text = $"{pm.ScoreTeam1}";
+        team2ScoreText.Text = $"{pm.ScoreTeam2}";
+    }
+    
     public void Init(bool specialTeams)
     {
         if(!ready) _Ready();
@@ -136,14 +150,14 @@ public partial class PlaySelectionUIManager : Control
         int first = Mathf.RoundToInt(Mathf.Abs(pm.firstDownLine - pm.lineOfScrimmage));
         int currentYard = Mathf.RoundToInt((pm.PlayDirection * pm.lineOfScrimmage) + gm.fieldLength / 2f);
         
-        string yardsTillFirst = first + currentYard < gm.fieldLength / 2 ? first.ToString() : "Goal";
+        string yardsTillFirst = first + currentYard < gm.fieldLength ? first.ToString() : "Goal";
         yardDownText.Text =
             $"{gm.DownsTillTurnover - (pm.CurrentDown - 1)}{suffixLookup[suffixD]} & " +
             $"{yardsTillFirst} on the " +
             $"{currentYard}";
         quarterText.Text = $"{pm.quarterNumber}{suffixLookup[suffix]} Quarter";
         timeInQuarterText.Text = $"{min}:{sec:D2}";
-
+        
         team1ScoreText.Text = $"{pm.ScoreTeam1}";
         team2ScoreText.Text = $"{pm.ScoreTeam2}";
         
