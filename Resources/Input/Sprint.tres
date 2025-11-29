@@ -7,5 +7,5 @@ script = ExtResource("1_836hm")
 InputActions = PackedStringArray("Sprint")
 InputActionsKey = 4194325
 InputActionsJoy = 10
-SecondaryInputActionsJoy = -1
+SecondaryInputActionsJoy = 9
 isUniversal = true

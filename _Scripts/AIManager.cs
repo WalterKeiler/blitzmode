@@ -207,7 +207,14 @@ public partial class AIManager : Node
     {
         if(block == 0) return Vector3.Zero;
         
-        if (debugBox == null)
+        if(ball.ballState == BallState.Thrown && ball.endPoint < Vector3.Inf)
+        {
+            if(player.GlobalPosition.DistanceTo(ball.endPoint) > 5f)
+                return QuerySDF(ball.endPoint);
+            return Vector3.Zero;
+        }
+        
+        /*if (debugBox == null)
         {
             MeshInstance3D testMesh = new MeshInstance3D();
             testMesh.Mesh = new BoxMesh();
@@ -215,7 +222,7 @@ public partial class AIManager : Node
             testMesh.Position = Vector3.Zero;
             GetParent().AddChild(testMesh);
             debugBox = testMesh;
-        }
+        }*/
         
         PlayerController[] nearestPlayers = player.GetNearestPlayers(false);
         PlayerController nearestPlayer = targetPlayer;
@@ -267,8 +274,8 @@ public partial class AIManager : Node
             if(player.IsBlocking)
                 return Vector3.Zero;
         }
-        debugBox.GlobalPosition = nearestPlayer.GlobalPosition;
-        debugBox.Scale = Vector3.One;
+        //debugBox.GlobalPosition = nearestPlayer.GlobalPosition;
+        //debugBox.Scale = Vector3.One;
         return dir;
     }
     

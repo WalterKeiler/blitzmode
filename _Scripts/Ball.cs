@@ -78,13 +78,16 @@ public partial class Ball : RigidBody3D
 
     void Snap(bool isSpecialTeams)
     {
+        if(ballState == BallState.Free) return;
+        //if(init) return;
         if(isSpecialTeams)
         {
             init = true;
+            ballState = ballState;
             //ballState = BallState.Thrown;
             return;
         }
-        if(ballState == BallState.Free) return;
+        
         
         GD.Print("Snap");
         
@@ -102,7 +105,7 @@ public partial class Ball : RigidBody3D
     public override void _Process(double delta)
     {
         if(!init) return;
-        
+        //GD.Print(ballState);
         if (ballState == BallState.Thrown)
         {
             Move(delta);
@@ -177,6 +180,12 @@ public partial class Ball : RigidBody3D
         {
             BallCaught?.Invoke(false);
         }
+        
+        //Freeze = true;
+        //endPoint = Vector3.Inf;
+        //startPoint = Vector3.Inf;
+        
+        
         Position = Vector3.Up;
         ballState = BallState.Held;
     }
@@ -244,6 +253,7 @@ public partial class Ball : RigidBody3D
         Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
         float distance = startPoint.DistanceTo(endPoint);
         midPoint.Y = Mathf.Clamp(BALLHEIGHTMULTIPLIER * distance, 1, 10);
+        if (pm.isKickoff) midPoint.Y *= 2;
         Vector3 upDir = startPoint.DirectionTo(midPoint);
         Vector3 downDir = midPoint.DirectionTo(endPoint);
 

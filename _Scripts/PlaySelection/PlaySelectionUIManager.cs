@@ -19,6 +19,8 @@ public partial class PlaySelectionUIManager : Control
     [Export] private Label selectionTimerText;
     [Export] private Label team1PageText;
     [Export] private Label team2PageText;
+    [Export] private Label team1ScoreText;
+    [Export] private Label team2ScoreText;
     
     [Export] int team1Selection = 0;
     [Export] int team2Selection = 0;
@@ -130,14 +132,21 @@ public partial class PlaySelectionUIManager : Control
         
         int suffixD = Mathf.Clamp((gm.DownsTillTurnover - (pm.CurrentDown)), 0, suffixLookup.Length - 1);
         int suffix = Mathf.Clamp(pm.quarterNumber - 1, 0, suffixLookup.Length - 1);
+
+        int first = Mathf.RoundToInt(Mathf.Abs(pm.firstDownLine - pm.lineOfScrimmage));
+        int currentYard = Mathf.RoundToInt((pm.PlayDirection * pm.lineOfScrimmage) + gm.fieldLength / 2f);
         
+        string yardsTillFirst = first + currentYard < gm.fieldLength / 2 ? first.ToString() : "Goal";
         yardDownText.Text =
             $"{gm.DownsTillTurnover - (pm.CurrentDown - 1)}{suffixLookup[suffixD]} & " +
-            $"{Mathf.RoundToInt(Mathf.Abs(pm.firstDownLine - pm.lineOfScrimmage))} on the " +
-            $"{Mathf.RoundToInt((pm.PlayDirection * pm.lineOfScrimmage) + gm.fieldLength / 2f)}";
+            $"{yardsTillFirst} on the " +
+            $"{currentYard}";
         quarterText.Text = $"{pm.quarterNumber}{suffixLookup[suffix]} Quarter";
         timeInQuarterText.Text = $"{min}:{sec:D2}";
 
+        team1ScoreText.Text = $"{pm.ScoreTeam1}";
+        team2ScoreText.Text = $"{pm.ScoreTeam2}";
+        
         playSelectionTimer = gm.timeToPickPlaySec;
         
         if(pm != null)

@@ -31,7 +31,7 @@ border_blend = true
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1xvwf"]
 bg_color = Color(0.15007517, 0.15007517, 0.15007511, 1)
 
-[node name="PlaySelectionUI" type="Control" node_paths=PackedStringArray("team1Plays", "team2Plays", "team1SelectionIndicator", "team2SelectionIndicator", "yardDownText", "quarterText", "timeInQuarterText", "selectionTimerText", "team1PageText", "team2PageText")]
+[node name="PlaySelectionUI" type="Control" node_paths=PackedStringArray("team1Plays", "team2Plays", "team1SelectionIndicator", "team2SelectionIndicator", "yardDownText", "quarterText", "timeInQuarterText", "selectionTimerText", "team1PageText", "team2PageText", "team1ScoreText", "team2ScoreText")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -49,6 +49,8 @@ timeInQuarterText = NodePath("VBoxContainer/Header/HBoxContainer/GameInfo/Time i
 selectionTimerText = NodePath("VBoxContainer/Header/HBoxContainer/GameInfo/Time To Pick")
 team1PageText = NodePath("VBoxContainer/Header/HBoxContainer/Team1/VBoxContainer/PageNumTeam1")
 team2PageText = NodePath("VBoxContainer/Header/HBoxContainer/Team2/VBoxContainer/PageNumTeam2")
+team1ScoreText = NodePath("VBoxContainer/Header/HBoxContainer/Team1/VBoxContainer/PageNumTeam1")
+team2ScoreText = NodePath("VBoxContainer/Header/HBoxContainer/Team2/VBoxContainer/Team2Score")
 OffencePlaysPath = "res://Resources/Plays/Offence/"
 DefencePlaysPath = "res://Resources/Plays/Defence/"
 

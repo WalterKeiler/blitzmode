@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="Play" load_steps=20 format=3 uid="uid://cgcpgknu022h5"]
+[gd_resource type="Resource" script_class="Play" load_steps=21 format=3 uid="uid://cgcpgknu022h5"]
 
 [ext_resource type="Resource" uid="uid://blpydpdwlcl2a" path="res://Resources/Stats/Players/Safety.tres" id="1_fjmcb"]
 [ext_resource type="Script" uid="uid://c53peuqjd114t" path="res://_Scripts/Resources/PlayerDataDefence.cs" id="2_khu0o"]
 [ext_resource type="Resource" uid="uid://c3iwmer7t8bnr" path="res://Resources/Stats/Players/WideReceiver.tres" id="3_4gmy6"]
 [ext_resource type="Script" uid="uid://dys3y3oj7sr6d" path="res://_Scripts/Resources/PlayerDataOffence.cs" id="4_hs7sb"]
+[ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="5_khu0o"]
 [ext_resource type="Script" uid="uid://dcvk4jwtiq13o" path="res://_Scripts/Resources/Play.cs" id="5_uvsm2"]
 
 [sub_resource type="Resource" id="Resource_080ak"]
@@ -17,92 +18,79 @@ metadata/_custom_type_script = "uid://c53peuqjd114t"
 script = ExtResource("2_khu0o")
 IsPlayer = true
 PlayerType = ExtResource("1_fjmcb")
-rushBall = 1.0
 Position = Vector2(7.5, 0)
 metadata/_custom_type_script = "uid://c53peuqjd114t"
 
 [sub_resource type="Resource" id="Resource_dayw0"]
 script = ExtResource("2_khu0o")
 PlayerType = ExtResource("1_fjmcb")
-rushBall = 1.0
 Position = Vector2(-7.5, 0)
 metadata/_custom_type_script = "uid://c53peuqjd114t"
 
 [sub_resource type="Resource" id="Resource_dga1n"]
 script = ExtResource("2_khu0o")
 PlayerType = ExtResource("1_fjmcb")
-rushBall = 1.0
 Position = Vector2(15, 0)
 metadata/_custom_type_script = "uid://c53peuqjd114t"
 
 [sub_resource type="Resource" id="Resource_dbh1t"]
 script = ExtResource("2_khu0o")
 PlayerType = ExtResource("1_fjmcb")
-rushBall = 1.0
 Position = Vector2(-15, 0)
 metadata/_custom_type_script = "uid://c53peuqjd114t"
 
 [sub_resource type="Resource" id="Resource_be0t7"]
 script = ExtResource("2_khu0o")
 PlayerType = ExtResource("1_fjmcb")
-rushBall = 1.0
 Position = Vector2(22.5, 0)
 metadata/_custom_type_script = "uid://c53peuqjd114t"
 
 [sub_resource type="Resource" id="Resource_sfymy"]
 script = ExtResource("2_khu0o")
 PlayerType = ExtResource("1_fjmcb")
-rushBall = 1.0
 Position = Vector2(-22.5, 0)
 metadata/_custom_type_script = "uid://c53peuqjd114t"
 
 [sub_resource type="Resource" id="Resource_w33yd"]
 script = ExtResource("4_hs7sb")
 PlayerType = ExtResource("3_4gmy6")
-block = 1.0
 Position = Vector2(10, -1)
 metadata/_custom_type_script = "uid://dys3y3oj7sr6d"
 
 [sub_resource type="Resource" id="Resource_13odu"]
 script = ExtResource("4_hs7sb")
 PlayerType = ExtResource("3_4gmy6")
-block = 1.0
 Position = Vector2(-10, -1)
 metadata/_custom_type_script = "uid://dys3y3oj7sr6d"
 
 [sub_resource type="Resource" id="Resource_0ci6f"]
 script = ExtResource("4_hs7sb")
 PlayerType = ExtResource("3_4gmy6")
-block = 1.0
 Position = Vector2(20, -1)
 metadata/_custom_type_script = "uid://dys3y3oj7sr6d"
 
 [sub_resource type="Resource" id="Resource_0sadd"]
 script = ExtResource("4_hs7sb")
 PlayerType = ExtResource("3_4gmy6")
-block = 1.0
 Position = Vector2(-20, -1)
 metadata/_custom_type_script = "uid://dys3y3oj7sr6d"
 
 [sub_resource type="Resource" id="Resource_55v6n"]
 script = ExtResource("4_hs7sb")
 PlayerType = ExtResource("3_4gmy6")
-block = 1.0
 Position = Vector2(15, -2)
 metadata/_custom_type_script = "uid://dys3y3oj7sr6d"
 
 [sub_resource type="Resource" id="Resource_dmptd"]
 script = ExtResource("4_hs7sb")
 PlayerType = ExtResource("3_4gmy6")
-block = 1.0
 Position = Vector2(-15, -2)
 metadata/_custom_type_script = "uid://dys3y3oj7sr6d"
 
 [sub_resource type="Resource" id="Resource_qukk1"]
 script = ExtResource("4_hs7sb")
 IsPlayer = true
-PlayerType = ExtResource("3_4gmy6")
-block = 1.0
+PlayerType = ExtResource("5_khu0o")
 Position = Vector2(0, -2.75)
 metadata/_custom_type_script = "uid://dys3y3oj7sr6d"
 

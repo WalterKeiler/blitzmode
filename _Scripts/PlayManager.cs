@@ -201,6 +201,7 @@ public partial class PlayManager : Node
 				Vector2 pos = OffencePlay.PlayerDataOffence[o].Position;
 				gm.players[i].Position = new Vector3(lineOfScrimmage + pos.Y * PlayDirection, 1, pos.X);
 				gm.players[i].playerStats = play.PlayerType;
+				gm.players[i].isOffence = true;
 
 				if (isKickoff)
 				{
@@ -279,6 +280,7 @@ public partial class PlayManager : Node
 				Vector2 pos = play.Position;
 				gm.players[i].Position = (Vector3.Right * 1) + new Vector3(lineOfScrimmage + pos.Y * PlayDirection, 1, pos.X);
 				gm.players[i].playerStats = play.PlayerType;
+				gm.players[i].isOffence = false;
 				
 				if (isKickoff)
 				{
@@ -366,6 +368,7 @@ public partial class PlayManager : Node
 			gm.players[i].inputManager = null;
 			gm.players[i].inputID = -1;
 			gm.players[i].isPlayerControlled = false;
+			
 			return;
 		}
 		
@@ -470,9 +473,10 @@ public partial class PlayManager : Node
 		firstDownLine = lineOfScrimmage + gm.yardsToFirstDown * PlayDirection;
 	}
 
-	void Kickoff(int playDirection = 0)
+	async void Kickoff(int playDirection = 0)
 	{
-		Turnover(true);
+		Turnover(true, playDirection);
+		await ToSignal(GetTree().CreateTimer(.5f), "timeout");
 		OffencePlay = KickoffPlay;
 		DefencePlay = KickoffPlay;
 		isKickoff = true;
@@ -585,7 +589,7 @@ public partial class PlayManager : Node
 	
 	private void BallCaught(bool isOff)
 	{
-		if(!isOff) Turnover(true);
+		if(!isOff && !isKickoff) Turnover(true);
 	}
 	
 	public async void InvokeEndPlay(bool moveLineOfScrimmage)

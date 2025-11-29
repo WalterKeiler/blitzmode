@@ -159,7 +159,7 @@ public partial class PlayerController : Node3D
 			PlayersNotOnTeam = gm.offencePlayers;
 		}
 		init = true;
-		if (PlayManager.Instance.isKickoff) CanMove = false;
+		//if (PlayManager.Instance.isKickoff) CanMove = false;
 		aiManager.Init();
 	}
 
@@ -181,6 +181,7 @@ public partial class PlayerController : Node3D
 				ball.ResetCatchData();
 				snap = false;
 				Snapped?.Invoke(true);
+				GD.Print("Kickoff");
 			}
 			return;
 		}
@@ -201,6 +202,7 @@ public partial class PlayerController : Node3D
 	{
 		((Node)ball).Reparent(GetTree().Root.GetChild(0));
 		HasBall = false;
+		ball.throwingPlayer = this;
 		Snapped?.Invoke(false);
 	}
 	
