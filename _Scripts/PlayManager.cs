@@ -27,7 +27,7 @@ public partial class PlayManager : Node
 
 	public bool inbetweenPlays;
 
-	bool isExtraPointPlay;
+	public bool isExtraPointPlay;
 	public bool isKickoff;
 	
 	bool timerRunning = false;

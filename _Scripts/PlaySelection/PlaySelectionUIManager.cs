@@ -151,12 +151,15 @@ public partial class PlaySelectionUIManager : Control
         int currentYard = Mathf.RoundToInt((pm.PlayDirection * pm.lineOfScrimmage) + gm.fieldLength / 2f);
         
         string yardsTillFirst = first + currentYard < gm.fieldLength ? first.ToString() : "Goal";
+        
         yardDownText.Text =
             $"{gm.DownsTillTurnover - (pm.CurrentDown - 1)}{suffixLookup[suffixD]} & " +
             $"{yardsTillFirst} on the " +
             $"{currentYard}";
         quarterText.Text = $"{pm.quarterNumber}{suffixLookup[suffix]} Quarter";
         timeInQuarterText.Text = $"{min}:{sec:D2}";
+        
+        if(pm.isExtraPointPlay) yardDownText.Text = $"Extra Point on the {currentYard}";
         
         team1ScoreText.Text = $"{pm.ScoreTeam1}";
         team2ScoreText.Text = $"{pm.ScoreTeam2}";
