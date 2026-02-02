@@ -1,0 +1,107 @@
+[gd_scene load_steps=30 format=3 uid="uid://dkddmtmu5c3pb"]
+
+[ext_resource type="Script" uid="uid://byeqa4htefu52" path="res://_Scripts/CameraController.cs" id="1_nb8lh"]
+[ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="2_acjaa"]
+[ext_resource type="Script" uid="uid://cif8tedtkepy5" path="res://_Scripts/FieldManager.cs" id="2_mpaqs"]
+[ext_resource type="PackedScene" uid="uid://c4884nm7e6oit" path="res://_Scenes/player.tscn" id="3_jke3i"]
+[ext_resource type="PackedScene" uid="uid://8p1e2l56d68k" path="res://_Scenes/ball.tscn" id="5_weq6n"]
+[ext_resource type="PackedScene" uid="uid://cl04xbkb6lkf4" path="res://_Scenes/InputManager.tscn" id="6_rn8ec"]
+[ext_resource type="Resource" uid="uid://tcnum2x5ch5a" path="res://Resources/Input/Sprint.tres" id="7_5jy3s"]
+[ext_resource type="Resource" uid="uid://bduqn4upev1j5" path="res://Resources/Input/SpinMove.tres" id="8_cy3xd"]
+[ext_resource type="Resource" uid="uid://dq1abbnm8n2c2" path="res://Resources/Input/ChangePlayer.tres" id="9_y1vnq"]
+[ext_resource type="Resource" uid="uid://bkmyjysofqm7m" path="res://Resources/Input/Dive.tres" id="10_ekhn6"]
+[ext_resource type="Resource" uid="uid://bsm7re1plbrl1" path="res://Resources/Input/Jump.tres" id="11_1quqr"]
+[ext_resource type="Resource" uid="uid://doyaqfc8yadf4" path="res://Resources/Input/Tackle.tres" id="12_2ifbs"]
+[ext_resource type="Resource" uid="uid://bx2h0hskxnnli" path="res://Resources/Input/Throw.tres" id="13_anypg"]
+[ext_resource type="Script" uid="uid://crjaa7tlj28x0" path="res://_Scripts/GameManager.cs" id="13_vno2e"]
+[ext_resource type="Resource" uid="uid://ds41fgws8hnvb" path="res://Resources/Input/StiffArm.tres" id="14_bggh7"]
+[ext_resource type="Resource" uid="uid://ds2cg24b7iqae" path="res://Resources/Stats/Teams/Birds.tres" id="14_cg1ps"]
+[ext_resource type="Script" uid="uid://dfois0v0jtqqd" path="res://_Scripts/PlayManager.cs" id="14_tri8s"]
+[ext_resource type="Resource" uid="uid://c7eyrp0e4tg0h" path="res://Resources/Stats/Teams/Mamals.tres" id="15_bsuan"]
+[ext_resource type="PackedScene" uid="uid://bcmgvfcvwhc7b" path="res://_Scenes/PlayHUD.tscn" id="19_puul3"]
+[ext_resource type="Resource" uid="uid://bfsuyo3p3p5db" path="res://Resources/Plays/Offence/Saquon Up The Middle.tres" id="19_tnsxv"]
+[ext_resource type="Resource" uid="uid://bi7utm7mbpr17" path="res://Resources/Plays/Defence/All Out Blitz.tres" id="20_tnsxv"]
+[ext_resource type="Resource" uid="uid://cgcpgknu022h5" path="res://Resources/Plays/Kickoff.tres" id="21_cvln5"]
+[ext_resource type="Script" uid="uid://cvc6gb3kekrlu" path="res://_Scripts/PathfindingManager.cs" id="21_omn81"]
+[ext_resource type="PackedScene" uid="uid://da44s0i0rtv5k" path="res://_Scenes/PlaySelectionUI.tscn" id="22_gpq5w"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sbqmv"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_ppmuy"]
+sky_material = SubResource("ProceduralSkyMaterial_sbqmv")
+
+[sub_resource type="Environment" id="Environment_ysj40"]
+background_mode = 2
+sky = SubResource("Sky_ppmuy")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_gpq5w"]
+material = ExtResource("2_acjaa")
+size = Vector2(100, 60)
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_0xxls"]
+
+[node name="Field" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ysj40")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 10, 0)
+
+[node name="CameraController" type="Node3D" parent="."]
+script = ExtResource("1_nb8lh")
+cameraMoveSpeed = 30.0
+
+[node name="Camera3D" type="Camera3D" parent="CameraController"]
+transform = Transform3D(-4.37114e-08, 0.707107, -0.707107, 0, 0.707107, 0.707107, 1, 3.09086e-08, -3.09086e-08, -10, 8, 0)
+
+[node name="FieldManager" type="Node" parent="." node_paths=PackedStringArray("fieldMesh")]
+script = ExtResource("2_mpaqs")
+fieldMaterial = ExtResource("2_acjaa")
+fieldMesh = NodePath("FieldGeo/MeshInstance3D")
+
+[node name="FieldGeo" type="StaticBody3D" parent="FieldManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 3.55271e-15, 0, -3.55271e-15, 1, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="FieldManager/FieldGeo"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("QuadMesh_gpq5w")
+skeleton = NodePath("../../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FieldManager/FieldGeo"]
+transform = Transform3D(1, 0, 0, 0, 1, -3.55271e-15, 0, 3.55271e-15, 1, 0, 0, 0)
+shape = SubResource("WorldBoundaryShape3D_0xxls")
+
+[node name="InputManagerInstance" parent="." instance=ExtResource("6_rn8ec")]
+_inputCombos = Array[Resource]([ExtResource("7_5jy3s"), ExtResource("8_cy3xd"), ExtResource("9_y1vnq"), ExtResource("10_ekhn6"), ExtResource("11_1quqr"), ExtResource("12_2ifbs"), ExtResource("13_anypg"), ExtResource("14_bggh7")])
+_inputBuffer = 0.1
+isOffence = true
+
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("playerInputTeam1", "playerInputTeam2")]
+script = ExtResource("13_vno2e")
+team1 = ExtResource("14_cg1ps")
+team2 = ExtResource("15_bsuan")
+playerInputTeam1 = [NodePath("../InputManagerInstance")]
+playerInputTeam2 = []
+
+[node name="PlayManager" type="Node" parent="." node_paths=PackedStringArray("mainCam", "playSelectionUI")]
+script = ExtResource("14_tri8s")
+playerPrefab = ExtResource("3_jke3i")
+BallPrefab = ExtResource("5_weq6n")
+mainCam = NodePath("../CameraController")
+playSelectionUI = NodePath("../PlaySelectionUI")
+OffencePlay = ExtResource("19_tnsxv")
+DefencePlay = ExtResource("20_tnsxv")
+KickoffPlay = ExtResource("21_cvln5")
+
+[node name="PathfindingManager" type="Node" parent="."]
+script = ExtResource("21_omn81")
+
+[node name="Control" parent="." instance=ExtResource("19_puul3")]
+
+[node name="PlaySelectionUI" parent="." instance=ExtResource("22_gpq5w")]
+visible = false

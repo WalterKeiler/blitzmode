@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b8tkqah4a6tbs"
+path="res://.godot/imported/FootBall.obj-ba314ad8ea577670a8ca9a65972ce607.mesh"
+
+[deps]
+
+files=["res://.godot/imported/FootBall.obj-ba314ad8ea577670a8ca9a65972ce607.mesh"]
+
+source_file="res://Models/FootBall.obj"
+dest_files=["res://.godot/imported/FootBall.obj-ba314ad8ea577670a8ca9a65972ce607.mesh", "res://.godot/imported/FootBall.obj-ba314ad8ea577670a8ca9a65972ce607.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://ux3khxvx5uyi"]
+
+[ext_resource type="Shader" uid="uid://c60bnyclatswx" path="res://Shaders/PlayDrawPlayer.gdshader" id="1_pf7dp"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_pf7dp")
+shader_parameter/isSelected = false
+shader_parameter/UnselectedCol = Color(1, 0.733333, 0, 1)
+shader_parameter/SelectedCol = Color(0.81749743, 0.00052539527, 0.8174919, 1)
+shader_parameter/Circle = 1.0
+shader_parameter/Square = 0.0
+shader_parameter/Triangle = 0.0

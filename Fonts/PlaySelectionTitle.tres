@@ -1,0 +1,7 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://b15up6lstoawd"]
+
+[ext_resource type="FontFile" uid="uid://dyvfg6smw20h6" path="res://Fonts/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf" id="1_0mbvo"]
+
+[resource]
+font = ExtResource("1_0mbvo")
+font_size = 28

@@ -1,19 +1,60 @@
-[gd_scene load_steps=4 format=3 uid="uid://c4884nm7e6oit"]
+[gd_scene load_steps=9 format=3 uid="uid://c4884nm7e6oit"]
 
-[ext_resource type="Script" path="res://_Scripts/PlayerController.cs" id="1_areti"]
+[ext_resource type="Script" uid="uid://cfxtv87lmtpr6" path="res://_Scripts/PlayerController.cs" id="1_areti"]
+[ext_resource type="Material" uid="uid://k4x7eqdcrbjq" path="res://Materials/TestMat.tres" id="2_tyapl"]
+[ext_resource type="PackedScene" uid="uid://bph8u704hl88n" path="res://_Scenes/AIManager.tscn" id="3_hud2f"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ai2fj"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ljm3w"]
+material = ExtResource("2_tyapl")
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_p1g61"]
 
-[node name="Player" type="Node3D"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ai2fj"]
+height = 2.83541
+radius = 3.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_l6q3d"]
+height = 2.83541
+radius = 9.0
+
+[node name="Player" type="RigidBody3D" node_paths=PackedStringArray("aiManager", "mesh")]
+collision_layer = 5
+collision_mask = 5
+axis_lock_linear_x = true
+axis_lock_linear_y = true
+axis_lock_linear_z = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
 script = ExtResource("1_areti")
-speed = 1.0
+aiManager = NodePath("AIManager")
+mesh = NodePath("MeshInstance3D")
+mat = SubResource("StandardMaterial3D_ai2fj")
+debugMode = true
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = ExtResource("2_tyapl")
 mesh = SubResource("CapsuleMesh_ljm3w")
+skeleton = NodePath("")
+surface_material_override/0 = ExtResource("2_tyapl")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_p1g61")
+
+[node name="TackleBox" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TackleBox"]
+shape = SubResource("CylinderShape3D_ai2fj")
+
+[node name="NearbyPayersBox" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 4
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NearbyPayersBox"]
+shape = SubResource("CylinderShape3D_l6q3d")
+
+[node name="AIManager" parent="." instance=ExtResource("3_hud2f")]

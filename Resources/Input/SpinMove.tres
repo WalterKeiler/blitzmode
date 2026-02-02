@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bduqn4upev1j5"]
+
+[ext_resource type="Script" uid="uid://c3fydb0n34ntr" path="res://_Scripts/InputCombo.cs" id="1_0msh6"]
+
+[resource]
+script = ExtResource("1_0msh6")
+Action = 1
+InputActions = PackedStringArray("Sprint")
+InputActionsKey = 4194325
+InputActionsJoy = 10
+SecondaryInputActionsJoy = -1
+PressCount = 2
+isOffence = true

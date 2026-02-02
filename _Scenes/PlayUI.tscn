@@ -1,0 +1,65 @@
+[gd_scene load_steps=4 format=3 uid="uid://sg8pqaimncg0"]
+
+[ext_resource type="Script" uid="uid://dhbfg3xngea3v" path="res://_Scripts/PlaySelection/PSPlayUI.cs" id="1_61gsx"]
+[ext_resource type="Texture2D" uid="uid://ob4hjvynku0l" path="res://icon.svg" id="1_eisve"]
+[ext_resource type="LabelSettings" uid="uid://bn80hiao1bfo6" path="res://Fonts/PlayUI.tres" id="3_rhn13"]
+
+[node name="Play" type="Control" node_paths=PackedStringArray("image", "name")]
+custom_minimum_size = Vector2(175, 128)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -977.0
+offset_bottom = -520.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_61gsx")
+image = NodePath("PlayImage")
+name = NodePath("PlayName")
+
+[node name="Backer" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayImage" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(175, 128)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+texture = ExtResource("1_eisve")
+expand_mode = 2
+
+[node name="PlayName" type="Label" parent="."]
+z_index = 1
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "TestPlay"
+label_settings = ExtResource("3_rhn13")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NameBacker" type="Panel" parent="PlayName"]
+show_behind_parent = true
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

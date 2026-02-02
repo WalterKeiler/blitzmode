@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bsm7re1plbrl1"]
+
+[ext_resource type="Script" uid="uid://c3fydb0n34ntr" path="res://_Scripts/InputCombo.cs" id="1_ggypt"]
+
+[resource]
+script = ExtResource("1_ggypt")
+Action = 3
+InputActions = PackedStringArray("Jump-Tackle")
+InputActionsKey = 74
+InputActionsJoy = 3
+isOffence = true

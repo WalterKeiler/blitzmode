@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="PlayerStats" load_steps=2 format=3 uid="uid://duahorhpdwoe1"]
+
+[ext_resource type="Script" path="res://_Scripts/Resources/PlayerStats.cs" id="1_a7u2a"]
+
+[resource]
+script = ExtResource("1_a7u2a")
+PlayerType = 3
+canBeThrowTarget = false
+Speed = 3.0
+Endurance = 5.0
+Strength = 7.5
+Catching = 3.0
+Agility = 2.5

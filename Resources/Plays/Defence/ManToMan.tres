@@ -1,0 +1,61 @@
+[gd_resource type="Resource" script_class="Play" load_steps=14 format=3 uid="uid://cu8kg5n6okpmp"]
+
+[ext_resource type="Script" uid="uid://c53peuqjd114t" path="res://_Scripts/Resources/PlayerDataDefence.cs" id="1_6u8c1"]
+[ext_resource type="Script" uid="uid://dcvk4jwtiq13o" path="res://_Scripts/Resources/Play.cs" id="1_g7x5f"]
+[ext_resource type="Resource" uid="uid://blpydpdwlcl2a" path="res://Resources/Stats/Players/Safety.tres" id="1_p4bfn"]
+[ext_resource type="Resource" uid="uid://duahorhpdwoe1" path="res://Resources/Stats/Players/DLinebacker.tres" id="3_783g0"]
+[ext_resource type="Script" uid="uid://b2t5xsiw63gd7" path="res://_Scripts/Resources/Zone.cs" id="4_c8i7e"]
+
+[sub_resource type="Resource" id="Resource_ulerc"]
+script = ExtResource("1_6u8c1")
+PlayerType = ExtResource("3_783g0")
+rushBall = 1.0
+Position = Vector2(0, 1)
+
+[sub_resource type="Resource" id="Resource_jjkup"]
+script = ExtResource("1_6u8c1")
+PlayerType = ExtResource("3_783g0")
+rushBall = 1.0
+Position = Vector2(-1.5, 1)
+
+[sub_resource type="Resource" id="Resource_51qj0"]
+script = ExtResource("1_6u8c1")
+PlayerType = ExtResource("3_783g0")
+rushBall = 1.0
+Position = Vector2(1.5, 1)
+
+[sub_resource type="Resource" id="Resource_n2mmf"]
+script = ExtResource("1_6u8c1")
+PlayerType = ExtResource("1_p4bfn")
+followPlayer = 1.0
+Position = Vector2(10, 0)
+
+[sub_resource type="Resource" id="Resource_yv0fv"]
+script = ExtResource("1_6u8c1")
+PlayerType = ExtResource("1_p4bfn")
+followPlayer = 1.0
+Position = Vector2(-10, 0)
+
+[sub_resource type="Resource" id="Resource_353sc"]
+script = ExtResource("1_6u8c1")
+PlayerType = ExtResource("1_p4bfn")
+followPlayer = 1.0
+Position = Vector2(-7, 0)
+
+[sub_resource type="Resource" id="Resource_uq318"]
+script = ExtResource("4_c8i7e")
+center = Vector3(10, 0, 0)
+radius = 7.5
+
+[sub_resource type="Resource" id="Resource_d7vhj"]
+script = ExtResource("1_6u8c1")
+IsPlayer = true
+PlayerType = ExtResource("1_p4bfn")
+coverZone = 1.0
+Position = Vector2(0, 10)
+Zone = SubResource("Resource_uq318")
+
+[resource]
+script = ExtResource("1_g7x5f")
+PlayerDataOffence = null
+PlayerDataDefence = Array[Object]([SubResource("Resource_ulerc"), SubResource("Resource_jjkup"), SubResource("Resource_51qj0"), SubResource("Resource_n2mmf"), SubResource("Resource_yv0fv"), SubResource("Resource_353sc"), SubResource("Resource_d7vhj")])

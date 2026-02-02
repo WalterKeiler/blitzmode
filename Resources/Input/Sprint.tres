@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://tcnum2x5ch5a"]
+
+[ext_resource type="Script" uid="uid://c3fydb0n34ntr" path="res://_Scripts/InputCombo.cs" id="1_836hm"]
+
+[resource]
+script = ExtResource("1_836hm")
+InputActions = PackedStringArray("Sprint")
+InputActionsKey = 4194325
+InputActionsJoy = 10
+SecondaryInputActionsJoy = 9
+isUniversal = true
