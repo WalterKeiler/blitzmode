@@ -143,13 +143,15 @@ public partial class Ball : RigidBody3D
         }
 
         if (ballState == BallState.Free && pm.isKickoff && !pm.inbetweenPlays && 
-            (GlobalPosition.X * pm.PlayDirection >= GameManager.Instance.fieldLength / 2f &&
-             GlobalPosition.X * pm.PlayDirection <=
+            (GlobalPosition.X * -pm.PlayDirection >= GameManager.Instance.fieldLength / 2f &&
+             GlobalPosition.X * -pm.PlayDirection <=
              (GameManager.Instance.fieldLength / 2f) + GameManager.Instance.EndzoneDepth))
         {
-            GlobalPosition = Vector3.Right * ((GameManager.Instance.fieldLength / 2f) +
-                                              (GameManager.Instance.touchBackDistance * pm.PlayDirection));
-            pm.Turnover(false);
+            float ballPos = pm.PlayDirection == 1 ? -(GameManager.Instance.fieldLength / 2f - GameManager.Instance.touchBackDistance) : GameManager.Instance.fieldLength - GameManager.Instance.touchBackDistance;
+            
+            GlobalPosition = Vector3.Right * ballPos;
+            
+            pm.Turnover(false, pm.PlayDirection);
             pm.InvokeEndPlay(true);
         }
         
