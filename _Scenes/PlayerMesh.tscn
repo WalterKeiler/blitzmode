@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://cu67rpkhckpoc"]
+
+[ext_resource type="PackedScene" uid="uid://xr35c4v7tmou" path="res://Models/BlitzPlayer.fbx" id="1_sr08k"]
+
+[node name="BlitzPlayer" unique_id=1043985889 instance=ExtResource("1_sr08k")]

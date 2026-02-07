@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://c4884nm7e6oit"]
+[gd_scene format=3 uid="uid://c4884nm7e6oit"]
 
 [ext_resource type="Script" uid="uid://cfxtv87lmtpr6" path="res://_Scripts/PlayerController.cs" id="1_areti"]
 [ext_resource type="Material" uid="uid://k4x7eqdcrbjq" path="res://Materials/TestMat.tres" id="2_tyapl"]
 [ext_resource type="PackedScene" uid="uid://bph8u704hl88n" path="res://_Scenes/AIManager.tscn" id="3_hud2f"]
+[ext_resource type="PackedScene" uid="uid://cu67rpkhckpoc" path="res://_Scenes/PlayerMesh.tscn" id="4_dolds"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ai2fj"]
 
@@ -19,7 +20,7 @@ radius = 3.0
 height = 2.83541
 radius = 9.0
 
-[node name="Player" type="RigidBody3D" node_paths=PackedStringArray("aiManager", "mesh")]
+[node name="Player" type="RigidBody3D" unique_id=2092308859 node_paths=PackedStringArray("aiManager", "mesh")]
 collision_layer = 5
 collision_mask = 5
 axis_lock_linear_x = true
@@ -34,27 +35,31 @@ mesh = NodePath("MeshInstance3D")
 mat = SubResource("StandardMaterial3D_ai2fj")
 debugMode = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=881877773]
+visible = false
 material_override = ExtResource("2_tyapl")
 mesh = SubResource("CapsuleMesh_ljm3w")
 skeleton = NodePath("")
 surface_material_override/0 = ExtResource("2_tyapl")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1077129963]
 shape = SubResource("CapsuleShape3D_p1g61")
 
-[node name="TackleBox" type="Area3D" parent="."]
+[node name="TackleBox" type="Area3D" parent="." unique_id=1875948987]
 collision_layer = 2
 collision_mask = 4
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="TackleBox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TackleBox" unique_id=1709103426]
 shape = SubResource("CylinderShape3D_ai2fj")
 
-[node name="NearbyPayersBox" type="Area3D" parent="."]
+[node name="NearbyPayersBox" type="Area3D" parent="." unique_id=1583073736]
 collision_layer = 2
 collision_mask = 4
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="NearbyPayersBox"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NearbyPayersBox" unique_id=505030239]
 shape = SubResource("CylinderShape3D_l6q3d")
 
-[node name="AIManager" parent="." instance=ExtResource("3_hud2f")]
+[node name="AIManager" parent="." unique_id=464923239 instance=ExtResource("3_hud2f")]
+
+[node name="BlitzPlayer" parent="." unique_id=1043985889 instance=ExtResource("4_dolds")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)

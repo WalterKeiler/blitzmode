@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Play" load_steps=12 format=4 uid="uid://bi7utm7mbpr17"]
+[gd_resource type="Resource" script_class="Play" format=4 uid="uid://bi7utm7mbpr17"]
 
 [ext_resource type="Resource" uid="uid://duahorhpdwoe1" path="res://Resources/Stats/Players/DLinebacker.tres" id="1_r14gi"]
 [ext_resource type="Script" uid="uid://c53peuqjd114t" path="res://_Scripts/Resources/PlayerDataDefence.cs" id="2_v0y2u"]
