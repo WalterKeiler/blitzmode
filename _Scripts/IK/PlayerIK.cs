@@ -33,6 +33,6 @@ public partial class PlayerIK : Node3D
         walkPathLegsR.ProgressRatio += movementStep;
         walkPathArmsL.ProgressRatio += movementStep;
         walkPathArmsR.ProgressRatio += movementStep;
-        walkPathBody.ProgressRatio += movementStep;
+        walkPathBody.ProgressRatio += movementStep * 2;
     }
 }

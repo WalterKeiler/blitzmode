@@ -166,7 +166,7 @@ bone = 3
 transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 0.0016802241, -0.005233547, 0.0076802517)
 
 [node name="HeadTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="2" unique_id=124009042]
-transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 0.0016802246, -0.010749162, 0.013408003)
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 0, -0.011, 0.013)
 
 [node name="BodyPole" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="3" unique_id=715255197]
 transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 2.0509295e-16, -3.4408887e-09, 0.023091413)
