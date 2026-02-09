@@ -1,5 +1,229 @@
 [gd_scene format=3 uid="uid://cu67rpkhckpoc"]
 
 [ext_resource type="PackedScene" uid="uid://xr35c4v7tmou" path="res://Models/BlitzPlayer.fbx" id="1_sr08k"]
+[ext_resource type="Script" uid="uid://d6212k03vu6m" path="res://_Scripts/IK/PlayerIK.cs" id="2_arojt"]
 
-[node name="BlitzPlayer" unique_id=1043985889 instance=ExtResource("1_sr08k")]
+[sub_resource type="Curve3D" id="Curve3D_1sej0"]
+closed = true
+bake_interval = 1.0
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.545, -1.15, 0, 0, 0, 0, 0, 0, 0, 0, -1.145, 0, 0, 0, 0, 0, 0, 0, -0.6372496, -1.0752637, 0, 0, 0, 0, 0, 0, 0, -0.7504368, -0.4547634, 0, 0, 0, 0, 0, 0, 0, -0.215, -0.8, 0, 0, 0, 0, 0, 0, 0, 0.5401273, -0.85489094, 0, 0, 0, 0, 0, 0, 0, 0.77518207, -0.9548, 0),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 7
+
+[sub_resource type="Curve3D" id="Curve3D_arojt"]
+closed = true
+bake_interval = 1.0
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.22612494, -0.330246, 0, 0, 0, 0, 0, 0, 0, -0.2061944, -0.32565123, 0, 0, 0, 0, 0, 0, 0, -0.2994433, -0.27962667, 0, 0, 0, 0, 0, 0, 0, -0.10654032, -0.25819826, 0, 0, 0, 0, 0, 0, 0, 0.18406609, -0.2595876, 0, 0, 0, 0, 0, 0, 0, 0.43845558, -0.04865192, 0, 0, 0, 0, 0, 0, 0, 0.3776466, -0.19993928, 0),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 7
+
+[sub_resource type="Curve3D" id="Curve3D_aw1fv"]
+closed = true
+bake_interval = 100.0
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.4365226, 0.41632557, 0, 0, 0, 0, 0, 0, 0, 0.4482931, 0.31635445, 0, 0, 0, 0, 0, 0, 0, 0.4172177, 0.30463582, 0),
+"tilts": PackedFloat32Array(0, 0, 0)
+}
+point_count = 3
+
+[node name="BlitzPlayer" unique_id=871886053 node_paths=PackedStringArray("targetLegsL", "targetLegsR", "walkPathLegsL", "walkPathLegsR", "walkPathArmsL", "walkPathArmsR", "walkPathBody") instance=ExtResource("1_sr08k")]
+script = ExtResource("2_arojt")
+targetLegsL = NodePath("WalkCycleLegs/LeftLeg/LeftLegTarget")
+targetLegsR = NodePath("WalkCycleLegs/RightLeg/RightLegTarget")
+walkPathLegsL = NodePath("WalkCycleLegs/LeftLeg")
+walkPathLegsR = NodePath("WalkCycleLegs/RightLeg")
+walkPathArmsL = NodePath("WalkCycleArms/LeftArm")
+walkPathArmsR = NodePath("WalkCycleArms/RightArm")
+walkPathBody = NodePath("WalkCycleBody/Body")
+speed = 1.0
+legOffset = 0.5
+
+[node name="Skeleton3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="0" unique_id=1666916350]
+bones/1/position = Vector3(2.196667e-18, 0.0015221955, -1.9691854e-10)
+bones/1/rotation = Quaternion(-0.10668072, -1.8692749e-16, 1.5274712e-16, 0.99429333)
+bones/1/scale = Vector3(1, 1, 1.0000001)
+bones/2/position = Vector3(-1.4361442e-17, 0.004635858, -0.00012071043)
+bones/2/rotation = Quaternion(0.16876853, 1.1749934e-07, 2.011878e-08, 0.9856557)
+bones/2/scale = Vector3(1, 1.0000002, 1.0000001)
+bones/3/position = Vector3(1.9285122e-17, 0.0006616349, -6.63172e-10)
+bones/3/rotation = Quaternion(-0.12954494, -8.9572625e-15, -3.0885914e-08, 0.9915736)
+bones/3/scale = Vector3(1, 0.9999997, 0.9999999)
+bones/5/position = Vector3(0.0027086104, 0.004276205, 7.927241e-07)
+bones/5/rotation = Quaternion(-0.014577145, -0.013174548, -0.7322136, 0.68079156)
+bones/5/scale = Vector3(1.0000001, 0.99999994, 1)
+bones/6/position = Vector3(-2.055394e-09, 0.0029913418, 1.0332123e-11)
+bones/6/rotation = Quaternion(0.0029730476, 0.028135272, 0.013092785, 0.999514)
+bones/6/scale = Vector3(0.9999999, 0.99999994, 1)
+bones/7/position = Vector3(2.8794228e-10, 0.0032852986, -5.778348e-11)
+bones/7/rotation = Quaternion(-0.027114693, 0.25844637, 0.025103893, 0.9653186)
+bones/7/scale = Vector3(1, 0.9999999, 0.99999994)
+bones/9/position = Vector3(-0.0027086104, 0.004276205, 7.927246e-07)
+bones/9/rotation = Quaternion(-0.014577145, 0.013174548, 0.7322136, 0.68079156)
+bones/9/scale = Vector3(1.0000001, 0.99999994, 1)
+bones/10/position = Vector3(2.0553954e-09, 0.0029913418, 8.8851105e-12)
+bones/10/rotation = Quaternion(0.002973048, -0.028135272, -0.013092788, 0.999514)
+bones/10/scale = Vector3(0.9999999, 0.99999994, 1.0000001)
+bones/11/position = Vector3(-2.877844e-10, 0.0032852986, -5.4938047e-11)
+bones/11/rotation = Quaternion(-0.027114691, -0.25844634, -0.025103888, 0.9653187)
+bones/11/scale = Vector3(0.99999994, 0.9999999, 0.9999999)
+bones/13/position = Vector3(0.0014122301, 0.0007081852, 0.00025942284)
+bones/13/rotation = Quaternion(0.98651487, -1.162874e-16, 5.9194093e-16, 0.1636718)
+bones/14/position = Vector3(3.0954152e-11, 0.005363695, 8.829332e-11)
+bones/14/rotation = Quaternion(0.08216356, -1.1880625e-07, -9.794661e-09, 0.99661887)
+bones/14/scale = Vector3(1, 1, 0.9999999)
+bones/15/position = Vector3(-3.382308e-11, 0.005097627, -4.0826745e-11)
+bones/15/rotation = Quaternion(-0.7115171, -2.5129594e-07, 4.2409928e-07, 0.70266885)
+bones/15/scale = Vector3(1, 0.99999994, 0.9999999)
+bones/17/position = Vector3(-0.0014122301, 0.0007081852, 0.00025942284)
+bones/17/rotation = Quaternion(0.98651487, -1.162874e-16, 5.9194093e-16, 0.1636718)
+bones/18/position = Vector3(3.0954152e-11, 0.005363695, 8.829332e-11)
+bones/18/rotation = Quaternion(0.08216356, 1.18806256e-07, 9.794659e-09, 0.99661887)
+bones/18/scale = Vector3(1, 1, 0.9999999)
+bones/19/position = Vector3(5.971601e-11, 0.005097627, -2.9179555e-11)
+bones/19/rotation = Quaternion(-0.7115171, 2.5129594e-07, -4.2409928e-07, 0.70266885)
+bones/19/scale = Vector3(1, 0.99999994, 0.9999999)
+
+[node name="LeftLegIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="1" unique_id=1566000273]
+setting_count = 1
+settings/0/target_node = NodePath("../../../WalkCycleLegs/LeftLeg/LeftLegTarget")
+settings/0/pole_node = NodePath("../../LeftLegPole")
+settings/0/root_bone_name = "thigh.L"
+settings/0/root_bone = 13
+settings/0/middle_bone_name = "shin.L"
+settings/0/middle_bone = 14
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "foot.L"
+settings/0/end_bone = 15
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="RightLegIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="2" unique_id=364598030]
+setting_count = 1
+settings/0/target_node = NodePath("../../../WalkCycleLegs/RightLeg/RightLegTarget")
+settings/0/pole_node = NodePath("../../RightLegPole")
+settings/0/root_bone_name = "thigh.R"
+settings/0/root_bone = 17
+settings/0/middle_bone_name = "shin.R"
+settings/0/middle_bone = 18
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "foot.R"
+settings/0/end_bone = 19
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="LeftArmIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="3" unique_id=1809922524]
+setting_count = 1
+settings/0/target_node = NodePath("../../../WalkCycleArms/LeftArm/LeftArmTarget")
+settings/0/pole_node = NodePath("../../LeftArmPole")
+settings/0/root_bone_name = "upper_arm.L"
+settings/0/root_bone = 5
+settings/0/middle_bone_name = "forearm.L"
+settings/0/middle_bone = 6
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "hand.L"
+settings/0/end_bone = 7
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="RightArmIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="4" unique_id=993204215]
+setting_count = 1
+settings/0/target_node = NodePath("../../../WalkCycleArms/RightArm/RightArmTarget")
+settings/0/pole_node = NodePath("../../RightArmPole")
+settings/0/root_bone_name = "upper_arm.R"
+settings/0/root_bone = 9
+settings/0/middle_bone_name = "forearm.R"
+settings/0/middle_bone = 10
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "hand.R"
+settings/0/end_bone = 11
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="BodyIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="5" unique_id=79343420]
+setting_count = 1
+settings/0/target_node = NodePath("../../../WalkCycleBody/Body/BodyTarget")
+settings/0/pole_node = NodePath("../../BodyPole")
+settings/0/root_bone_name = "spine"
+settings/0/root_bone = 0
+settings/0/middle_bone_name = "spine.Torso"
+settings/0/middle_bone = 1
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "spine.Neck"
+settings/0/end_bone = 2
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="LookAtModifier3D" type="LookAtModifier3D" parent="Guy/Skeleton3D" index="6" unique_id=1078525971]
+target_node = NodePath("../../HeadTarget")
+bone_name = "spine.Head"
+bone = 3
+
+[node name="LeftLegPole" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="1" unique_id=775772921]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 0.0016802241, -0.005233547, 0.0076802517)
+
+[node name="HeadTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="2" unique_id=124009042]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 0.0016802246, -0.010749162, 0.013408003)
+
+[node name="BodyPole" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="3" unique_id=715255197]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 2.0509295e-16, -3.4408887e-09, 0.023091413)
+
+[node name="LeftArmPole" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="4" unique_id=658636459]
+transform = Transform3D(0.009808282, 0, -1.0384929e-24, 0, 0.009808283, -1.23798e-31, 0, 1.7423021e-17, 0.009808282, 0.003, 0.01, 0.015)
+
+[node name="RightArmPole" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="5" unique_id=1024303168]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.0032002234, 0.009612993, 0.015356189)
+
+[node name="RightLegPole" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="6" unique_id=628951899]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.0013521161, -0.005233547, 0.0076802517)
+
+[node name="WalkCycleLegs" type="Path3D" parent="." index="1" unique_id=2037237239]
+curve = SubResource("Curve3D_1sej0")
+
+[node name="LeftLeg" type="PathFollow3D" parent="WalkCycleLegs" index="0" unique_id=936057854]
+transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.545, -1.15, 0)
+rotation_mode = 0
+
+[node name="LeftLegTarget" type="Marker3D" parent="WalkCycleLegs/LeftLeg" index="0" unique_id=1794891064]
+transform = Transform3D(4.2912244e-08, 8.355517e-09, -0.9999999, 0.17162588, -0.98516214, 6.79774e-08, -0.9851621, -0.17162591, -1.5719044e-07, 0, 0, -0.164)
+
+[node name="RightLeg" type="PathFollow3D" parent="WalkCycleLegs" index="1" unique_id=170082333]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5559149, -0.5690303, 0)
+progress = 2.1146333
+rotation_mode = 0
+
+[node name="RightLegTarget" type="Marker3D" parent="WalkCycleLegs/RightLeg" index="0" unique_id=1269360011]
+transform = Transform3D(4.2912244e-08, 8.355517e-09, -0.9999999, 0.1716259, -0.9851622, 6.797741e-08, -0.98516214, -0.17162593, -1.5719047e-07, 0, 0, 0.164)
+
+[node name="WalkCycleArms" type="Path3D" parent="." index="2" unique_id=1704221403]
+curve = SubResource("Curve3D_arojt")
+
+[node name="LeftArm" type="PathFollow3D" parent="WalkCycleArms" index="0" unique_id=597344314]
+transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.09064802, -0.33063865, 0)
+progress = 0.1536098
+rotation_mode = 0
+
+[node name="LeftArmTarget" type="Marker3D" parent="WalkCycleArms/LeftArm" index="0" unique_id=200270119]
+transform = Transform3D(1.1920929e-07, -1.0000001, -1.4901161e-07, -2.9802603e-08, -1.1921043e-07, 1.0000093, -1.0000094, -5.960521e-08, 0, 0, 0, -0.328)
+
+[node name="RightArm" type="PathFollow3D" parent="WalkCycleArms" index="1" unique_id=275819613]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21871947, -0.26516902, 0)
+progress = 0.6406694
+rotation_mode = 0
+
+[node name="RightArmTarget" type="Marker3D" parent="WalkCycleArms/RightArm" index="0" unique_id=1011435863]
+transform = Transform3D(1.1920929e-07, -1.0000001, -1.4901161e-07, -2.9802322e-08, -1.192093e-07, 0.99999994, -1, -5.960465e-08, 0, 0, 0, 0.328)
+
+[node name="WalkCycleBody" type="Path3D" parent="." index="3" unique_id=1753422218]
+curve = SubResource("Curve3D_aw1fv")
+
+[node name="Body" type="PathFollow3D" parent="WalkCycleBody" index="0" unique_id=1661211191]
+transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.43610254, 0.4140077, 0)
+progress = 0.24299163
+rotation_mode = 0
+
+[node name="BodyTarget" type="Marker3D" parent="WalkCycleBody/Body" index="0" unique_id=1925155]
+transform = Transform3D(1.1920929e-07, -1.0000001, -1.4901161e-07, -2.9802603e-08, -1.1921043e-07, 1.0000093, -1.0000094, -5.960521e-08, 0, 0, 0, 0)

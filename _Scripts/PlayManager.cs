@@ -89,7 +89,7 @@ public partial class PlayManager : Node
 	}
 	
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public override void _PhysicsProcess(double delta)
 	{
 		if(timerRunning) quarterTimer -= (float)delta;
 		if(quarterTimer < 0)

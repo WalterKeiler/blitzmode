@@ -233,14 +233,19 @@ public partial class PlayerController : Node3D
 		init = false;
 		CanAct = false;
 	}
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
+
 	public override void _Process(double delta)
+	{
+		GetInput();
+		base._Process(delta);
+	}
+
+	// Called every frame. 'delta' is the elapsed time since the previous frame.
+	public override void _PhysicsProcess(double delta)
 	{
 		if(!init) return;
 
 		if (snap && ball.ballState == BallState.Held) snap = false;
-		
-		GetInput();
 		
 		if(CanMove)
 			Move(delta);
