@@ -2,6 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://xr35c4v7tmou" path="res://Models/BlitzPlayer.fbx" id="1_sr08k"]
 [ext_resource type="Script" uid="uid://d6212k03vu6m" path="res://_Scripts/IK/PlayerIK.cs" id="2_arojt"]
+[ext_resource type="Material" uid="uid://che1ppkf7h5e6" path="res://Materials/BallMat.tres" id="3_aw1fv"]
+[ext_resource type="ArrayMesh" uid="uid://b8tkqah4a6tbs" path="res://Models/FootBall.obj" id="4_phsfh"]
 
 [sub_resource type="Curve3D" id="Curve3D_1sej0"]
 closed = true
@@ -16,7 +18,7 @@ point_count = 7
 closed = true
 bake_interval = 1.0
 _data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.22612494, -0.330246, 0, 0, 0, 0, 0, 0, 0, -0.2061944, -0.32565123, 0, 0, 0, 0, 0, 0, 0, -0.2994433, -0.27962667, 0, 0, 0, 0, 0, 0, 0, -0.10654032, -0.25819826, 0, 0, 0, 0, 0, 0, 0, 0.18406609, -0.2595876, 0, 0, 0, 0, 0, 0, 0, 0.43845558, -0.04865192, 0, 0, 0, 0, 0, 0, 0, 0.3776466, -0.19993928, 0),
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.22612494, -0.330246, 0, 0, 0, 0, 0, 0, 0, -0.07053137, -0.35609227, 0, 0, 0, 0, 0, 0, 0, -0.14484507, -0.2150008, 0, 0, 0, 0, 0, 0, 0, 0.096467614, -0.26060197, 0, 0, 0, 0, 0, 0, 0, 0.34189847, -0.24020451, 0, 0, 0, 0, 0, 0, 0, 0.5658288, -0.13172156, 0, 0, 0, 0, 0, 0, 0, 0.43302646, -0.28577793, 0),
 "tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
 }
 point_count = 7
@@ -30,10 +32,31 @@ _data = {
 }
 point_count = 3
 
-[node name="BlitzPlayer" unique_id=871886053 node_paths=PackedStringArray("targetLegsL", "targetLegsR", "walkPathLegsL", "walkPathLegsR", "walkPathArmsL", "walkPathArmsR", "walkPathBody") instance=ExtResource("1_sr08k")]
+[sub_resource type="Curve3D" id="Curve3D_phsfh"]
+closed = true
+bake_interval = 100.0
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0.435, 0, 0, 0, 0, 0, 0, 0, 0, -0.18994248, -0.04707277, 0.17096004, 0, 0, 0, 0, 0, 0, -0.36922437, 0.4549272, 0, 0, 0, 0, 0, 0, 0, -0.051655382, 0.7499249, 0, 0, 0, 0, 0, 0, 0, 0.645, 0.75, 0, 0, 0, 0, 0, 0, 0, 0.9945986, 0.4760939, 0, 0, 0, 0, 0, 0, 0, 1.062203, -0.38111085, 0),
+"tilts": PackedFloat32Array(-2.0525072, -2.0525072, -1.0262536, 0, 0, 0, 0)
+}
+point_count = 7
+
+[node name="BlitzPlayer" unique_id=871886053 node_paths=PackedStringArray("targetLegsL", "targetLegsR", "targetStiffArm", "targetHead", "BodyIK", "HeadIK", "HeadLookAt", "StiffArmBodyIK", "StiffArmIK", "LeftLegIK", "RightLegIK", "LeftArmIK", "RightArmIK", "BallArmIK", "walkPathLegsL", "walkPathLegsR", "walkPathArmsL", "walkPathArmsR", "walkPathBody") instance=ExtResource("1_sr08k")]
 script = ExtResource("2_arojt")
 targetLegsL = NodePath("WalkCycleLegs/LeftLeg/LeftLegTarget")
 targetLegsR = NodePath("WalkCycleLegs/RightLeg/RightLegTarget")
+targetStiffArm = NodePath("Guy/StiffArmTarget")
+targetHead = NodePath("Guy/HeadTarget")
+BodyIK = NodePath("Guy/Skeleton3D/BodyIK")
+HeadIK = NodePath("Guy/Skeleton3D/HeadIK")
+HeadLookAt = NodePath("Guy/Skeleton3D/HeadLookAt")
+StiffArmBodyIK = NodePath("Guy/Skeleton3D/StiffArmBodyIK")
+StiffArmIK = NodePath("Guy/Skeleton3D/StiffArmIK")
+LeftLegIK = NodePath("Guy/Skeleton3D/LeftLegIK")
+RightLegIK = NodePath("Guy/Skeleton3D/RightLegIK")
+LeftArmIK = NodePath("Guy/Skeleton3D/LeftArmIK")
+RightArmIK = NodePath("Guy/Skeleton3D/RightArmIK")
+BallArmIK = NodePath("Guy/Skeleton3D/BallArmIK")
 walkPathLegsL = NodePath("WalkCycleLegs/LeftLeg")
 walkPathLegsR = NodePath("WalkCycleLegs/RightLeg")
 walkPathArmsL = NodePath("WalkCycleArms/LeftArm")
@@ -87,66 +110,11 @@ bones/19/position = Vector3(5.971601e-11, 0.005097627, -2.9179555e-11)
 bones/19/rotation = Quaternion(-0.7115171, 2.5129594e-07, -4.2409928e-07, 0.70266885)
 bones/19/scale = Vector3(1, 0.99999994, 0.9999999)
 
-[node name="LeftLegIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="1" unique_id=1566000273]
-setting_count = 1
-settings/0/target_node = NodePath("../../../WalkCycleLegs/LeftLeg/LeftLegTarget")
-settings/0/pole_node = NodePath("../../LeftLegPole")
-settings/0/root_bone_name = "thigh.L"
-settings/0/root_bone = 13
-settings/0/middle_bone_name = "shin.L"
-settings/0/middle_bone = 14
-settings/0/pole_direction = 0
-settings/0/end_bone_name = "foot.L"
-settings/0/end_bone = 15
-settings/0/use_virtual_end = false
-settings/0/extend_end_bone = false
-
-[node name="RightLegIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="2" unique_id=364598030]
-setting_count = 1
-settings/0/target_node = NodePath("../../../WalkCycleLegs/RightLeg/RightLegTarget")
-settings/0/pole_node = NodePath("../../RightLegPole")
-settings/0/root_bone_name = "thigh.R"
-settings/0/root_bone = 17
-settings/0/middle_bone_name = "shin.R"
-settings/0/middle_bone = 18
-settings/0/pole_direction = 0
-settings/0/end_bone_name = "foot.R"
-settings/0/end_bone = 19
-settings/0/use_virtual_end = false
-settings/0/extend_end_bone = false
-
-[node name="LeftArmIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="3" unique_id=1809922524]
-setting_count = 1
-settings/0/target_node = NodePath("../../../WalkCycleArms/LeftArm/LeftArmTarget")
-settings/0/pole_node = NodePath("../../LeftArmPole")
-settings/0/root_bone_name = "upper_arm.L"
-settings/0/root_bone = 5
-settings/0/middle_bone_name = "forearm.L"
-settings/0/middle_bone = 6
-settings/0/pole_direction = 0
-settings/0/end_bone_name = "hand.L"
-settings/0/end_bone = 7
-settings/0/use_virtual_end = false
-settings/0/extend_end_bone = false
-
-[node name="RightArmIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="4" unique_id=993204215]
-setting_count = 1
-settings/0/target_node = NodePath("../../../WalkCycleArms/RightArm/RightArmTarget")
-settings/0/pole_node = NodePath("../../RightArmPole")
-settings/0/root_bone_name = "upper_arm.R"
-settings/0/root_bone = 9
-settings/0/middle_bone_name = "forearm.R"
-settings/0/middle_bone = 10
-settings/0/pole_direction = 0
-settings/0/end_bone_name = "hand.R"
-settings/0/end_bone = 11
-settings/0/use_virtual_end = false
-settings/0/extend_end_bone = false
-
-[node name="BodyIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="5" unique_id=79343420]
+[node name="BodyIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="1" unique_id=79343420]
+transform = Transform3D(1, 0, 0, 7.1054274e-15, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
 setting_count = 1
 settings/0/target_node = NodePath("../../../WalkCycleBody/Body/BodyTarget")
-settings/0/pole_node = NodePath("../../BodyPole")
+settings/0/pole_node = NodePath("../BodyPole")
 settings/0/root_bone_name = "spine"
 settings/0/root_bone = 0
 settings/0/middle_bone_name = "spine.Torso"
@@ -157,34 +125,242 @@ settings/0/end_bone = 2
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
-[node name="LookAtModifier3D" type="LookAtModifier3D" parent="Guy/Skeleton3D" index="6" unique_id=1078525971]
+[node name="HeadIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="2" unique_id=2014030389]
+transform = Transform3D(1, 0, 0, 2.1316282e-14, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+influence = 0.25
+setting_count = 1
+settings/0/target_node = NodePath("../../HeadTarget")
+settings/0/pole_node = NodePath("../BodyPole")
+settings/0/root_bone_name = "spine.Neck"
+settings/0/root_bone = 2
+settings/0/middle_bone_name = "spine.Head"
+settings/0/middle_bone = 3
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "spine.Head_end"
+settings/0/end_bone = 4
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = true
+settings/0/end_bone/direction = 6
+settings/0/end_bone/length = 0.0
+
+[node name="StiffArmBodyIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="3" unique_id=517387760]
+transform = Transform3D(1, 0, 0, 2.1316282e-14, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+active = false
+influence = 0.25
+setting_count = 1
+settings/0/target_node = NodePath("../../StiffArmTarget")
+settings/0/pole_node = NodePath("../StiffArmPole")
+settings/0/root_bone_name = "spine.Torso"
+settings/0/root_bone = 1
+settings/0/middle_bone_name = "forearm.R"
+settings/0/middle_bone = 10
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "hand.R_end"
+settings/0/end_bone = 12
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = true
+settings/0/end_bone/direction = 6
+settings/0/end_bone/length = 0.0
+
+[node name="StiffArmIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="4" unique_id=390421596]
+transform = Transform3D(1, 0, 0, 2.1316282e-14, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+active = false
+setting_count = 1
+settings/0/target_node = NodePath("../../StiffArmTarget")
+settings/0/pole_node = NodePath("../StiffArmPole")
+settings/0/root_bone_name = "upper_arm.R"
+settings/0/root_bone = 9
+settings/0/middle_bone_name = "forearm.R"
+settings/0/middle_bone = 10
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "hand.R_end"
+settings/0/end_bone = 12
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = true
+settings/0/end_bone/direction = 6
+settings/0/end_bone/length = 0.0
+
+[node name="ThrowBodyLookAt" type="LookAtModifier3D" parent="Guy/Skeleton3D" index="5" unique_id=792022788]
+transform = Transform3D(1, 0, 0, 2.1316282e-14, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+target_node = NodePath("../../ThrowBodyTarget")
+bone_name = "spine"
+bone = 0
+
+[node name="HeadLookAt" type="LookAtModifier3D" parent="Guy/Skeleton3D" index="6" unique_id=1078525971]
+transform = Transform3D(1, 0, 0, 7.1054274e-15, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
 target_node = NodePath("../../HeadTarget")
 bone_name = "spine.Head"
 bone = 3
 
-[node name="LeftLegPole" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="1" unique_id=775772921]
+[node name="LeftLegIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="7" unique_id=1566000273]
+setting_count = 1
+settings/0/target_node = NodePath("../../../WalkCycleLegs/LeftLeg/LeftLegTarget")
+settings/0/pole_node = NodePath("../LeftLegPole")
+settings/0/root_bone_name = "thigh.L"
+settings/0/root_bone = 13
+settings/0/middle_bone_name = "shin.L"
+settings/0/middle_bone = 14
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "foot.L"
+settings/0/end_bone = 15
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="RightLegIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="8" unique_id=364598030]
+setting_count = 1
+settings/0/target_node = NodePath("../../../WalkCycleLegs/RightLeg/RightLegTarget")
+settings/0/pole_node = NodePath("../RightLegPole")
+settings/0/root_bone_name = "thigh.R"
+settings/0/root_bone = 17
+settings/0/middle_bone_name = "shin.R"
+settings/0/middle_bone = 18
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "foot.R"
+settings/0/end_bone = 19
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="LeftArmIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="9" unique_id=1809922524]
+influence = 0.1
+setting_count = 1
+settings/0/target_node = NodePath("../../../WalkCycleArms/LeftArm/LeftArmTarget")
+settings/0/pole_node = NodePath("../LeftArmPole")
+settings/0/root_bone_name = "upper_arm.L"
+settings/0/root_bone = 5
+settings/0/middle_bone_name = "forearm.L"
+settings/0/middle_bone = 6
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "hand.L"
+settings/0/end_bone = 7
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="RightArmIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="10" unique_id=993204215]
+active = false
+setting_count = 1
+settings/0/target_node = NodePath("../../../WalkCycleArms/RightArm/RightArmTarget")
+settings/0/pole_node = NodePath("../RightArmPole")
+settings/0/root_bone_name = "upper_arm.R"
+settings/0/root_bone = 9
+settings/0/middle_bone_name = "forearm.R"
+settings/0/middle_bone = 10
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "hand.R"
+settings/0/end_bone = 11
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="LeftArmThrowIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="11" unique_id=1591390378]
+setting_count = 1
+settings/0/target_node = NodePath("../../ThrowBallTargetRest")
+settings/0/pole_node = NodePath("../LeftArmThrowPole")
+settings/0/root_bone_name = "upper_arm.L"
+settings/0/root_bone = 5
+settings/0/middle_bone_name = "forearm.L"
+settings/0/middle_bone = 6
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "hand.L_end"
+settings/0/end_bone = 8
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="RightArmThrowIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="12" unique_id=158079148]
+setting_count = 1
+settings/0/target_node = NodePath("../../../ThrowCycleArm/Arm/ThrowCycleTarget")
+settings/0/pole_node = NodePath("../../../ThrowCycleArm/Arm/RightArmThrowPole")
+settings/0/root_bone_name = "upper_arm.R"
+settings/0/root_bone = 9
+settings/0/middle_bone_name = "forearm.R"
+settings/0/middle_bone = 10
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "hand.R_end"
+settings/0/end_bone = 12
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="BallArmIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="13" unique_id=654247791]
+transform = Transform3D(1, 0, 0, 2.1316282e-14, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+active = false
+setting_count = 1
+settings/0/target_node = NodePath("../../BallTargetRun")
+settings/0/pole_node = NodePath("../LeftArmPole")
+settings/0/root_bone_name = "upper_arm.L"
+settings/0/root_bone = 5
+settings/0/middle_bone_name = "forearm.L"
+settings/0/middle_bone = 6
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "hand.L_end"
+settings/0/end_bone = 8
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="ThrowHandLookAt" type="LookAtModifier3D" parent="Guy/Skeleton3D" index="14" unique_id=1530464178]
+transform = Transform3D(1, 0, 0, 2.1316282e-14, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+target_node = NodePath("../../../ThrowCycleArm/Arm/RightArmThrowHand")
+bone_name = "hand.R_end"
+bone = 12
+
+[node name="LeftHandPos" type="BoneAttachment3D" parent="Guy/Skeleton3D" index="15" unique_id=1756353376]
+transform = Transform3D(-0.012129657, -0.9849053, 0.17266652, 0.78568304, 0.09742427, 0.6109098, -0.6185106, 0.14307113, 0.77264184, -0.0021252115, -0.0045637395, 0.0126092)
+bone_name = "hand.L_end"
+bone_idx = 8
+
+[node name="RightHandPos" type="BoneAttachment3D" parent="Guy/Skeleton3D" index="16" unique_id=1673656415]
+transform = Transform3D(0.44603366, -0.6565265, -0.6082982, 0.39516026, -0.46536568, 0.792012, -0.8030584, -0.5936394, 0.051864386, -0.0023394353, -0.004266604, 0.012657895)
+bone_name = "hand.R_end"
+bone_idx = 12
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Guy/Skeleton3D/RightHandPos" index="0" unique_id=765786067]
+transform = Transform3D(0.0009999995, 0, 0, 0, -4.371136e-11, -0.0009999993, 0, 0.0009999993, -4.371136e-11, 0, 0, 0)
+material_override = ExtResource("3_aw1fv")
+mesh = ExtResource("4_phsfh")
+
+[node name="Poles-----------------------------------" type="Node" parent="Guy/Skeleton3D" index="17" unique_id=1480012889]
+
+[node name="LeftLegPole" type="Marker3D" parent="Guy/Skeleton3D" index="18" unique_id=775772921]
 transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 0.0016802241, -0.005233547, 0.0076802517)
 
-[node name="HeadTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="2" unique_id=124009042]
-transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 0, -0.011, 0.013)
+[node name="StiffArmPole" type="Marker3D" parent="Guy/Skeleton3D" index="19" unique_id=1680427299]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.0062168133, -0.0005763503, 0.012322526)
 
-[node name="BodyPole" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="3" unique_id=715255197]
-transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 2.0509295e-16, -3.4408887e-09, 0.023091413)
+[node name="BodyPole" type="Marker3D" parent="Guy/Skeleton3D" index="20" unique_id=715255197]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 2.0509296e-16, -3.440889e-09, 0.023091415)
 
-[node name="LeftArmPole" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="4" unique_id=658636459]
-transform = Transform3D(0.009808282, 0, -1.0384929e-24, 0, 0.009808283, -1.23798e-31, 0, 1.7423021e-17, 0.009808282, 0.003, 0.01, 0.015)
+[node name="LeftArmPole" type="Marker3D" parent="Guy/Skeleton3D" index="21" unique_id=658636459]
+transform = Transform3D(0.009808282, 0, -1.0384929e-24, 0, 0.009808283, -1.23798e-31, 0, 1.7423021e-17, 0.009808282, 0.008, 0.010000001, 0.015000001)
 
-[node name="RightArmPole" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="5" unique_id=1024303168]
-transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.0032002234, 0.009612993, 0.015356189)
+[node name="LeftArmThrowPole" type="Marker3D" parent="Guy/Skeleton3D" index="22" unique_id=956342139]
+transform = Transform3D(0.009808282, 0, -1.0384929e-24, 0, 0.009808283, -1.23798e-31, 0, 1.7423021e-17, 0.009808282, 0.008969747, -0.0034354303, 0.015000001)
 
-[node name="RightLegPole" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="6" unique_id=628951899]
+[node name="RightArmPole" type="Marker3D" parent="Guy/Skeleton3D" index="23" unique_id=1024303168]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.008, 0.010000001, 0.015)
+
+[node name="RightLegPole" type="Marker3D" parent="Guy/Skeleton3D" index="24" unique_id=628951899]
 transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.0013521161, -0.005233547, 0.0076802517)
+
+[node name="---------------------------------------" type="Node" parent="Guy/Skeleton3D" index="25" unique_id=770829469]
+
+[node name="BallTargetRun" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="1" unique_id=2023228797]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 0.0026127873, -0.0054018795, 0.012208413)
+
+[node name="StiffArmTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="2" unique_id=1927829651]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.0054572173, -0.0080393525, 0.014578923)
+
+[node name="HeadTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="3" unique_id=124009042]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -1.0149981e-11, -0.010829713, 0.014355718)
+
+[node name="ThrowBodyTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="4" unique_id=2063059365]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.004577808, -0.006913084, 0.005564332)
+
+[node name="ThrowBallTargetRest" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="5" unique_id=821275923]
+transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.0021252127, -0.0045637395, 0.012609199)
 
 [node name="WalkCycleLegs" type="Path3D" parent="." index="1" unique_id=2037237239]
 curve = SubResource("Curve3D_1sej0")
 
 [node name="LeftLeg" type="PathFollow3D" parent="WalkCycleLegs" index="0" unique_id=936057854]
-transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.545, -1.15, 0)
+transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.75265193, -0.9936622, 0)
+progress = 3.5308375
 rotation_mode = 0
 
 [node name="LeftLegTarget" type="Marker3D" parent="WalkCycleLegs/LeftLeg" index="0" unique_id=1794891064]
@@ -202,16 +378,16 @@ transform = Transform3D(4.2912244e-08, 8.355517e-09, -0.9999999, 0.1716259, -0.9
 curve = SubResource("Curve3D_arojt")
 
 [node name="LeftArm" type="PathFollow3D" parent="WalkCycleArms" index="0" unique_id=597344314]
-transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.09064802, -0.33063865, 0)
-progress = 0.1536098
+transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.09592168, -0.2605729, 0)
+progress = 0.7022793
 rotation_mode = 0
 
 [node name="LeftArmTarget" type="Marker3D" parent="WalkCycleArms/LeftArm" index="0" unique_id=200270119]
 transform = Transform3D(1.1920929e-07, -1.0000001, -1.4901161e-07, -2.9802603e-08, -1.1921043e-07, 1.0000093, -1.0000094, -5.960521e-08, 0, 0, 0, -0.328)
 
 [node name="RightArm" type="PathFollow3D" parent="WalkCycleArms" index="1" unique_id=275819613]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21871947, -0.26516902, 0)
-progress = 0.6406694
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4933389, -0.23553488, 0)
+progress = 1.3363304
 rotation_mode = 0
 
 [node name="RightArmTarget" type="Marker3D" parent="WalkCycleArms/RightArm" index="0" unique_id=1011435863]
@@ -227,3 +403,19 @@ rotation_mode = 0
 
 [node name="BodyTarget" type="Marker3D" parent="WalkCycleBody/Body" index="0" unique_id=1925155]
 transform = Transform3D(1.1920929e-07, -1.0000001, -1.4901161e-07, -2.9802603e-08, -1.1921043e-07, 1.0000093, -1.0000094, -5.960521e-08, 0, 0, 0, 0)
+
+[node name="ThrowCycleArm" type="Path3D" parent="." index="4" unique_id=1314627747]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.10915685, 0.23851627)
+curve = SubResource("Curve3D_phsfh")
+
+[node name="Arm" type="PathFollow3D" parent="ThrowCycleArm" index="0" unique_id=709582600]
+transform = Transform3D(0.060302958, 0.26621267, 0.9620582, 0.8838136, -0.4620636, 0.07246545, 0.46378952, 0.84591115, -0.2631818, 0.435, 0, 0)
+
+[node name="ThrowCycleTarget" type="Marker3D" parent="ThrowCycleArm/Arm" index="0" unique_id=210666618]
+transform = Transform3D(1.0000085, 3.1664968e-08, 5.9604645e-08, 1.8626451e-09, 0.9999995, 7.264316e-08, 5.9604645e-08, 1.0570511e-07, 1.0000086, 0, 0, 0)
+
+[node name="RightArmThrowPole" type="Marker3D" parent="ThrowCycleArm/Arm" index="1" unique_id=1565847673]
+transform = Transform3D(1.0000604, 5.9604645e-08, -1.4901161e-08, 1.7881393e-07, 1.0000992, 0, -7.450581e-09, 1.3411045e-07, 1.0000654, -0.5552873, 1.18749, -1.3402262)
+
+[node name="RightArmThrowHand" type="Marker3D" parent="ThrowCycleArm/Arm" index="2" unique_id=216722945]
+transform = Transform3D(1.0000607, 1.4901161e-08, -1.2201124e-07, 3.7252903e-07, 1.0000988, -4.1040934e-08, 6.1859225e-08, 4.7061352e-08, 1.0000654, 0.06425011, 0.064144194, -0.21052277)
