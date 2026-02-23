@@ -29,6 +29,8 @@ public partial class PlayerIK : Node3D
     [Export] public TwoBoneIK3D BallArmIK;
     [Export] public TwoBoneIK3D LeftArmThrowIK;
     [Export] public TwoBoneIK3D RightArmThrowIK;
+    [Export] public TwoBoneIK3D LeftLegThrowIK;
+    [Export] public TwoBoneIK3D RightLegThrowIK;
     
     [Export, ExportGroup("Walk")] private PathFollow3D walkPathLegsL;
     [Export] private PathFollow3D walkPathLegsR;
@@ -42,10 +44,13 @@ public partial class PlayerIK : Node3D
     private Node3D stiffArmTarget;
 
     [Export, ExportGroup("HoldingBall")] private Node3D ballPos;
+    [Export] private bool isHoldingBall;
+    
     
     [Export, ExportGroup("Throw")] private PathFollow3D throwPathArms;
     [Export] private float throwSpeed;
     [Export] private bool isThrowable;
+    [Export] private bool isThrowing;
     public override void _Ready()
     {
         base._Ready();
@@ -68,6 +73,7 @@ public partial class PlayerIK : Node3D
         base._PhysicsProcess(delta);
 
         float movementStep = (float)delta * speed;
+        float throwStep = (float)delta * throwSpeed;
 
         walkPathLegsL.ProgressRatio += movementStep;
         walkPathLegsR.ProgressRatio += movementStep;
@@ -78,6 +84,17 @@ public partial class PlayerIK : Node3D
         if (isStiffArming)
         {
             targetStiffArm.GlobalPosition = stiffArmTarget.GlobalPosition;
+        }
+
+        if (isThrowing && throwPathArms.ProgressRatio <= .95f)
+        {
+            throwPathArms.ProgressRatio += throwStep;
+        }
+        else
+        {
+            isThrowing = false;
+            isThrowable = false;
+            throwPathArms.ProgressRatio = 0;
         }
     }
     
@@ -116,8 +133,12 @@ public partial class PlayerIK : Node3D
         ThrowHandLookAt.Active = false;
         LeftArmThrowIK.Active = false;
         RightArmThrowIK.Active = false;
+        LeftLegThrowIK.Active = false;
+        RightLegThrowIK.Active = false;
 
         BallArmIK.Active = false;
+
+        isHoldingBall = false;
         
         stiffArmTarget = targetStiffArm;
     }
@@ -144,7 +165,24 @@ public partial class PlayerIK : Node3D
             ThrowHandLookAt.Active = false;
             LeftArmThrowIK.Active = false;
             RightArmThrowIK.Active = false;
+            LeftLegThrowIK.Active = false;
+            RightLegThrowIK.Active = false;
             LeftArmIK.Active = true;
+        }
+        
+        if (!isThrowing)
+        {
+            LeftLegThrowIK.Active = false;
+            RightLegThrowIK.Active = false;
+        }
+
+        if (isHoldingBall)
+        {
+            BallArmIK.Active = true;
+        }
+        else
+        {
+            BallArmIK.Active = false;
         }
         
         walkPathLegsL.ProgressRatio = 0;
@@ -157,8 +195,11 @@ public partial class PlayerIK : Node3D
     public void SetToThrow()
     {
         isThrowable = true;
+
+        isThrowing = true;
         
         LeftArmIK.Active = false;
+        RightArmIK.Active = false;
         
         isStiffArming = false;
         StiffArmIK.Active = false;
@@ -168,7 +209,16 @@ public partial class PlayerIK : Node3D
         ThrowHandLookAt.Active = true;
         LeftArmThrowIK.Active = true;
         RightArmThrowIK.Active = true;
+        LeftLegThrowIK.Active = true;
+        RightLegThrowIK.Active = true;
 
+        if (isThrowing)
+        {
+            LeftLegIK.Active = false;
+            RightLegIK.Active = false;
+            BodyIK.Active = false;
+        }
+        
         BallArmIK.Active = false;
 
     }

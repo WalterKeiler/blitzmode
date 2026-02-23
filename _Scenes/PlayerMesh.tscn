@@ -57,7 +57,7 @@ _data = {
 }
 point_count = 2
 
-[node name="BlitzPlayer" unique_id=871886053 node_paths=PackedStringArray("targetLegsL", "targetLegsR", "targetStiffArm", "targetHead", "BodyIK", "HeadIK", "HeadLookAt", "ThrowBodyLookAt", "ThrowHandLookAt", "StiffArmBodyIK", "StiffArmIK", "LeftLegIK", "RightLegIK", "LeftArmIK", "RightArmIK", "BallArmIK", "LeftArmThrowIK", "RightArmThrowIK", "walkPathLegsL", "walkPathLegsR", "walkPathArmsL", "walkPathArmsR", "walkPathBody", "throwPathArms") instance=ExtResource("1_sr08k")]
+[node name="BlitzPlayer" unique_id=871886053 node_paths=PackedStringArray("targetLegsL", "targetLegsR", "targetStiffArm", "targetHead", "BodyIK", "HeadIK", "HeadLookAt", "ThrowBodyLookAt", "ThrowHandLookAt", "StiffArmBodyIK", "StiffArmIK", "LeftLegIK", "RightLegIK", "LeftArmIK", "RightArmIK", "BallArmIK", "LeftArmThrowIK", "RightArmThrowIK", "LeftLegThrowIK", "RightLegThrowIK", "walkPathLegsL", "walkPathLegsR", "walkPathArmsL", "walkPathArmsR", "walkPathBody", "throwPathArms") instance=ExtResource("1_sr08k")]
 script = ExtResource("2_arojt")
 targetLegsL = NodePath("WalkCycleLegs/LeftLeg/LeftLegTarget")
 targetLegsR = NodePath("WalkCycleLegs/RightLeg/RightLegTarget")
@@ -77,6 +77,8 @@ RightArmIK = NodePath("Guy/Skeleton3D/RightArmIK")
 BallArmIK = NodePath("Guy/Skeleton3D/BallArmIK")
 LeftArmThrowIK = NodePath("Guy/Skeleton3D/LeftArmThrowIK")
 RightArmThrowIK = NodePath("Guy/Skeleton3D/RightArmThrowIK")
+LeftLegThrowIK = NodePath("Guy/Skeleton3D/LeftLegThrowIK")
+RightLegThrowIK = NodePath("Guy/Skeleton3D/RightLegThrowIK")
 walkPathLegsL = NodePath("WalkCycleLegs/LeftLeg")
 walkPathLegsR = NodePath("WalkCycleLegs/RightLeg")
 walkPathArmsL = NodePath("WalkCycleArms/LeftArm")
@@ -85,8 +87,7 @@ walkPathBody = NodePath("WalkCycleBody/Body")
 speed = 1.0
 legOffset = 0.5
 throwPathArms = NodePath("ThrowCycleArm/Arm")
-throwSpeed = 1.0
-isThrowable = true
+throwSpeed = 2.0
 
 [node name="Skeleton3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="0" unique_id=1666916350]
 bones/1/position = Vector3(2.196667e-18, 0.0015221955, -1.9691854e-10)
@@ -135,6 +136,7 @@ bones/19/scale = Vector3(1, 0.99999994, 0.9999999)
 
 [node name="BodyIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="1" unique_id=79343420]
 transform = Transform3D(1, 0, 0, 7.1054274e-15, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+active = false
 setting_count = 1
 settings/0/target_node = NodePath("../../../WalkCycleBody/Body/BodyTarget")
 settings/0/pole_node = NodePath("../BodyPole")
@@ -150,6 +152,7 @@ settings/0/extend_end_bone = false
 
 [node name="HeadIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="2" unique_id=2014030389]
 transform = Transform3D(1, 0, 0, 2.1316282e-14, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+active = false
 influence = 0.25
 setting_count = 1
 settings/0/target_node = NodePath("../../HeadTarget")
@@ -205,17 +208,20 @@ settings/0/end_bone/length = 0.0
 
 [node name="ThrowBodyLookAt" type="LookAtModifier3D" parent="Guy/Skeleton3D" index="5" unique_id=792022788]
 transform = Transform3D(1, 0, 0, 2.1316282e-14, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+active = false
 target_node = NodePath("../../ThrowBodyTarget")
 bone_name = "spine"
 bone = 0
 
 [node name="HeadLookAt" type="LookAtModifier3D" parent="Guy/Skeleton3D" index="6" unique_id=1078525971]
 transform = Transform3D(1, 0, 0, 7.1054274e-15, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+active = false
 target_node = NodePath("../../HeadTarget")
 bone_name = "spine.Head"
 bone = 3
 
 [node name="LeftLegIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="7" unique_id=1566000273]
+active = false
 setting_count = 1
 settings/0/target_node = NodePath("../../../WalkCycleLegs/LeftLeg/LeftLegTarget")
 settings/0/pole_node = NodePath("../LeftLegPole")
@@ -230,6 +236,7 @@ settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
 [node name="RightLegIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="8" unique_id=364598030]
+active = false
 setting_count = 1
 settings/0/target_node = NodePath("../../../WalkCycleLegs/RightLeg/RightLegTarget")
 settings/0/pole_node = NodePath("../RightLegPole")
@@ -275,6 +282,7 @@ settings/0/extend_end_bone = false
 
 [node name="LeftLegThrowIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="11" unique_id=156744387]
 transform = Transform3D(1, 0, 0, 7.1054274e-15, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+active = false
 setting_count = 1
 settings/0/target_node = NodePath("../../../ThrowCycleFrontFoot/FrontLeg/ThrowLeftLegTarget")
 settings/0/pole_node = NodePath("../LeftLegPole")
@@ -290,6 +298,7 @@ settings/0/extend_end_bone = false
 
 [node name="RightLegThrowIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="12" unique_id=1391927589]
 transform = Transform3D(1, 0, 0, 7.1054274e-15, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+active = false
 setting_count = 1
 settings/0/target_node = NodePath("../../../ThrowCycleBackFoot/BackLeg/ThrowRightLegTarget")
 settings/0/pole_node = NodePath("../RightLegThrowPole")
@@ -304,6 +313,7 @@ settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
 [node name="LeftArmThrowIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="13" unique_id=1591390378]
+active = false
 setting_count = 1
 settings/0/target_node = NodePath("../../ThrowBallTargetRest")
 settings/0/pole_node = NodePath("../LeftArmThrowPole")
@@ -318,6 +328,7 @@ settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
 [node name="RightArmThrowIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="14" unique_id=158079148]
+active = false
 setting_count = 1
 settings/0/target_node = NodePath("../../../ThrowCycleArm/Arm/ThrowCycleTarget")
 settings/0/pole_node = NodePath("../../../ThrowCycleArm/Arm/RightArmThrowPole")
@@ -349,17 +360,18 @@ settings/0/extend_end_bone = false
 
 [node name="ThrowHandLookAt" type="LookAtModifier3D" parent="Guy/Skeleton3D" index="16" unique_id=1530464178]
 transform = Transform3D(1, 0, 0, 2.1316282e-14, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
+active = false
 target_node = NodePath("../../../ThrowCycleArm/Arm/RightArmThrowHand")
 bone_name = "hand.R_end"
 bone = 12
 
 [node name="LeftHandPos" type="BoneAttachment3D" parent="Guy/Skeleton3D" index="17" unique_id=1756353376]
-transform = Transform3D(-0.04852918, -0.9840688, 0.17103575, 0.67379636, 0.094152264, 0.7328944, -0.7373222, 0.15080984, 0.65849304, -0.0021252136, -0.004563737, 0.012609198)
+transform = Transform3D(-0.0027896536, 0.99930817, 0.037078086, 0.54736996, 0.032556318, -0.83625734, -0.8368862, 0.017962605, -0.5470822, 0.010516997, 5.590705e-05, 0.015503221)
 bone_name = "hand.L_end"
 bone_idx = 8
 
 [node name="RightHandPos" type="BoneAttachment3D" parent="Guy/Skeleton3D" index="18" unique_id=1673656415]
-transform = Transform3D(0.9776555, 0.0683754, 0.19878215, 0.20070621, -0.58477926, -0.785971, 0.06250262, 0.8083057, -0.5854363, -0.0023394355, -0.008171039, 0.019355636)
+transform = Transform3D(-0.002789665, -0.99930817, -0.03707808, -0.5473699, 0.032556325, -0.8362574, 0.83688617, 0.01796259, -0.5470821, -0.010516997, 5.5907058e-05, 0.015503221)
 bone_name = "hand.R_end"
 bone_idx = 12
 
@@ -415,15 +427,16 @@ transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 
 curve = SubResource("Curve3D_1sej0")
 
 [node name="LeftLeg" type="PathFollow3D" parent="WalkCycleLegs" index="0" unique_id=936057854]
-transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.545, -1.15, 0)
+transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.31146818, -0.84395456, 0)
+progress = 2.951655
 rotation_mode = 0
 
 [node name="LeftLegTarget" type="Marker3D" parent="WalkCycleLegs/LeftLeg" index="0" unique_id=1794891064]
 transform = Transform3D(4.2912244e-08, 8.355517e-09, -0.9999999, 0.17162588, -0.98516214, 6.79774e-08, -0.9851621, -0.17162591, -1.5719044e-07, 0, 0, -0.164)
 
 [node name="RightLeg" type="PathFollow3D" parent="WalkCycleLegs" index="1" unique_id=170082333]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7223737, -0.4518811, 0)
-progress = 1.8841181
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55031604, -1.1228925, 0)
+progress = 1.0675344
 rotation_mode = 0
 
 [node name="RightLegTarget" type="Marker3D" parent="WalkCycleLegs/RightLeg" index="0" unique_id=1269360011]
@@ -433,15 +446,16 @@ transform = Transform3D(4.2912244e-08, 8.355517e-09, -0.9999999, 0.1716259, -0.9
 curve = SubResource("Curve3D_arojt")
 
 [node name="LeftArm" type="PathFollow3D" parent="WalkCycleArms" index="0" unique_id=597344314]
-transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.20057026, -0.2611935, 0)
-progress = 0.8064761
+transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, -0.14497218, -0.21507442, 0)
+progress = 0.45700225
 rotation_mode = 0
 
 [node name="LeftArmTarget" type="Marker3D" parent="WalkCycleArms/LeftArm" index="0" unique_id=200270119]
 transform = Transform3D(1.1920929e-07, -1.0000001, -1.4901161e-07, -2.9802603e-08, -1.1921043e-07, 1.0000093, -1.0000094, -5.960521e-08, 0, 0, 0, -0.328)
 
 [node name="RightArm" type="PathFollow3D" parent="WalkCycleArms" index="1" unique_id=275819613]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22612494, -0.330246, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5520412, -0.16579477, 0)
+progress = 1.2634784
 rotation_mode = 0
 
 [node name="RightArmTarget" type="Marker3D" parent="WalkCycleArms/RightArm" index="0" unique_id=1011435863]
@@ -451,7 +465,8 @@ transform = Transform3D(1.1920929e-07, -1.0000001, -1.4901161e-07, -2.9802322e-0
 curve = SubResource("Curve3D_aw1fv")
 
 [node name="Body" type="PathFollow3D" parent="WalkCycleBody" index="0" unique_id=1661211191]
-transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.4365226, 0.41632557, 0)
+transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.41706973, 0.30789778, 0)
+progress = 0.1400908
 rotation_mode = 0
 
 [node name="BodyTarget" type="Marker3D" parent="WalkCycleBody/Body" index="0" unique_id=1925155]
@@ -462,8 +477,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.10915685, 0.23851627)
 curve = SubResource("Curve3D_phsfh")
 
 [node name="Arm" type="PathFollow3D" parent="ThrowCycleArm" index="0" unique_id=709582600]
-transform = Transform3D(-0.07191654, -0.27004686, -0.96019876, -0.247079, -0.9277835, 0.2794819, -0.96625423, 0.25734082, 7.249299e-08, 0.83307505, 0.6828658, 0)
-progress = 2.5288303
+transform = Transform3D(0.060303062, 0.26620838, 0.9620841, 0.8838151, -0.46205613, 0.0724674, 0.46379033, 0.84589744, -0.2631889, 0.435, 0, 0)
 
 [node name="ThrowCycleTarget" type="Marker3D" parent="ThrowCycleArm/Arm" index="0" unique_id=210666618]
 transform = Transform3D(1.0000085, 3.1664968e-08, 5.9604645e-08, 1.8626451e-09, 0.9999995, 7.264316e-08, 5.9604645e-08, 1.0570511e-07, 1.0000086, 0, 0, 0)
