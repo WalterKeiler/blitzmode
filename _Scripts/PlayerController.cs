@@ -53,6 +53,7 @@ public partial class PlayerController : Node3D
 
 	[Export] bool init = false;
 	bool snap = false;
+	bool isKickoff = false;
 	bool canTakeInput = true;
 	float _sprintMultiplier;
 	float switchTargetTimer;
@@ -69,6 +70,7 @@ public partial class PlayerController : Node3D
 
 	public static event Action<bool> CrossedLOS;
 	public static event Action<bool> Snapped;
+	public static event Action<bool> Kickoff;
 	
 	public override void _Ready()
 	{
@@ -133,6 +135,7 @@ public partial class PlayerController : Node3D
 		mesh.MaterialOverride = testMat;
 		lastFrameMoveDir = Vector3.Zero;
 		
+		isKickoff = isSpecialTeams;
 		
 		if (playerStats.PlayerType == PlayerType.OLineman) snap = true;
 		
@@ -165,13 +168,12 @@ public partial class PlayerController : Node3D
 
 	void InitSnap(bool isSpecialTeams)
 	{
-		if (!HasBall) return;
 
 		if (isSpecialTeams)
 		{
+			ball = Ball.Instance;
 			if (HasBall)
 			{
-				ball = Ball.Instance;
 				((Node)ball).Reparent(this, false);
 				ball.Position = new Vector3(.5f, -.25f, 0) * PlayManager.Instance.PlayDirection;
 				snap = true;
@@ -185,6 +187,8 @@ public partial class PlayerController : Node3D
 			}
 			return;
 		}
+		
+		if (!HasBall) return;
 		
 		if (!isOffence) HasBall = false;
 		
@@ -221,6 +225,19 @@ public partial class PlayerController : Node3D
 				aiManager.coverZone = 0;
 				aiManager.followPlayer = 0;
 				aiManager.rushBall = 1;
+			}
+		}
+		else
+		{
+			if (isKickoff)
+			{
+				if (HasBall && isOffence)
+				{
+					InputManager im = gm.GetPlayerOnSide(isOffence);
+					inputID = im.PlayerID;
+					inputManager = im;
+					PlayerAction = new List<PlayerActions>();
+				}
 			}
 		}
 
@@ -652,6 +669,7 @@ public partial class PlayerController : Node3D
 			if (c && action == PlayerActions.Throw)
 			{
 				SnapBall();
+				snap = false;
 			}
 		}
 		

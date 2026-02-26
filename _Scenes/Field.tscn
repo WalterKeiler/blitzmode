@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://dkddmtmu5c3pb"]
+[gd_scene format=3 uid="uid://dkddmtmu5c3pb"]
 
 [ext_resource type="Script" uid="uid://byeqa4htefu52" path="res://_Scripts/CameraController.cs" id="1_nb8lh"]
 [ext_resource type="Material" uid="uid://bi2dythq2vfsg" path="res://Materials/FeildMaterial.tres" id="2_acjaa"]
@@ -44,51 +44,51 @@ size = Vector2(100, 60)
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_0xxls"]
 
-[node name="Field" type="Node3D"]
+[node name="Field" type="Node3D" unique_id=1426665185]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1842986845]
 environment = SubResource("Environment_ysj40")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1707137243]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 10, 0)
 
-[node name="CameraController" type="Node3D" parent="."]
+[node name="CameraController" type="Node3D" parent="." unique_id=633635235]
 script = ExtResource("1_nb8lh")
 cameraMoveSpeed = 30.0
 
-[node name="Camera3D" type="Camera3D" parent="CameraController"]
+[node name="Camera3D" type="Camera3D" parent="CameraController" unique_id=296882471]
 transform = Transform3D(-4.37114e-08, 0.707107, -0.707107, 0, 0.707107, 0.707107, 1, 3.09086e-08, -3.09086e-08, -10, 8, 0)
 
-[node name="FieldManager" type="Node" parent="." node_paths=PackedStringArray("fieldMesh")]
+[node name="FieldManager" type="Node" parent="." unique_id=248804991 node_paths=PackedStringArray("fieldMesh")]
 script = ExtResource("2_mpaqs")
 fieldMaterial = ExtResource("2_acjaa")
 fieldMesh = NodePath("FieldGeo/MeshInstance3D")
 
-[node name="FieldGeo" type="StaticBody3D" parent="FieldManager"]
+[node name="FieldGeo" type="StaticBody3D" parent="FieldManager" unique_id=1993192167]
 transform = Transform3D(1, 0, 0, 0, 1, 3.55271e-15, 0, -3.55271e-15, 1, 0, 0, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="FieldManager/FieldGeo"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="FieldManager/FieldGeo" unique_id=801578935]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 mesh = SubResource("QuadMesh_gpq5w")
 skeleton = NodePath("../../..")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="FieldManager/FieldGeo"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FieldManager/FieldGeo" unique_id=492144717]
 transform = Transform3D(1, 0, 0, 0, 1, -3.55271e-15, 0, 3.55271e-15, 1, 0, 0, 0)
 shape = SubResource("WorldBoundaryShape3D_0xxls")
 
-[node name="InputManagerInstance" parent="." instance=ExtResource("6_rn8ec")]
+[node name="InputManagerInstance" parent="." unique_id=330680480 instance=ExtResource("6_rn8ec")]
 _inputCombos = Array[Resource]([ExtResource("7_5jy3s"), ExtResource("8_cy3xd"), ExtResource("9_y1vnq"), ExtResource("10_ekhn6"), ExtResource("11_1quqr"), ExtResource("12_2ifbs"), ExtResource("13_anypg"), ExtResource("14_bggh7")])
 _inputBuffer = 0.1
 isOffence = true
 
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("playerInputTeam1", "playerInputTeam2")]
+[node name="GameManager" type="Node" parent="." unique_id=430278613 node_paths=PackedStringArray("playerInputTeam1", "playerInputTeam2")]
 script = ExtResource("13_vno2e")
 team1 = ExtResource("14_cg1ps")
 team2 = ExtResource("15_bsuan")
 playerInputTeam1 = [NodePath("../InputManagerInstance")]
 playerInputTeam2 = []
 
-[node name="PlayManager" type="Node" parent="." node_paths=PackedStringArray("mainCam", "playSelectionUI")]
+[node name="PlayManager" type="Node" parent="." unique_id=2062905392 node_paths=PackedStringArray("mainCam", "playSelectionUI")]
 script = ExtResource("14_tri8s")
 playerPrefab = ExtResource("3_jke3i")
 BallPrefab = ExtResource("5_weq6n")
@@ -98,10 +98,10 @@ OffencePlay = ExtResource("19_tnsxv")
 DefencePlay = ExtResource("20_tnsxv")
 KickoffPlay = ExtResource("21_cvln5")
 
-[node name="PathfindingManager" type="Node" parent="."]
+[node name="PathfindingManager" type="Node" parent="." unique_id=1947342551]
 script = ExtResource("21_omn81")
 
-[node name="Control" parent="." instance=ExtResource("19_puul3")]
+[node name="Control" parent="." unique_id=1056900939 instance=ExtResource("19_puul3")]
 
-[node name="PlaySelectionUI" parent="." instance=ExtResource("22_gpq5w")]
+[node name="PlaySelectionUI" parent="." unique_id=998663060 instance=ExtResource("22_gpq5w")]
 visible = false

@@ -40,6 +40,7 @@ public partial class Ball : RigidBody3D
         base._EnterTree();
         PlayManager.InitPlay += Init;
         PlayerController.Snapped += Snap;
+        PlayerController.Kickoff += Snap;
         PlayerController.CrossedLOS += PlayerControllerOnCrossedLOS;
         PlayManager.EndPlay += EndPlay;
     }
@@ -49,6 +50,7 @@ public partial class Ball : RigidBody3D
         base._ExitTree();
         PlayManager.InitPlay -= Init;
         PlayerController.Snapped -= Snap;
+        PlayerController.Kickoff -= Snap;
         PlayerController.CrossedLOS -= PlayerControllerOnCrossedLOS;
         PlayManager.EndPlay -= EndPlay;
     }
@@ -92,12 +94,12 @@ public partial class Ball : RigidBody3D
         GD.Print("Snap");
         
         PlayerController qb = GameManager.Instance.offencePlayers.Find(x => x.playerStats.PlayerType == PlayerType.Quarterback);
-        endPoint = qb.GlobalPosition + Vector3.Up * .75f;
+        endPoint = qb.GlobalPosition + Vector3.Up * .5f;
         Vector3 moveDirection = GlobalPosition.DirectionTo(endPoint);
         ballState = BallState.Free;
         Freeze = false;
         //GlobalPosition = endPoint;
-        ApplyCentralImpulse(moveDirection * 10);
+        ApplyCentralImpulse(moveDirection * 5);
         init = true;
         //ApplyImpulse(moveDirection * ballSpeed);
     }
@@ -131,6 +133,13 @@ public partial class Ball : RigidBody3D
         if (ballState == BallState.Free)
         {
             Freeze = false;
+        }
+        else
+        {
+            Freeze = true;
+            AngularVelocity = Vector3.Zero;
+            LinearVelocity = Vector3.Zero;
+            Sleeping = true;
         }
         
         //GD.Print(GlobalPosition.X * pm.PlayDirection >= GameManager.Instance.fieldLength / 2f);
@@ -187,6 +196,10 @@ public partial class Ball : RigidBody3D
         //endPoint = Vector3.Inf;
         //startPoint = Vector3.Inf;
         
+        Freeze = true;
+        AngularVelocity = Vector3.Zero;
+        LinearVelocity = Vector3.Zero;
+        Sleeping = true;
         
         Position = Vector3.Up;
         ballState = BallState.Held;

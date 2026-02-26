@@ -45,9 +45,9 @@ public partial class GameManager : Node
 	{
 	}
 	
-	public PlayerController GetPlayerControlledPlayer(bool offence)
+	public PlayerController GetPlayerControlledPlayer(bool isOffence)
 	{
-		if(offence)
+		if(isOffence)
 		{
 			foreach (var player in offencePlayers)
 			{
@@ -77,6 +77,13 @@ public partial class GameManager : Node
 		}
 
 		return null;
+	}
+
+	public InputManager GetPlayerOnSide(bool isOffence)
+	{
+		if (playerInputTeam1 is {Length: > 0} && playerInputTeam1[0].isOffence == isOffence) return playerInputTeam1[0];
+		if (playerInputTeam2 is {Length: > 0} && playerInputTeam2[0].isOffence == isOffence) return playerInputTeam2[0];
+		return default;
 	}
 	
 }

@@ -89,7 +89,6 @@ metadata/_custom_type_script = "uid://dys3y3oj7sr6d"
 
 [sub_resource type="Resource" id="Resource_qukk1"]
 script = ExtResource("4_hs7sb")
-IsPlayer = true
 PlayerType = ExtResource("5_khu0o")
 Position = Vector2(0, -2.75)
 metadata/_custom_type_script = "uid://dys3y3oj7sr6d"
