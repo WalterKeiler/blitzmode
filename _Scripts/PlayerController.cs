@@ -127,6 +127,7 @@ public partial class PlayerController : Node3D
 				ball.ResetCatchData();
 				Snapped?.Invoke(true, true);
 				GD.Print("Kickoff");
+				ball.Reparent(GetParent());
 			}
 			return;
 		}
@@ -311,13 +312,16 @@ public partial class PlayerController : Node3D
 			CheckForCatch();
 		}
 		
-		if (ball.ballState is BallState.Free or BallState.Fumbled && snap)
+		if (ball.ballState is BallState.Free && snap)
 		{
-			float dist = ball.GlobalPosition.DistanceTo(GlobalPosition);
-
-			if (dist <= 1.25f)
+			if(playerStats.PlayerType != PlayerType.OLineman || ball.ballState is BallState.Fumbled)
 			{
-				ball.Caught(this);
+				float dist = ball.GlobalPosition.DistanceTo(GlobalPosition);
+
+				if (dist <= 1.25f)
+				{
+					ball.Caught(this);
+				}
 			}
 		}
 		

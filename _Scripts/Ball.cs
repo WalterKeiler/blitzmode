@@ -36,12 +36,7 @@ public partial class Ball : RigidBody3D
     
     public override void _EnterTree()
     {
-        //if(Instance == null)
-            Instance = this;
-        // else
-        // {
-        //     QueueFree();
-        // }
+        Instance = this;
         
         base._EnterTree();
         PlayManager.InitPlay += Init;
@@ -66,7 +61,7 @@ public partial class Ball : RigidBody3D
 
     void Init(bool isST, bool isSnapped)
     {
-        if(isST) init = true;
+        if(isST || isSnapped) init = true;
         Freeze = true;
         crossedLOS = false;
         if(!isST)
@@ -79,7 +74,8 @@ public partial class Ball : RigidBody3D
 
     void EndPlay(bool b)
     {
-        init = false;
+        if(!pm.isKickoff)
+            init = false;
     }
 
     void Snap(bool isSpecialTeams, bool isSnapped)
@@ -97,8 +93,8 @@ public partial class Ball : RigidBody3D
         ApplyCentralImpulse(moveDirection * 5);
         init = true;
     }
-    
-    public override void _Process(double delta)
+
+    public override void _PhysicsProcess(double delta)
     {
         if(!init) return;
         //GD.Print(ballState);
@@ -255,7 +251,7 @@ public partial class Ball : RigidBody3D
     
     public Vector3 CalculateBallDirection()
     {
-        if (bestOption is { CatchPriority: > 10000000 }) endPoint = bestOption.Player.GlobalPosition - startPoint.DirectionTo(bestOption.Player.GlobalPosition) * 2;
+        if (bestOption is { CatchPriority: > 10000000 }) endPoint = bestOption.Player.GlobalPosition;
         
         //GD.Print(endPoint);
         

@@ -209,6 +209,8 @@ public partial class PlayManager : Node
 				if (isKickoff)
 				{
 					gm.players[i].Position = new Vector3((gm.fieldLength / 6f) * pos.Y * PlayDirection, 1, pos.X);
+					if(gm.players[i].playerStats.PlayerType == PlayerType.Quarterback)
+						Ball.Instance.endPoint = gm.players[i].GlobalPosition;
 				}
 				gm.players[i].Name = (play.PlayerType.PlayerType + " " + o);
 				
@@ -379,7 +381,6 @@ public partial class PlayManager : Node
 	public void PlayEnded(bool moveLineOfScrimmage)
 	{
 		
-
 		bool kickoff = false;
 		bool score = false;
 		
