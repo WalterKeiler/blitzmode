@@ -201,7 +201,7 @@ public partial class PlayerController : Node3D
 
 	void SnapBall()
 	{
-		((Node)ball).Reparent(GetTree().Root.GetChild(0));
+		((Node)ball).Reparent(GetParent());
 		HasBall = false;
 		ball.throwingPlayer = this;
 		Snapped?.Invoke(false, true);
@@ -318,13 +318,6 @@ public partial class PlayerController : Node3D
 			if (dist <= 1.25f)
 			{
 				ball.Caught(this);
-				ball.Freeze = true;
-				ball.AngularVelocity = Vector3.Zero;
-				ball.LinearVelocity = Vector3.Zero;
-				ball.Sleeping = true;
-        
-				ball.Position = Vector3.Up;
-				ball.ballState = BallState.Held;
 			}
 		}
 		
@@ -1011,14 +1004,6 @@ public partial class PlayerController : Node3D
 			return;
 		}
 		
-		ball.Freeze = true;
-		ball.AngularVelocity = Vector3.Zero;
-		ball.LinearVelocity = Vector3.Zero;
-		ball.Sleeping = true;
-        
-		ball.Position = Vector3.Up;
-		ball.ballState = BallState.Held;
-		
 		testMat.SetAlbedo((Colors.Yellow));
 		Vector3 startPoint = ball.GlobalPosition;
 		Vector3 endPoint = throwTarget.GlobalPosition;
@@ -1051,7 +1036,7 @@ public partial class PlayerController : Node3D
 			endPoint += (dir * dif);
 		}
 
-		((Node)ball).Reparent(GetTree().Root.GetChild(0));
+		((Node)ball).Reparent(GetParent());
 		ball.startPoint = startPoint;
 		ball.endPoint = endPoint;
 		ball.ballSpeed = throwSpeed;// * (float)GetProcessDeltaTime();

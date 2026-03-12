@@ -36,7 +36,13 @@ public partial class Ball : RigidBody3D
     
     public override void _EnterTree()
     {
-        Instance = this;
+        //if(Instance == null)
+            Instance = this;
+        // else
+        // {
+        //     QueueFree();
+        // }
+        
         base._EnterTree();
         PlayManager.InitPlay += Init;
         PlayerController.Snapped += Snap;
@@ -60,7 +66,7 @@ public partial class Ball : RigidBody3D
 
     void Init(bool isST, bool isSnapped)
     {
-        init = true;
+        if(isST) init = true;
         Freeze = true;
         crossedLOS = false;
         if(!isST)
@@ -78,7 +84,7 @@ public partial class Ball : RigidBody3D
 
     void Snap(bool isSpecialTeams, bool isSnapped)
     {
-        if(isSpecialTeams) return;
+        if(isSpecialTeams || init) return;
         
         GD.Print("Snap");
         
@@ -161,7 +167,7 @@ public partial class Ball : RigidBody3D
     public void Caught(PlayerController catchPlayer)
     {
         catchPlayer.HasBall = true;
-        Reparent(catchPlayer);
+        Reparent(catchPlayer, false);
         if (throwingPlayer != null && throwingPlayer.PlayerAction.Contains(PlayerActions.Throw))
             throwingPlayer.PlayerAction.Remove(PlayerActions.Throw);
         
@@ -183,14 +189,12 @@ public partial class Ball : RigidBody3D
         //Freeze = true;
         //endPoint = Vector3.Inf;
         //startPoint = Vector3.Inf;
-        
-        Freeze = true;
-        AngularVelocity = Vector3.Zero;
-        LinearVelocity = Vector3.Zero;
-        Sleeping = true;
-        
+        //GlobalPosition = ((Node3D)GetParent()).GlobalPosition;
         Position = Vector3.Up;
         ballState = BallState.Held;
+        
+        Freeze = true;
+        Sleeping = true;
     }
     
     void Move(double delta)

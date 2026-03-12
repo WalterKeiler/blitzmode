@@ -413,7 +413,7 @@ public partial class PlayManager : Node
 			{
 				ExtraPointPlay();
 				isExtraPointPlay = false;
-				Turnover(false);
+				Turnover(true);
 				Kickoff();
 				return;
 			}
@@ -428,7 +428,7 @@ public partial class PlayManager : Node
 
 		if (kickoff || isExtraPointPlay)
 		{
-			Turnover(false);
+			Turnover(true);
 			Kickoff();
 			return;
 		}

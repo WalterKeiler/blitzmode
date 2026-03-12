@@ -19,10 +19,6 @@ run/main_scene="uid://dkddmtmu5c3pb"
 config/features=PackedStringArray("4.6", "C#", "Mobile")
 config/icon="res://icon.svg"
 
-[autoload]
-
-Ball="*res://_Scripts/Ball.cs"
-
 [display]
 
 window/stretch/mode="canvas_items"
