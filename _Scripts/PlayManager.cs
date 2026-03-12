@@ -43,6 +43,9 @@ public partial class PlayManager : Node
 	
 	private GameManager gm;
 	PlaySelectionUIManager psm;
+
+	private double startDelay = 2;
+	
 	public override void _EnterTree()
 	{
 		base._EnterTree();
@@ -75,9 +78,6 @@ public partial class PlayManager : Node
 		FirstDown();
 		CurrentDown--;
 		quarterTimer = gm.QuarterLengthMin * 60;
-		
-		Kickoff(1);
-		StartGame();
 	}
 
 	async void StartGame()
@@ -91,6 +91,16 @@ public partial class PlayManager : Node
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
+		if (startDelay < 0)
+		{
+			Kickoff();
+			StartGame();
+		}
+		else
+		{
+			startDelay -= delta;
+		}
+		
 		if(timerRunning) quarterTimer -= (float)delta;
 		if(quarterTimer < 0)
 		{
@@ -206,16 +216,6 @@ public partial class PlayManager : Node
 				if (isKickoff)
 				{
 					gm.players[i].Position = new Vector3((gm.fieldLength / 6f) * pos.Y * PlayDirection, 1, pos.X);
-					Ball.Instance.endPoint = gm.players[i].GlobalPosition;
-					BallCatchData data = new BallCatchData
-					{
-						BallDot = 1,
-						CatchPriority = float.MaxValue,
-						DistanceToBall = gm.players[i].GlobalPosition.DistanceTo(Ball.Instance.GlobalPosition),
-						DistanceToTarget = gm.players[i].GlobalPosition.DistanceTo(Ball.Instance.GlobalPosition),
-						Player = gm.players[i]
-					};
-					Ball.Instance.AddCatchOption(data);
 				}
 				gm.players[i].Name = (play.PlayerType.PlayerType + " " + o);
 				
@@ -420,6 +420,7 @@ public partial class PlayManager : Node
 			{
 				ExtraPointPlay();
 				isExtraPointPlay = false;
+				Turnover(false);
 				Kickoff();
 				return;
 			}
@@ -434,6 +435,7 @@ public partial class PlayManager : Node
 
 		if (kickoff || isExtraPointPlay)
 		{
+			Turnover(false);
 			Kickoff();
 			return;
 		}
@@ -473,10 +475,13 @@ public partial class PlayManager : Node
 		firstDownLine = lineOfScrimmage + gm.yardsToFirstDown * PlayDirection;
 	}
 
-	async void Kickoff(int playDirection = 0)
+	void Kickoff(int forceDirection = -1)
 	{
-		Turnover(true, playDirection);
-		await ToSignal(GetTree().CreateTimer(.5f), "timeout");
+		if (forceDirection != -1)
+		{
+			Turnover(false, forceDirection);
+		}
+		
 		OffencePlay = KickoffPlay;
 		DefencePlay = KickoffPlay;
 		isKickoff = true;

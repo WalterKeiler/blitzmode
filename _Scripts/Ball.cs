@@ -80,28 +80,7 @@ public partial class Ball : RigidBody3D
 
     void Snap(bool isSpecialTeams)
     {
-        if(ballState == BallState.Free) return;
-        //if(init) return;
-        if(isSpecialTeams)
-        {
-            init = true;
-            ballState = ballState;
-            //ballState = BallState.Thrown;
-            return;
-        }
         
-        
-        GD.Print("Snap");
-        
-        PlayerController qb = GameManager.Instance.offencePlayers.Find(x => x.playerStats.PlayerType == PlayerType.Quarterback);
-        endPoint = qb.GlobalPosition + Vector3.Up * .5f;
-        Vector3 moveDirection = GlobalPosition.DirectionTo(endPoint);
-        ballState = BallState.Free;
-        Freeze = false;
-        //GlobalPosition = endPoint;
-        ApplyCentralImpulse(moveDirection * 5);
-        init = true;
-        //ApplyImpulse(moveDirection * ballSpeed);
     }
     
     public override void _Process(double delta)

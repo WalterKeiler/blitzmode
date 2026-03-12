@@ -94,7 +94,7 @@ public partial class PlayerController : Node3D
 		CrossedLOS += BallOnBallCaught;
 		PlayManager.EndPlay += OnPlayerWithBallTackled;
 		Snapped += Init;
-		PlayManager.InitPlay += InitSnap;
+		PlayManager.InitPlay += Init;
 	}
 
 	public override void _ExitTree()
@@ -106,12 +106,38 @@ public partial class PlayerController : Node3D
 		CrossedLOS -= BallOnBallCaught;
 		PlayManager.EndPlay -= OnPlayerWithBallTackled;
 		Snapped -= Init;
-		PlayManager.InitPlay -= InitSnap;
+		PlayManager.InitPlay -= Init;
 	}
 	
 	// Called when the node enters the scene tree for the first time.
 	public void Init(bool isSpecialTeams)
 	{
+		//Kickoff Info
+		if (PlayManager.Instance.isKickoff && isSpecialTeams && HasBall)
+		{
+			ball = Ball.Instance;
+			if (HasBall)
+			{
+				((Node)ball).Reparent(this, false);
+				ball.Position = new Vector3(.5f, -.25f, 0) * PlayManager.Instance.PlayDirection;
+				snap = true;
+				ball.ballSpeed = .25f;
+				ball.ballState = BallState.Thrown;
+				ball.throwingPlayer = this;
+				ball.ResetCatchData();
+				snap = false;
+				Snapped?.Invoke(true);
+				GD.Print("Kickoff");
+			}
+			return;
+		}
+		
+		// Snap Info
+		if (playerStats.PlayerType == PlayerType.OLineman && HasBall && !snap)
+		{
+			
+		}
+		
 		//snap = false;
 		//GD.Print(mat.ResourceName);
 		PlayerAction = new List<PlayerActions>();
@@ -136,8 +162,6 @@ public partial class PlayerController : Node3D
 		lastFrameMoveDir = Vector3.Zero;
 		
 		isKickoff = isSpecialTeams;
-		
-		if (playerStats.PlayerType == PlayerType.OLineman) snap = true;
 		
 		teamStats = IsTeam1 ? gm.team1 : gm.team2;
 		
@@ -166,50 +190,6 @@ public partial class PlayerController : Node3D
 		aiManager.Init();
 	}
 
-	void InitSnap(bool isSpecialTeams)
-	{
-
-		if (isSpecialTeams)
-		{
-			ball = Ball.Instance;
-			if (HasBall)
-			{
-				((Node)ball).Reparent(this, false);
-				ball.Position = new Vector3(.5f, -.25f, 0) * PlayManager.Instance.PlayDirection;
-				snap = true;
-				ball.ballSpeed = .25f;
-				ball.ballState = BallState.Thrown;
-				ball.throwingPlayer = this;
-				ball.ResetCatchData();
-				snap = false;
-				Snapped?.Invoke(true);
-				GD.Print("Kickoff");
-			}
-			return;
-		}
-		
-		if (!HasBall) return;
-		
-		if (!isOffence) HasBall = false;
-		
-		ball = Ball.Instance;
-		ball.Freeze = true;
-		//GD.Print("Ball: "  + ball.GetParent().Name);
-		ball.Position = new Vector3(-.5f, -.25f, 0) * PlayManager.Instance.PlayDirection;
-		
-		((Node)ball).Reparent(this, false);
-
-		snap = true;
-	}
-
-	void SnapBall()
-	{
-		((Node)ball).Reparent(GetTree().Root.GetChild(0));
-		HasBall = false;
-		ball.throwingPlayer = this;
-		Snapped?.Invoke(false);
-	}
-	
 	private void BallOnBallCaught(bool caughtByOffence)
 	{
 		if (caughtByOffence)
@@ -260,6 +240,20 @@ public partial class PlayerController : Node3D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
+		if (PlayManager.Instance.isKickoff && !snap && playerStats.PlayerType == PlayerType.Quarterback)
+		{
+			Ball.Instance.endPoint = GlobalPosition;
+			BallCatchData data = new BallCatchData
+			{
+				BallDot = 1,
+				CatchPriority = float.MaxValue,
+				DistanceToBall = GlobalPosition.DistanceTo(Ball.Instance.GlobalPosition),
+				DistanceToTarget = GlobalPosition.DistanceTo(Ball.Instance.GlobalPosition),
+				Player = this
+			};
+			Ball.Instance.AddCatchOption(data);
+			Ball.Instance.endPoint = GlobalPosition;
+		}
 		if(!init) return;
 
 		if (snap && ball.ballState == BallState.Held) snap = false;
@@ -443,7 +437,6 @@ public partial class PlayerController : Node3D
 		lastFrameMoveDir = _moveDirection;
 	}
 	
-	
 	void CheckForCatch()
 	{
 		if (HasBall || snap) return;
@@ -467,7 +460,6 @@ public partial class PlayerController : Node3D
 			Ball.Instance.AddCatchOption(data);
 		}
 	}
-	
 	
 	/// <summary>
 	/// Use when searching with collisions
@@ -668,7 +660,7 @@ public partial class PlayerController : Node3D
 
 			if (c && action == PlayerActions.Throw)
 			{
-				SnapBall();
+				//SnapBall();
 				snap = false;
 			}
 		}
