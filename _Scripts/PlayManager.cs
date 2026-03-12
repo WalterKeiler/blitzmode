@@ -37,14 +37,13 @@ public partial class PlayManager : Node
 	
 	List<PlayerController> reciverPositions = new List<PlayerController>();
 	
-	public static event Action<bool> InitPlay;
+	public static event Action<bool, bool> InitPlay;
 	public static event Action UpdateScore;
 	public static event Action<bool> EndPlay;
 	
 	private GameManager gm;
 	PlaySelectionUIManager psm;
 
-	private double startDelay = 2;
 	
 	public override void _EnterTree()
 	{
@@ -78,6 +77,9 @@ public partial class PlayManager : Node
 		FirstDown();
 		CurrentDown--;
 		quarterTimer = gm.QuarterLengthMin * 60;
+		
+		Kickoff();
+		StartGame();
 	}
 
 	async void StartGame()
@@ -91,15 +93,6 @@ public partial class PlayManager : Node
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
-		if (startDelay < 0)
-		{
-			Kickoff();
-			StartGame();
-		}
-		else
-		{
-			startDelay -= delta;
-		}
 		
 		if(timerRunning) quarterTimer -= (float)delta;
 		if(quarterTimer < 0)
@@ -354,7 +347,7 @@ public partial class PlayManager : Node
 		}
 		inbetweenPlays = false;
 		StartTimer();
-		InitPlay?.Invoke(isSpecialTeams || isKickoff);
+		InitPlay?.Invoke(isSpecialTeams || isKickoff, false);
 	}
 
 	void SetPlayerInitalVars(bool isOffence, int i, PlayerDataOffence pO, PlayerDataDefence pD)

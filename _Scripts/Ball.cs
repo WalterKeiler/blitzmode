@@ -40,7 +40,6 @@ public partial class Ball : RigidBody3D
         base._EnterTree();
         PlayManager.InitPlay += Init;
         PlayerController.Snapped += Snap;
-        PlayerController.Kickoff += Snap;
         PlayerController.CrossedLOS += PlayerControllerOnCrossedLOS;
         PlayManager.EndPlay += EndPlay;
     }
@@ -50,7 +49,6 @@ public partial class Ball : RigidBody3D
         base._ExitTree();
         PlayManager.InitPlay -= Init;
         PlayerController.Snapped -= Snap;
-        PlayerController.Kickoff -= Snap;
         PlayerController.CrossedLOS -= PlayerControllerOnCrossedLOS;
         PlayManager.EndPlay -= EndPlay;
     }
@@ -60,7 +58,7 @@ public partial class Ball : RigidBody3D
         crossedLOS = true;
     }
 
-    void Init(bool isST)
+    void Init(bool isST, bool isSnapped)
     {
         init = true;
         Freeze = true;
@@ -78,9 +76,20 @@ public partial class Ball : RigidBody3D
         init = false;
     }
 
-    void Snap(bool isSpecialTeams)
+    void Snap(bool isSpecialTeams, bool isSnapped)
     {
+        if(isSpecialTeams) return;
         
+        GD.Print("Snap");
+        
+        PlayerController qb = GameManager.Instance.offencePlayers.Find(x => x.playerStats.PlayerType == PlayerType.Quarterback);
+        endPoint = qb.GlobalPosition + Vector3.Up * .5f;
+        Vector3 moveDirection = GlobalPosition.DirectionTo(endPoint);
+        ballState = BallState.Free;
+        Freeze = false;
+        //GlobalPosition = endPoint;
+        ApplyCentralImpulse(moveDirection * 5);
+        init = true;
     }
     
     public override void _Process(double delta)
@@ -242,7 +251,9 @@ public partial class Ball : RigidBody3D
     
     public Vector3 CalculateBallDirection()
     {
-        if (bestOption is {CatchPriority: > 10000000}) endPoint = bestOption.Player.GlobalPosition;
+        if (bestOption is { CatchPriority: > 10000000 }) endPoint = bestOption.Player.GlobalPosition - startPoint.DirectionTo(bestOption.Player.GlobalPosition) * 2;
+        
+        //GD.Print(endPoint);
         
         Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
         float distance = startPoint.DistanceTo(endPoint);

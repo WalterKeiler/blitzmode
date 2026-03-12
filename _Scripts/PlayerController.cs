@@ -69,8 +69,7 @@ public partial class PlayerController : Node3D
 	Node3D debugBox2;
 
 	public static event Action<bool> CrossedLOS;
-	public static event Action<bool> Snapped;
-	public static event Action<bool> Kickoff;
+	public static event Action<bool, bool> Snapped;
 	
 	public override void _Ready()
 	{
@@ -110,10 +109,11 @@ public partial class PlayerController : Node3D
 	}
 	
 	// Called when the node enters the scene tree for the first time.
-	public void Init(bool isSpecialTeams)
+	public void Init(bool isSpecialTeams, bool snapped)
 	{
+		snap = snapped;
 		//Kickoff Info
-		if (PlayManager.Instance.isKickoff && isSpecialTeams && HasBall)
+		if (PlayManager.Instance.isKickoff && isSpecialTeams && HasBall && !snapped)
 		{
 			ball = Ball.Instance;
 			if (HasBall)
@@ -125,18 +125,27 @@ public partial class PlayerController : Node3D
 				ball.ballState = BallState.Thrown;
 				ball.throwingPlayer = this;
 				ball.ResetCatchData();
-				snap = false;
-				Snapped?.Invoke(true);
+				Snapped?.Invoke(true, true);
 				GD.Print("Kickoff");
 			}
 			return;
 		}
 		
 		// Snap Info
-		if (playerStats.PlayerType == PlayerType.OLineman && HasBall && !snap)
+		if (playerStats.PlayerType == PlayerType.OLineman && HasBall && !snapped)
 		{
-			
+			ball = Ball.Instance;
+			ball.Freeze = true;
+			//GD.Print("Ball: "  + ball.GetParent().Name);
+			ball.Position = new Vector3(-.5f, -.25f, 0) * PlayManager.Instance.PlayDirection;
+		
+			((Node)ball).Reparent(this, false);
+			snap = true;
+			return;
 		}
+		
+		if(!snapped) return;
+		
 		
 		//snap = false;
 		//GD.Print(mat.ResourceName);
@@ -190,6 +199,14 @@ public partial class PlayerController : Node3D
 		aiManager.Init();
 	}
 
+	void SnapBall()
+	{
+		((Node)ball).Reparent(GetTree().Root.GetChild(0));
+		HasBall = false;
+		ball.throwingPlayer = this;
+		Snapped?.Invoke(false, true);
+	}
+	
 	private void BallOnBallCaught(bool caughtByOffence)
 	{
 		if (caughtByOffence)
@@ -240,9 +257,9 @@ public partial class PlayerController : Node3D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _PhysicsProcess(double delta)
 	{
-		if (PlayManager.Instance.isKickoff && !snap && playerStats.PlayerType == PlayerType.Quarterback)
+		if (PlayManager.Instance.isKickoff && snap && playerStats.PlayerType == PlayerType.Quarterback)
 		{
-			Ball.Instance.endPoint = GlobalPosition;
+			aiManager.overrideTargetPoint = GlobalPosition;
 			BallCatchData data = new BallCatchData
 			{
 				BallDot = 1,
@@ -252,7 +269,6 @@ public partial class PlayerController : Node3D
 				Player = this
 			};
 			Ball.Instance.AddCatchOption(data);
-			Ball.Instance.endPoint = GlobalPosition;
 		}
 		if(!init) return;
 
@@ -295,13 +311,20 @@ public partial class PlayerController : Node3D
 			CheckForCatch();
 		}
 		
-		if (ball.ballState is BallState.Free or BallState.Fumbled && !snap)
+		if (ball.ballState is BallState.Free or BallState.Fumbled && snap)
 		{
 			float dist = ball.GlobalPosition.DistanceTo(GlobalPosition);
 
 			if (dist <= 1.25f)
 			{
 				ball.Caught(this);
+				ball.Freeze = true;
+				ball.AngularVelocity = Vector3.Zero;
+				ball.LinearVelocity = Vector3.Zero;
+				ball.Sleeping = true;
+        
+				ball.Position = Vector3.Up;
+				ball.ballState = BallState.Held;
 			}
 		}
 		
@@ -644,7 +667,7 @@ public partial class PlayerController : Node3D
 	
 	public void DoAction(PlayerActions action, int calledPlayerId, bool forceAction = false, bool playerAction = false, bool isSecondaryAction = false)
 	{
-		if (snap)
+		if (snap && !init)
 		{
 			InputManager[] inputs = IsTeam1 ? gm.playerInputTeam1 : gm.playerInputTeam2;
 			bool c = false;
@@ -660,7 +683,7 @@ public partial class PlayerController : Node3D
 
 			if (c && action == PlayerActions.Throw)
 			{
-				//SnapBall();
+				SnapBall();
 				snap = false;
 			}
 		}
@@ -679,7 +702,7 @@ public partial class PlayerController : Node3D
 			}
 		}
 		
-		GD.Print("Started: " + action);
+		//GD.Print("Started: " + action);
 		switch (action)
 		{
 			case PlayerActions.Sprint : 
@@ -987,6 +1010,14 @@ public partial class PlayerController : Node3D
 				PlayerAction.Remove(PlayerActions.Throw);
 			return;
 		}
+		
+		ball.Freeze = true;
+		ball.AngularVelocity = Vector3.Zero;
+		ball.LinearVelocity = Vector3.Zero;
+		ball.Sleeping = true;
+        
+		ball.Position = Vector3.Up;
+		ball.ballState = BallState.Held;
 		
 		testMat.SetAlbedo((Colors.Yellow));
 		Vector3 startPoint = ball.GlobalPosition;
