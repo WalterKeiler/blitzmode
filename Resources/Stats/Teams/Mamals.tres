@@ -1,11 +1,13 @@
-[gd_resource type="Resource" load_steps=2 format=3 uid="uid://c7eyrp0e4tg0h"]
+[gd_resource type="Resource" format=3 uid="uid://c7eyrp0e4tg0h"]
 
-[ext_resource type="Script" path="res://_Scripts/Resources/TeamData.cs" id="1_b70he"]
+[ext_resource type="Script" uid="uid://cqk1kcah2wpib" path="res://_Scripts/Resources/TeamData.cs" id="1_b70he"]
 
 [resource]
 script = ExtResource("1_b70he")
 teamName = "Mamals"
 teamAbreviation = "MAM"
+teamMain = Color(0.019607844, 0.32941177, 0.64705884, 1)
+teamSecondary = Color(0.41568628, 0, 0, 1)
 Passing = 0.5
 Running = 0.6
 Linemen = 0.3

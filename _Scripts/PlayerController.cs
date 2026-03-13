@@ -21,7 +21,7 @@ public partial class PlayerController : Node3D
 	[Export] public AIManager aiManager;
 	[Export] public bool isPlayerControlled;
 	[Export] public bool isOffence;
-	[Export] MeshInstance3D mesh;
+	[Export] PlayerIK playerMesh;
 	[Export] Material mat;
 	[Export] bool debugMode;
 	
@@ -62,7 +62,7 @@ public partial class PlayerController : Node3D
 
 	public Color StartColor;
 	
-	StandardMaterial3D testMat;
+	ShaderMaterial testMat;
 	GameManager gm;
 	PathfindingManager pm;
 	Node3D debugBox;
@@ -167,8 +167,8 @@ public partial class PlayerController : Node3D
 		IsBlocked = false;
 		IsBlocking = false;
 		switchTargetTimer = 0;
-		testMat = (StandardMaterial3D)mat.Duplicate();
-		mesh.MaterialOverride = testMat;
+		testMat = (ShaderMaterial)mat.Duplicate();
+		playerMesh.mesh.MaterialOverride = testMat;
 		lastFrameMoveDir = Vector3.Zero;
 		
 		isKickoff = isSpecialTeams;
@@ -183,7 +183,8 @@ public partial class PlayerController : Node3D
 		blockCooldown = 0;
 		IsBlocking = false;
 		
-		testMat.SetAlbedo(StartColor);
+		testMat.SetShaderParameter("MainColor",teamStats.teamMain);
+		testMat.SetShaderParameter("SecondaryColor",teamStats.teamSecondary);
 
 		if (isOffence)
 		{
@@ -825,9 +826,10 @@ public partial class PlayerController : Node3D
 		if(!CanDoAction(PlayerActions.SpinMove, restrictions)) return;
 		
 		
-		testMat.SetAlbedo((Colors.Red));
+		testMat.SetShaderParameter("SecondaryColor",Colors.Red);
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
-		testMat.SetAlbedo(StartColor);
+		testMat.SetShaderParameter("SecondaryColor",teamStats.teamSecondary);
+
 		if (PlayerAction.Contains(PlayerActions.SpinMove))
 			PlayerAction.Remove(PlayerActions.SpinMove);
 	}
@@ -845,7 +847,8 @@ public partial class PlayerController : Node3D
 		//if(tackleBox.GetOverlappingAreas().Count > 1) return;
 		
 		float jumpHeight = 3;
-		testMat.SetAlbedo((Colors.Blue));
+		testMat.SetShaderParameter("SecondaryColor",Colors.Blue);
+
 		canTakeInput = false;
 		var tween = CreateTween();
 		tween.TweenProperty(GetNode("."), "position:y", jumpHeight,
@@ -856,7 +859,8 @@ public partial class PlayerController : Node3D
 		await ToSignal(tween, "finished");
 		
 		canTakeInput = true;
-		testMat.SetAlbedo(StartColor);
+		testMat.SetShaderParameter("SecondaryColor",teamStats.teamSecondary);
+
 		if (PlayerAction.Contains(PlayerActions.Jump))
 			PlayerAction.Remove(PlayerActions.Jump);
 	}
@@ -869,11 +873,13 @@ public partial class PlayerController : Node3D
 		};
 		if(!CanDoAction(PlayerActions.StiffArm, restrictions)) return;
 		
-		testMat.SetAlbedo((Colors.Orange));
+		testMat.SetShaderParameter("SecondaryColor",Colors.Orange);
+
 		tackleBox.Monitorable = false;
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		tackleBox.Monitorable = true;
-		testMat.SetAlbedo(StartColor);
+		testMat.SetShaderParameter("SecondaryColor",teamStats.teamSecondary);
+
 		if (PlayerAction.Contains(PlayerActions.StiffArm))
 			PlayerAction.Remove(PlayerActions.StiffArm);
 	}
@@ -886,7 +892,8 @@ public partial class PlayerController : Node3D
 		};
 		if(!CanDoAction(PlayerActions.Tackle, restrictions)) return;
 		
-		testMat.SetAlbedo((Colors.Green));
+		testMat.SetShaderParameter("SecondaryColor",Colors.Green);
+
 		//PlayerController tackleTarget = GetNearestPlayer(tackleBox, false, true);
 		PlayerController tackleTarget = GetNearestPlayer(false, true);
 		if (tackleTarget != null)
@@ -895,7 +902,8 @@ public partial class PlayerController : Node3D
 			GD.Print("Tackled");
 		}
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
-		testMat.SetAlbedo(StartColor);
+		testMat.SetShaderParameter("SecondaryColor",teamStats.teamSecondary);
+
 		if (PlayerAction.Contains(PlayerActions.Tackle))
 			PlayerAction.Remove(PlayerActions.Tackle);
 	}
@@ -907,7 +915,8 @@ public partial class PlayerController : Node3D
 		};
 		if(!CanDoAction(PlayerActions.Tackled, restrictions)) return;
 		
-		testMat.SetAlbedo((Colors.Black));
+		testMat.SetShaderParameter("SecondaryColor",Colors.Black);
+
 		CanCatch = false;
 		CanMove = false;
 		
@@ -921,7 +930,8 @@ public partial class PlayerController : Node3D
 
 		CanMove = true;
 		CanCatch = true;
-		testMat.SetAlbedo(StartColor);
+		testMat.SetShaderParameter("SecondaryColor",teamStats.teamSecondary);
+
 		if (PlayerAction.Contains(PlayerActions.Tackled))
 			PlayerAction.Remove(PlayerActions.Tackled);
 	}
@@ -934,7 +944,8 @@ public partial class PlayerController : Node3D
 		};
 		if(!CanDoAction(PlayerActions.Dive, restrictions)) return;
 		
-		testMat.SetAlbedo((Colors.Teal));
+		testMat.SetShaderParameter("SecondaryColor",Colors.Teal);
+
 		float diveHeight = 1.25f;
 		canTakeInput = false;
 		
@@ -976,7 +987,8 @@ public partial class PlayerController : Node3D
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
 		canTakeInput = true;
 		
-		testMat.SetAlbedo(StartColor);
+		testMat.SetShaderParameter("SecondaryColor",teamStats.teamSecondary);
+
 		if (PlayerAction.Contains(PlayerActions.Dive))
 			PlayerAction.Remove(PlayerActions.Dive);
 	}
@@ -1008,7 +1020,8 @@ public partial class PlayerController : Node3D
 			return;
 		}
 		
-		testMat.SetAlbedo((Colors.Yellow));
+		testMat.SetShaderParameter("SecondaryColor",Colors.Yellow);
+
 		Vector3 startPoint = ball.GlobalPosition;
 		Vector3 endPoint = throwTarget.GlobalPosition;
 
@@ -1067,12 +1080,12 @@ public partial class PlayerController : Node3D
 		PlayerActions[] restrictions = Array.Empty<PlayerActions>();
 		if(!CanDoAction(PlayerActions.ChangePlayer, restrictions)) return;
 		
-		testMat.SetAlbedo((Colors.BlanchedAlmond));
 		PlayerController otherPlayer = GetNearestPlayerToBall(true);
 		ChangePlayer(otherPlayer);
 		
 		await ToSignal(GetTree().CreateTimer(.25f), "timeout");
-		testMat.SetAlbedo(StartColor);
+		
+
 		if (PlayerAction.Contains(PlayerActions.ChangePlayer))
 			PlayerAction.Remove(PlayerActions.ChangePlayer);
 	}

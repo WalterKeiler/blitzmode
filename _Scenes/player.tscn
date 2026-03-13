@@ -2,10 +2,9 @@
 
 [ext_resource type="Script" uid="uid://cfxtv87lmtpr6" path="res://_Scripts/PlayerController.cs" id="1_areti"]
 [ext_resource type="Material" uid="uid://k4x7eqdcrbjq" path="res://Materials/TestMat.tres" id="2_tyapl"]
+[ext_resource type="Material" uid="uid://dhtn72rhpcofd" path="res://Materials/PlayerMat.tres" id="2_w50w8"]
 [ext_resource type="PackedScene" uid="uid://bph8u704hl88n" path="res://_Scenes/AIManager.tscn" id="3_hud2f"]
 [ext_resource type="PackedScene" uid="uid://cu67rpkhckpoc" path="res://_Scenes/PlayerMesh.tscn" id="4_dolds"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ai2fj"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_ljm3w"]
 material = ExtResource("2_tyapl")
@@ -20,7 +19,7 @@ radius = 3.0
 height = 2.83541
 radius = 9.0
 
-[node name="Player" type="RigidBody3D" unique_id=2092308859 node_paths=PackedStringArray("aiManager", "mesh")]
+[node name="Player" type="RigidBody3D" unique_id=2092308859 node_paths=PackedStringArray("aiManager", "playerMesh")]
 collision_layer = 5
 collision_mask = 5
 axis_lock_linear_x = true
@@ -31,8 +30,8 @@ axis_lock_angular_y = true
 axis_lock_angular_z = true
 script = ExtResource("1_areti")
 aiManager = NodePath("AIManager")
-mesh = NodePath("MeshInstance3D")
-mat = SubResource("StandardMaterial3D_ai2fj")
+playerMesh = NodePath("BlitzPlayer")
+mat = ExtResource("2_w50w8")
 debugMode = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=881877773]

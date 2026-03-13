@@ -4,11 +4,12 @@ using System;
 [Tool]
 public partial class PlayerIK : Node3D
 {
-    
     [ExportToolButton("Set To Neutral")] public Callable SetToNeutralButton => Callable.From(SetToNeutral);
     [ExportToolButton("Set To Run")] public Callable SetToRunButton => Callable.From(SetToRun);
     [ExportToolButton("Set To StiffArm")] public Callable SetToStiffArmButton => Callable.From(SetToStiffArm);
     [ExportToolButton("Set To Throw")] public Callable SetToThrowButton => Callable.From(SetToThrow);
+    
+    [Export] public MeshInstance3D mesh;
     
     [Export, ExportGroup("Targets")] public Node3D targetLegsL;
     [Export] public Node3D targetLegsR;

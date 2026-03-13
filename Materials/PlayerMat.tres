@@ -1,8 +1,14 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dhtn72rhpcofd"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dhtn72rhpcofd"]
 
-[ext_resource type="Shader" path="res://Shaders/PlayerMat.gdshader" id="1_0ghcb"]
+[ext_resource type="Shader" uid="uid://c2rq3d0p1f8ss" path="res://Shaders/PlayerMesh.gdshader" id="1_5o4fs"]
 
 [resource]
 render_priority = 0
-shader = ExtResource("1_0ghcb")
-shader_parameter/mainColor = Color(1, 1, 1, 1)
+shader = ExtResource("1_5o4fs")
+shader_parameter/MainColor = Color(0, 0.5058824, 0, 1)
+shader_parameter/SecondaryColor = Color(0, 0, 0, 1)
+shader_parameter/DetailColor = Color(0, 0, 0, 1)
+shader_parameter/PlayerNumber = 0
+shader_parameter/numberSpacing = 0.08
+shader_parameter/TestPoint1 = Vector2(0, 0)
+shader_parameter/TestPoint2 = Vector2(0, 0)

@@ -6,7 +6,7 @@ uniform vec3 MainColor : source_color;
 uniform vec3 SecondaryColor : source_color;
 uniform vec3 DetailColor : source_color;
 uniform int PlayerNumber;
-uniform float numberSpacing = 1.4;
+uniform float numberSpacing = 0.08;
 uniform vec2 TestPoint1;
 uniform vec2 TestPoint2;
 
@@ -39,6 +39,13 @@ float DrawDigits(vec2 uv, vec2 frontPos, vec2 backPos, float spacing, float digi
 		digits[0] = digits[0];
 		digits[1] = 0;
 		digitNum++;
+	}
+	
+	if(digitNum == 0) 
+	{
+		digits[0] = 0;
+		digits[1] = 0;
+		digitNum = 2;
 	}
 
 	//digit width * digitNum
@@ -156,7 +163,7 @@ void fragment()
 	//t = min(t,sdSegment(UV2, vec2(0.15,1.01), vec2(0.15,0)) -0.025);
 	
 	//Numbers
-	d = min(d, DrawDigits(UV,vec2(-1.265,0.83),vec2(1.615,0.515), numberSpacing, .01, .05));
+	d = min(d, DrawDigits(UV,vec2(-1.28,0.83),vec2(1.695,0.515), numberSpacing, .01, .05));
 	
 	vec3 col = (d<0.0) ? SecondaryColor : MainColor;
 	

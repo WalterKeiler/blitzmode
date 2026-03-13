@@ -1,11 +1,13 @@
-[gd_resource type="Resource" load_steps=2 format=3 uid="uid://ds2cg24b7iqae"]
+[gd_resource type="Resource" format=3 uid="uid://ds2cg24b7iqae"]
 
-[ext_resource type="Script" path="res://_Scripts/Resources/TeamData.cs" id="1_g4q8k"]
+[ext_resource type="Script" uid="uid://cqk1kcah2wpib" path="res://_Scripts/Resources/TeamData.cs" id="1_g4q8k"]
 
 [resource]
 script = ExtResource("1_g4q8k")
 teamName = "Birds"
 teamAbreviation = "BIR"
+teamMain = Color(0, 0.6431373, 0, 1)
+teamSecondary = Color(0.7135178, 0.7135178, 0.71351784, 1)
 Passing = 0.7
 Running = 0.6
 Linemen = 0.7
