@@ -3,7 +3,19 @@
 [ext_resource type="PackedScene" uid="uid://xr35c4v7tmou" path="res://Models/BlitzPlayer.fbx" id="1_sr08k"]
 [ext_resource type="Script" uid="uid://d6212k03vu6m" path="res://_Scripts/IK/PlayerIK.cs" id="2_arojt"]
 [ext_resource type="Material" uid="uid://che1ppkf7h5e6" path="res://Materials/BallMat.tres" id="3_aw1fv"]
+[ext_resource type="Shader" uid="uid://c2rq3d0p1f8ss" path="res://Shaders/PlayerMesh.gdshader" id="3_phsfh"]
 [ext_resource type="ArrayMesh" uid="uid://b8tkqah4a6tbs" path="res://Models/FootBall.obj" id="4_phsfh"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5lcam"]
+render_priority = 0
+shader = ExtResource("3_phsfh")
+shader_parameter/MainColor = Color(2.7314202e-06, 0.4343472, 9.62615e-08, 1)
+shader_parameter/SecondaryColor = Color(1, 1, 1, 1)
+shader_parameter/DetailColor = Color(0, 0.5803922, 0.3372549, 1)
+shader_parameter/PlayerNumber = 24
+shader_parameter/numberSpacing = 0.06
+shader_parameter/TestPoint1 = Vector2(0.15, 1.01)
+shader_parameter/TestPoint2 = Vector2(0.15, 0)
 
 [sub_resource type="Curve3D" id="Curve3D_1sej0"]
 closed = true
@@ -57,7 +69,7 @@ _data = {
 }
 point_count = 2
 
-[node name="BlitzPlayer" unique_id=871886053 node_paths=PackedStringArray("targetLegsL", "targetLegsR", "targetStiffArm", "targetHead", "BodyIK", "HeadIK", "HeadLookAt", "ThrowBodyLookAt", "ThrowHandLookAt", "StiffArmBodyIK", "StiffArmIK", "LeftLegIK", "RightLegIK", "LeftArmIK", "RightArmIK", "BallArmIK", "LeftArmThrowIK", "RightArmThrowIK", "LeftLegThrowIK", "RightLegThrowIK", "walkPathLegsL", "walkPathLegsR", "walkPathArmsL", "walkPathArmsR", "walkPathBody", "throwPathArms") instance=ExtResource("1_sr08k")]
+[node name="BlitzPlayer" unique_id=1707109893 node_paths=PackedStringArray("targetLegsL", "targetLegsR", "targetStiffArm", "targetHead", "BodyIK", "HeadIK", "HeadLookAt", "ThrowBodyLookAt", "ThrowHandLookAt", "StiffArmBodyIK", "StiffArmIK", "LeftLegIK", "RightLegIK", "LeftArmIK", "RightArmIK", "BallArmIK", "LeftArmThrowIK", "RightArmThrowIK", "LeftLegThrowIK", "RightLegThrowIK", "walkPathLegsL", "walkPathLegsR", "walkPathArmsL", "walkPathArmsR", "walkPathBody", "throwPathArms") instance=ExtResource("1_sr08k")]
 script = ExtResource("2_arojt")
 targetLegsL = NodePath("WalkCycleLegs/LeftLeg/LeftLegTarget")
 targetLegsR = NodePath("WalkCycleLegs/RightLeg/RightLegTarget")
@@ -89,50 +101,67 @@ legOffset = 0.5
 throwPathArms = NodePath("ThrowCycleArm/Arm")
 throwSpeed = 2.0
 
-[node name="Skeleton3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="0" unique_id=1666916350]
-bones/1/position = Vector3(2.196667e-18, 0.0015221955, -1.9691854e-10)
-bones/1/rotation = Quaternion(-0.10668072, -1.8692749e-16, 1.5274712e-16, 0.99429333)
-bones/1/scale = Vector3(1, 1, 1.0000001)
-bones/2/position = Vector3(-1.4361442e-17, 0.004635858, -0.00012071043)
-bones/2/rotation = Quaternion(0.16876853, 1.1749934e-07, 2.011878e-08, 0.9856557)
-bones/2/scale = Vector3(1, 1.0000002, 1.0000001)
-bones/3/position = Vector3(1.9285122e-17, 0.0006616349, -6.63172e-10)
-bones/3/rotation = Quaternion(-0.12954494, -8.9572625e-15, -3.0885914e-08, 0.9915736)
-bones/3/scale = Vector3(1, 0.9999997, 0.9999999)
-bones/5/position = Vector3(0.0027086104, 0.004276205, 7.927241e-07)
-bones/5/rotation = Quaternion(-0.014577145, -0.013174548, -0.7322136, 0.68079156)
-bones/5/scale = Vector3(1.0000001, 0.99999994, 1)
-bones/6/position = Vector3(-2.055394e-09, 0.0029913418, 1.0332123e-11)
-bones/6/rotation = Quaternion(0.0029730476, 0.028135272, 0.013092785, 0.999514)
-bones/6/scale = Vector3(0.9999999, 0.99999994, 1)
-bones/7/position = Vector3(2.8794228e-10, 0.0032852986, -5.778348e-11)
-bones/7/rotation = Quaternion(-0.027114693, 0.25844637, 0.025103893, 0.9653186)
-bones/7/scale = Vector3(1, 0.9999999, 0.99999994)
-bones/9/position = Vector3(-0.0027086104, 0.004276205, 7.927246e-07)
-bones/9/rotation = Quaternion(-0.014577145, 0.013174548, 0.7322136, 0.68079156)
-bones/9/scale = Vector3(1.0000001, 0.99999994, 1)
-bones/10/position = Vector3(2.0553954e-09, 0.0029913418, 8.8851105e-12)
-bones/10/rotation = Quaternion(0.002973048, -0.028135272, -0.013092788, 0.999514)
-bones/10/scale = Vector3(0.9999999, 0.99999994, 1.0000001)
-bones/11/position = Vector3(-2.877844e-10, 0.0032852986, -5.4938047e-11)
-bones/11/rotation = Quaternion(-0.027114691, -0.25844634, -0.025103888, 0.9653187)
-bones/11/scale = Vector3(0.99999994, 0.9999999, 0.9999999)
-bones/13/position = Vector3(0.0014122301, 0.0007081852, 0.00025942284)
-bones/13/rotation = Quaternion(0.98651487, -1.162874e-16, 5.9194093e-16, 0.1636718)
-bones/14/position = Vector3(3.0954152e-11, 0.005363695, 8.829332e-11)
-bones/14/rotation = Quaternion(0.08216356, -1.1880625e-07, -9.794661e-09, 0.99661887)
-bones/14/scale = Vector3(1, 1, 0.9999999)
-bones/15/position = Vector3(-3.382308e-11, 0.005097627, -4.0826745e-11)
-bones/15/rotation = Quaternion(-0.7115171, -2.5129594e-07, 4.2409928e-07, 0.70266885)
-bones/15/scale = Vector3(1, 0.99999994, 0.9999999)
-bones/17/position = Vector3(-0.0014122301, 0.0007081852, 0.00025942284)
-bones/17/rotation = Quaternion(0.98651487, -1.162874e-16, 5.9194093e-16, 0.1636718)
-bones/18/position = Vector3(3.0954152e-11, 0.005363695, 8.829332e-11)
-bones/18/rotation = Quaternion(0.08216356, 1.18806256e-07, 9.794659e-09, 0.99661887)
-bones/18/scale = Vector3(1, 1, 0.9999999)
-bones/19/position = Vector3(5.971601e-11, 0.005097627, -2.9179555e-11)
-bones/19/rotation = Quaternion(-0.7115171, 2.5129594e-07, -4.2409928e-07, 0.70266885)
-bones/19/scale = Vector3(1, 0.99999994, 0.9999999)
+[node name="Skeleton3D" parent="Guy" parent_id_path=PackedInt32Array(998692996) index="0" unique_id=255058058]
+bones/1/position = Vector3(-5.4523713e-18, 0.001522196, -7.434317e-11)
+bones/1/rotation = Quaternion(-0.10668076, 2.904698e-15, -2.849736e-16, 0.99429333)
+bones/1/scale = Vector3(1, 0.99999994, 0.9999999)
+bones/2/position = Vector3(-3.0471673e-17, 0.0046358565, -0.00012071079)
+bones/2/rotation = Quaternion(0.16876858, 1.1749936e-07, 2.0118781e-08, 0.9856557)
+bones/2/scale = Vector3(1, 0.9999999, 0.99999994)
+bones/3/position = Vector3(7.045633e-17, 0.0006616352, -8.809318e-10)
+bones/3/rotation = Quaternion(-0.12954497, -1.3659825e-14, -3.088593e-08, 0.9915735)
+bones/3/scale = Vector3(1, 1, 1.0000001)
+bones/4/position = Vector3(-4.488815e-17, 0.0009948382, 4.3774925e-11)
+bones/4/rotation = Quaternion(-2.3222482e-09, -9.020768e-15, -5.78903e-16, 1)
+bones/6/position = Vector3(0.0027086104, 0.004276203, 7.924184e-07)
+bones/6/rotation = Quaternion(-0.01457726, -0.013174641, -0.7322136, 0.68079156)
+bones/6/scale = Vector3(1, 0.99999994, 0.99999994)
+bones/7/position = Vector3(-4.85414e-09, 0.0029913415, 2.9984532e-11)
+bones/7/rotation = Quaternion(0.0029730515, 0.028135275, 0.013092793, 0.999514)
+bones/7/scale = Vector3(1, 1, 1.0000002)
+bones/8/position = Vector3(2.4985993e-09, 0.0032852995, 8.858663e-12)
+bones/8/rotation = Quaternion(-0.027114673, 0.2584463, 0.025103891, 0.9653187)
+bones/8/scale = Vector3(1, 0.99999976, 0.9999999)
+bones/9/position = Vector3(1.2630257e-10, 0.0015443271, 5.6841215e-10)
+bones/9/rotation = Quaternion(9.222451e-09, 4.6486308e-11, -1.2302918e-09, 1)
+bones/9/scale = Vector3(0.99999994, 1, 1)
+bones/11/position = Vector3(-0.0027086104, 0.004276203, 7.9241863e-07)
+bones/11/rotation = Quaternion(-0.014577257, 0.013174642, 0.7322136, 0.68079156)
+bones/11/scale = Vector3(1, 0.99999994, 0.99999994)
+bones/12/position = Vector3(4.8541433e-09, 0.0029913415, 2.618763e-11)
+bones/12/rotation = Quaternion(0.0029730506, -0.028135275, -0.013092793, 0.999514)
+bones/12/scale = Vector3(1, 1, 1.0000002)
+bones/13/position = Vector3(-2.4981526e-09, 0.0032852995, 1.6910905e-11)
+bones/13/rotation = Quaternion(-0.027114676, -0.25844634, -0.025103888, 0.9653187)
+bones/13/scale = Vector3(0.99999994, 0.99999976, 0.9999998)
+bones/14/position = Vector3(-2.8252561e-10, 0.0015443256, 6.221655e-10)
+bones/14/rotation = Quaternion(8.775381e-09, 1.320556e-08, -2.0419963e-10, 1)
+bones/14/scale = Vector3(0.99999994, 1, 0.99999994)
+bones/16/position = Vector3(0.00141223, 0.00070818607, 0.00025942264)
+bones/16/rotation = Quaternion(0.98651487, 2.350943e-16, 1.3939585e-16, 0.16367175)
+bones/16/scale = Vector3(1, 1, 0.99999833)
+bones/17/position = Vector3(7.9830066e-11, 0.0053636925, 1.5500974e-10)
+bones/17/rotation = Quaternion(0.08216346, -1.18806305e-07, -9.794654e-09, 0.99661887)
+bones/17/scale = Vector3(1, 1, 1)
+bones/18/position = Vector3(-8.7228745e-11, 0.0050976267, -3.8052263e-11)
+bones/18/rotation = Quaternion(-0.7115172, -2.5129788e-07, 4.241015e-07, 0.7026687)
+bones/18/scale = Vector3(1, 0.9999999, 0.9999999)
+bones/19/position = Vector3(4.6602916e-11, 0.001685377, 1.9554675e-10)
+bones/19/rotation = Quaternion(1.1054289e-19, 2.8758799e-12, -4.4495174e-15, 1)
+bones/21/position = Vector3(-0.00141223, 0.00070818607, 0.00025942264)
+bones/21/rotation = Quaternion(0.98651487, 2.350943e-16, 1.3939585e-16, 0.16367175)
+bones/21/scale = Vector3(1, 1, 0.99999833)
+bones/22/position = Vector3(-1.3709007e-11, 0.0053636925, 1.6666792e-10)
+bones/22/rotation = Quaternion(0.08216346, 1.18806305e-07, 9.79465e-09, 0.99661887)
+bones/22/scale = Vector3(1, 1, 1)
+bones/23/position = Vector3(1.9338853e-10, 0.0050976267, -7.208401e-11)
+bones/23/rotation = Quaternion(-0.7115172, 2.5129788e-07, -4.2410142e-07, 0.7026687)
+bones/23/scale = Vector3(1, 0.9999999, 0.9999999)
+bones/24/position = Vector3(-1.4047549e-10, 0.0016853772, 1.6483698e-10)
+bones/24/rotation = Quaternion(3.3554098e-18, -2.8418127e-12, -1.3795125e-14, 1)
+
+[node name="Torso" parent="Guy/Skeleton3D" index="0" unique_id=1894561947]
+surface_material_override/0 = SubResource("ShaderMaterial_5lcam")
 
 [node name="BodyIK" type="TwoBoneIK3D" parent="Guy/Skeleton3D" index="1" unique_id=79343420]
 transform = Transform3D(1, 0, 0, 7.1054274e-15, 1, 0, 0, 1.776358e-15, 1, 0, 0, 0)
@@ -179,10 +208,10 @@ settings/0/pole_node = NodePath("../StiffArmPole")
 settings/0/root_bone_name = "spine.Torso"
 settings/0/root_bone = 1
 settings/0/middle_bone_name = "forearm.R"
-settings/0/middle_bone = 10
+settings/0/middle_bone = 12
 settings/0/pole_direction = 0
 settings/0/end_bone_name = "hand.R_end"
-settings/0/end_bone = 12
+settings/0/end_bone = 14
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = true
 settings/0/end_bone/direction = 6
@@ -195,12 +224,12 @@ setting_count = 1
 settings/0/target_node = NodePath("../../StiffArmTarget")
 settings/0/pole_node = NodePath("../StiffArmPole")
 settings/0/root_bone_name = "upper_arm.R"
-settings/0/root_bone = 9
+settings/0/root_bone = 11
 settings/0/middle_bone_name = "forearm.R"
-settings/0/middle_bone = 10
+settings/0/middle_bone = 12
 settings/0/pole_direction = 0
 settings/0/end_bone_name = "hand.R_end"
-settings/0/end_bone = 12
+settings/0/end_bone = 14
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = true
 settings/0/end_bone/direction = 6
@@ -226,12 +255,12 @@ setting_count = 1
 settings/0/target_node = NodePath("../../../WalkCycleLegs/LeftLeg/LeftLegTarget")
 settings/0/pole_node = NodePath("../LeftLegPole")
 settings/0/root_bone_name = "thigh.L"
-settings/0/root_bone = 13
+settings/0/root_bone = 16
 settings/0/middle_bone_name = "shin.L"
-settings/0/middle_bone = 14
+settings/0/middle_bone = 17
 settings/0/pole_direction = 0
 settings/0/end_bone_name = "foot.L"
-settings/0/end_bone = 15
+settings/0/end_bone = 18
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
@@ -241,12 +270,12 @@ setting_count = 1
 settings/0/target_node = NodePath("../../../WalkCycleLegs/RightLeg/RightLegTarget")
 settings/0/pole_node = NodePath("../RightLegPole")
 settings/0/root_bone_name = "thigh.R"
-settings/0/root_bone = 17
+settings/0/root_bone = 21
 settings/0/middle_bone_name = "shin.R"
-settings/0/middle_bone = 18
+settings/0/middle_bone = 22
 settings/0/pole_direction = 0
 settings/0/end_bone_name = "foot.R"
-settings/0/end_bone = 19
+settings/0/end_bone = 23
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
@@ -256,12 +285,12 @@ setting_count = 1
 settings/0/target_node = NodePath("../../../WalkCycleArms/LeftArm/LeftArmTarget")
 settings/0/pole_node = NodePath("../LeftArmPole")
 settings/0/root_bone_name = "upper_arm.L"
-settings/0/root_bone = 5
+settings/0/root_bone = 6
 settings/0/middle_bone_name = "forearm.L"
-settings/0/middle_bone = 6
+settings/0/middle_bone = 7
 settings/0/pole_direction = 0
 settings/0/end_bone_name = "hand.L"
-settings/0/end_bone = 7
+settings/0/end_bone = 8
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
@@ -271,12 +300,12 @@ setting_count = 1
 settings/0/target_node = NodePath("../../../WalkCycleArms/RightArm/RightArmTarget")
 settings/0/pole_node = NodePath("../RightArmPole")
 settings/0/root_bone_name = "upper_arm.R"
-settings/0/root_bone = 9
+settings/0/root_bone = 11
 settings/0/middle_bone_name = "forearm.R"
-settings/0/middle_bone = 10
+settings/0/middle_bone = 12
 settings/0/pole_direction = 0
 settings/0/end_bone_name = "hand.R"
-settings/0/end_bone = 11
+settings/0/end_bone = 13
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
@@ -287,12 +316,12 @@ setting_count = 1
 settings/0/target_node = NodePath("../../../ThrowCycleFrontFoot/FrontLeg/ThrowLeftLegTarget")
 settings/0/pole_node = NodePath("../LeftLegPole")
 settings/0/root_bone_name = "thigh.L"
-settings/0/root_bone = 13
+settings/0/root_bone = 16
 settings/0/middle_bone_name = "shin.L"
-settings/0/middle_bone = 14
+settings/0/middle_bone = 17
 settings/0/pole_direction = 0
 settings/0/end_bone_name = "foot.L"
-settings/0/end_bone = 15
+settings/0/end_bone = 18
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
@@ -303,12 +332,12 @@ setting_count = 1
 settings/0/target_node = NodePath("../../../ThrowCycleBackFoot/BackLeg/ThrowRightLegTarget")
 settings/0/pole_node = NodePath("../RightLegThrowPole")
 settings/0/root_bone_name = "thigh.R"
-settings/0/root_bone = 17
+settings/0/root_bone = 21
 settings/0/middle_bone_name = "shin.R"
-settings/0/middle_bone = 18
+settings/0/middle_bone = 22
 settings/0/pole_direction = 0
 settings/0/end_bone_name = "foot.R"
-settings/0/end_bone = 19
+settings/0/end_bone = 23
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
@@ -318,12 +347,12 @@ setting_count = 1
 settings/0/target_node = NodePath("../../ThrowBallTargetRest")
 settings/0/pole_node = NodePath("../LeftArmThrowPole")
 settings/0/root_bone_name = "upper_arm.L"
-settings/0/root_bone = 5
+settings/0/root_bone = 6
 settings/0/middle_bone_name = "forearm.L"
-settings/0/middle_bone = 6
+settings/0/middle_bone = 7
 settings/0/pole_direction = 0
 settings/0/end_bone_name = "hand.L_end"
-settings/0/end_bone = 8
+settings/0/end_bone = 9
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
@@ -333,12 +362,12 @@ setting_count = 1
 settings/0/target_node = NodePath("../../../ThrowCycleArm/Arm/ThrowCycleTarget")
 settings/0/pole_node = NodePath("../../../ThrowCycleArm/Arm/RightArmThrowPole")
 settings/0/root_bone_name = "upper_arm.R"
-settings/0/root_bone = 9
+settings/0/root_bone = 11
 settings/0/middle_bone_name = "forearm.R"
-settings/0/middle_bone = 10
+settings/0/middle_bone = 12
 settings/0/pole_direction = 0
 settings/0/end_bone_name = "hand.R_end"
-settings/0/end_bone = 12
+settings/0/end_bone = 14
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
@@ -349,12 +378,12 @@ setting_count = 1
 settings/0/target_node = NodePath("../../BallTargetRun")
 settings/0/pole_node = NodePath("../LeftArmPole")
 settings/0/root_bone_name = "upper_arm.L"
-settings/0/root_bone = 5
+settings/0/root_bone = 6
 settings/0/middle_bone_name = "forearm.L"
-settings/0/middle_bone = 6
+settings/0/middle_bone = 7
 settings/0/pole_direction = 0
 settings/0/end_bone_name = "hand.L_end"
-settings/0/end_bone = 8
+settings/0/end_bone = 9
 settings/0/use_virtual_end = false
 settings/0/extend_end_bone = false
 
@@ -363,17 +392,17 @@ transform = Transform3D(1, 0, 0, 2.1316282e-14, 1, 0, 0, 1.776358e-15, 1, 0, 0, 
 active = false
 target_node = NodePath("../../../ThrowCycleArm/Arm/RightArmThrowHand")
 bone_name = "hand.R_end"
-bone = 12
+bone = 14
 
 [node name="LeftHandPos" type="BoneAttachment3D" parent="Guy/Skeleton3D" index="17" unique_id=1756353376]
-transform = Transform3D(-0.0027896536, 0.99930817, 0.037078086, 0.54736996, 0.032556318, -0.83625734, -0.8368862, 0.017962605, -0.5470822, 0.010516997, 5.590705e-05, 0.015503221)
+transform = Transform3D(-0.0027896597, 0.9993081, 0.037078064, 0.5473694, 0.0325563, -0.8362575, -0.8368863, 0.017962554, -0.54708165, 0.010516998, 5.5907356e-05, 0.015503218)
 bone_name = "hand.L_end"
-bone_idx = 8
+bone_idx = 9
 
 [node name="RightHandPos" type="BoneAttachment3D" parent="Guy/Skeleton3D" index="18" unique_id=1673656415]
-transform = Transform3D(-0.002789665, -0.99930817, -0.03707808, -0.5473699, 0.032556325, -0.8362574, 0.83688617, 0.01796259, -0.5470821, -0.010516997, 5.5907058e-05, 0.015503221)
+transform = Transform3D(-0.0027896613, -0.9993081, -0.037078056, -0.5473694, 0.032556303, -0.83625734, 0.83688617, 0.017962554, -0.54708165, -0.010516997, 5.590732e-05, 0.015503218)
 bone_name = "hand.R_end"
-bone_idx = 12
+bone_idx = 14
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Guy/Skeleton3D/RightHandPos" index="0" unique_id=765786067]
 transform = Transform3D(0.0009999995, 0, 0, 0, -4.371136e-11, -0.0009999993, 0, 0.0009999993, -4.371136e-11, 0, 0, 0)
@@ -408,35 +437,34 @@ transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 
 
 [node name="---------------------------------------" type="Node" parent="Guy/Skeleton3D" index="28" unique_id=770829469]
 
-[node name="BallTargetRun" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="1" unique_id=2023228797]
+[node name="BallTargetRun" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(998692996) index="1" unique_id=2023228797]
 transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, 0.0026127873, -0.0054018795, 0.012208413)
 
-[node name="StiffArmTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="2" unique_id=1927829651]
+[node name="StiffArmTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(998692996) index="2" unique_id=1927829651]
 transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.006824037, -0.006255537, 0.014578923)
 
-[node name="HeadTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="3" unique_id=124009042]
+[node name="HeadTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(998692996) index="3" unique_id=124009042]
 transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -1.0149981e-11, -0.010829713, 0.014355718)
 
-[node name="ThrowBodyTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="4" unique_id=2063059365]
+[node name="ThrowBodyTarget" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(998692996) index="4" unique_id=2063059365]
 transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.004577808, -0.006913084, 0.005564332)
 
-[node name="ThrowBallTargetRest" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(630692901) index="5" unique_id=821275923]
+[node name="ThrowBallTargetRest" type="Marker3D" parent="Guy" parent_id_path=PackedInt32Array(998692996) index="5" unique_id=821275923]
 transform = Transform3D(0.009808282, 0, 0, 0, 0.009808283, 0, 0, 1.7423021e-17, 0.009808282, -0.0021252127, -0.0045637395, 0.012609199)
 
 [node name="WalkCycleLegs" type="Path3D" parent="." index="1" unique_id=2037237239]
 curve = SubResource("Curve3D_1sej0")
 
 [node name="LeftLeg" type="PathFollow3D" parent="WalkCycleLegs" index="0" unique_id=936057854]
-transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.31146818, -0.84395456, 0)
-progress = 2.951655
+transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.545, -1.15, 0)
 rotation_mode = 0
 
 [node name="LeftLegTarget" type="Marker3D" parent="WalkCycleLegs/LeftLeg" index="0" unique_id=1794891064]
 transform = Transform3D(4.2912244e-08, 8.355517e-09, -0.9999999, 0.17162588, -0.98516214, 6.79774e-08, -0.9851621, -0.17162591, -1.5719044e-07, 0, 0, -0.164)
 
 [node name="RightLeg" type="PathFollow3D" parent="WalkCycleLegs" index="1" unique_id=170082333]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55031604, -1.1228925, 0)
-progress = 1.0675344
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7223737, -0.4518811, 0)
+progress = 1.8841181
 rotation_mode = 0
 
 [node name="RightLegTarget" type="Marker3D" parent="WalkCycleLegs/RightLeg" index="0" unique_id=1269360011]
@@ -446,16 +474,15 @@ transform = Transform3D(4.2912244e-08, 8.355517e-09, -0.9999999, 0.1716259, -0.9
 curve = SubResource("Curve3D_arojt")
 
 [node name="LeftArm" type="PathFollow3D" parent="WalkCycleArms" index="0" unique_id=597344314]
-transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, -0.14497218, -0.21507442, 0)
-progress = 0.45700225
+transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.20057026, -0.2611935, 0)
+progress = 0.8064761
 rotation_mode = 0
 
 [node name="LeftArmTarget" type="Marker3D" parent="WalkCycleArms/LeftArm" index="0" unique_id=200270119]
 transform = Transform3D(1.1920929e-07, -1.0000001, -1.4901161e-07, -2.9802603e-08, -1.1921043e-07, 1.0000093, -1.0000094, -5.960521e-08, 0, 0, 0, -0.328)
 
 [node name="RightArm" type="PathFollow3D" parent="WalkCycleArms" index="1" unique_id=275819613]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5520412, -0.16579477, 0)
-progress = 1.2634784
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.22612494, -0.330246, 0)
 rotation_mode = 0
 
 [node name="RightArmTarget" type="Marker3D" parent="WalkCycleArms/RightArm" index="0" unique_id=1011435863]
@@ -465,8 +492,7 @@ transform = Transform3D(1.1920929e-07, -1.0000001, -1.4901161e-07, -2.9802322e-0
 curve = SubResource("Curve3D_aw1fv")
 
 [node name="Body" type="PathFollow3D" parent="WalkCycleBody" index="0" unique_id=1661211191]
-transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.41706973, 0.30789778, 0)
-progress = 0.1400908
+transform = Transform3D(1, 0, 0, 0, 0.9999905, 0, 0, 0, 0.9999905, 0.4365226, 0.41632557, 0)
 rotation_mode = 0
 
 [node name="BodyTarget" type="Marker3D" parent="WalkCycleBody/Body" index="0" unique_id=1925155]
@@ -477,7 +503,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.10915685, 0.23851627)
 curve = SubResource("Curve3D_phsfh")
 
 [node name="Arm" type="PathFollow3D" parent="ThrowCycleArm" index="0" unique_id=709582600]
-transform = Transform3D(0.060303062, 0.26620838, 0.9620841, 0.8838151, -0.46205613, 0.0724674, 0.46379033, 0.84589744, -0.2631889, 0.435, 0, 0)
+transform = Transform3D(0.060303044, 0.26620838, 0.96208435, 0.8838149, -0.46205613, 0.07246742, 0.46379018, 0.84589744, -0.26318896, 0.435, 0, 0)
 
 [node name="ThrowCycleTarget" type="Marker3D" parent="ThrowCycleArm/Arm" index="0" unique_id=210666618]
 transform = Transform3D(1.0000085, 3.1664968e-08, 5.9604645e-08, 1.8626451e-09, 0.9999995, 7.264316e-08, 5.9604645e-08, 1.0570511e-07, 1.0000086, 0, 0, 0)

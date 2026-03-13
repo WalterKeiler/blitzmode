@@ -1,5 +1,5 @@
 shader_type spatial;
-#include "res://Shaders/SDFFunctions.gdshaderinc"
+#include "res://Shaders/NumberAndSymbolFunctions.gdshaderinc"
 #include "res://Shaders/NoiseFunctions.gdshaderinc"
 
 //const int arrayMaxLength = 15;
@@ -41,272 +41,6 @@ void vertex()
 	fieldPos = useWorldSpace? worldPos : fieldPos;
 }
 
-float Zero(vec2 offset, bool inverted)
-{
-	vec2[arrayMaxLength] points = {
-		vec2(-.9,1),
-		vec2(-.9,-1),
-		vec2(-.5,-1.4),
-		vec2(.5,-1.4),
-		vec2(.9,-1),
-		vec2(.9,1),
-		vec2(.5,1.4),
-		vec2(-.5,1.4),
-		vec2(-.9,1),
-		vec2(10,0),
-		vec2(11,0),
-		vec2(12,0),
-		vec2(13,0),
-		vec2(14,0),
-		vec2(15,0)
-	};
-	float x = ArrayToSegment(fieldPos,points,9,offset,inverted) - .25;
-
-	float d = x;
-	vec3 col = (d<0.0) ? vec3(1,1,1) : vec3(0,0,0);
-	return d;
-}
-float One(vec2 offset, bool inverted)
-{
-	vec2[arrayMaxLength] points = {
-		vec2(-.6,-1),
-		vec2(0,-1.4),
-		vec2(0,1.4),
-		vec2(-.9,1.4),
-		vec2(.9,1.4),
-		vec2(6,0),
-		vec2(7,0),
-		vec2(8,0),
-		vec2(9,0),
-		vec2(10,0),
-		vec2(11,0),
-		vec2(12,0),
-		vec2(13,0),
-		vec2(14,0),
-		vec2(15,0)
-	};
-
-	float x = ArrayToSegment(fieldPos,points,5,offset,inverted) - .25;
-
-	return x;
-}
-float Two(vec2 offset, bool inverted)
-{
-	vec2[arrayMaxLength] points = {
-		vec2(-.9,-.6),
-		vec2(-.9,-1),
-		vec2(-.5,-1.4),
-		vec2(.5,-1.4),
-		vec2(.9,-1),
-		vec2(.9,-.5),
-		vec2(-.9,.8),
-		vec2(-.9,1.4),
-		vec2(.9,1.4),
-		vec2(.9,1.4),
-		vec2(.9,1.4),
-		vec2(.9,1.4),
-		vec2(.9,1.4),
-		vec2(.9,1.4),
-		vec2(.9,1.4)
-	};
-	float x = ArrayToSegment(fieldPos,points,9,offset,inverted) - .25;
-	return x;
-}
-float Three(vec2 offset, bool inverted)
-{
-	vec2[arrayMaxLength] points = {
-		vec2(-.9,-.8),
-		vec2(-.9,-1),
-		vec2(-.5,-1.4),
-		vec2(.5,-1.4),
-		vec2(.9,-1),
-		vec2(.9,-.4),
-		vec2(.5,0),
-		vec2(.2,0),
-		vec2(.5,0),
-		vec2(.9,.4),
-		vec2(.9,1),
-		vec2(.5,1.4),
-		vec2(-.5,1.4),
-		vec2(-.9,1),
-		vec2(-.9,.8)
-	};
-
-	float x = ArrayToSegment(fieldPos,points,15,offset,inverted) - .25;
-	return x;
-}
-float Four(vec2 offset, bool inverted)
-{
-	vec2[arrayMaxLength] points = {
-		vec2(.9,.1),
-		vec2(-.9,.1),
-		vec2(-.9,-.5),
-		vec2(.4,-1.4),
-		vec2(.4,1.4),
-		vec2(-.15,1.4),
-		vec2(.9,1.4),
-		vec2(8,0),
-		vec2(9,0),
-		vec2(10,0),
-		vec2(11,0),
-		vec2(12,0),
-		vec2(13,0),
-		vec2(14,0),
-		vec2(15,0)
-	};
-	float x = ArrayToSegment(fieldPos,points,7,offset,inverted) - .25;
-	return x;
-}
-float Five(vec2 offset, bool inverted)
-{
-	vec2[arrayMaxLength] points = {
-		vec2(.9,-1.4),
-		vec2(-.9,-1.4),
-		vec2(-.9,-.8),
-		vec2(-.5,-.4),
-		vec2(.5,-.4),
-		vec2(.9,0),
-		vec2(.9,1),
-		vec2(.5,1.4),
-		vec2(-.5,1.4),
-		vec2(-.9,1),
-		vec2(11,0),
-		vec2(12,0),
-		vec2(13,0),
-		vec2(14,0),
-		vec2(15,0)
-	};
-	float x = ArrayToSegment(fieldPos,points,10,offset,inverted) - .25;
-
-	return x;
-}
-float Six(vec2 offset, bool inverted)
-{
-	vec2[arrayMaxLength] points = {
-		vec2(0.9,-1),
-		vec2(.5,-1.4),
-		vec2(-.5,-1.4),
-		vec2(-0.9,-1),
-		vec2(-0.9,1),
-		vec2(-0.5,1.4),
-		vec2(0.5,1.4),
-		vec2(0.9,1),
-		vec2(.9,0.4),
-		vec2(0.5,0),
-		vec2(-0.5,0),
-		vec2(-0.9,0.4),
-		vec2(13,0),
-		vec2(14,0),
-		vec2(15,0)
-	};
-
-	float x = ArrayToSegment(fieldPos,points,12,offset,inverted) - .25;
-
-
-	return x;
-}
-float Seven(vec2 offset, bool inverted)
-{
-	vec2[arrayMaxLength] points = {
-		vec2(-.9,-1),
-		vec2(-.9,-1.4),
-		vec2(.9,-1.4),
-		vec2(-0.5,1.4),
-		vec2(5,0),
-		vec2(6,0),
-		vec2(7,0),
-		vec2(8,0),
-		vec2(9,0),
-		vec2(10,0),
-		vec2(11,0),
-		vec2(12,0),
-		vec2(13,0),
-		vec2(14,0),
-		vec2(15,0)
-	};
-	float x = ArrayToSegment(fieldPos,points,4,offset,inverted) - .25;
-
-	return x;
-}
-float Eight(vec2 offset, bool inverted)
-{
-	vec2[arrayMaxLength] points = {
-		vec2(.5,0),
-		vec2(-.5,0),
-		vec2(-.9,.4),
-		vec2(-.9,1),
-		vec2(-.5,1.4),
-		vec2(.5,1.4),
-		vec2(.9,1),
-		vec2(.9,.4),
-		vec2(.5,0),
-		vec2(.9,-.4),
-		vec2(.9,-1),
-		vec2(.5,-1.4),
-		vec2(-.5,-1.4),
-		vec2(-.9,-1),
-		vec2(-.9,-.4)
-	};
-	float x = ArrayToSegment(fieldPos,points,15,offset,inverted) - .25;
-
-	float invert = inverted ? -1.0 : 1.0;
-
-	vec2 pos1 = vec2(-.9,-.4) * invert;
-	vec2 pos2 = vec2(-.5,0) * invert;
-
-	float p = sdSegment(fieldPos + offset,pos1,pos2)- .25;
-	x = min(x, p);
-
-	return x;
-}
-float Nine(vec2 offset, bool inverted)
-{
-	vec2[arrayMaxLength] points = {
-		vec2(-.9,1),
-		vec2(-.5,1.4),
-		vec2(.5,1.4),
-		vec2(.9,1),
-		vec2(.9,-1),
-		vec2(.5,-1.4),
-		vec2(-.5,-1.4),
-		vec2(-.9,-1),
-		vec2(-.9,-.4),
-		vec2(-.5,0),
-		vec2(.5,0),
-		vec2(.9,-.4),
-		vec2(13,0),
-		vec2(14,0),
-		vec2(15,0)
-	};
-	float x = ArrayToSegment(fieldPos,points,12,offset,inverted) - .25;
-
-	return x;
-}
-
-float Arrow(vec2 offset, bool inverted)
-{
-	vec2[arrayMaxLength] points = {
-		vec2(0,-.5),
-		vec2(.24,0),
-		vec2(0,.5),
-		vec2(4,0),
-		vec2(5,0),
-		vec2(6,0),
-		vec2(7,0),
-		vec2(8,0),
-		vec2(9,0),
-		vec2(10,0),
-		vec2(11,0),
-		vec2(12,0),
-		vec2(13,0),
-		vec2(14,0),
-		vec2(15,0)
-	};
-	float x = ArrayToSegment(fieldPos,points,3,offset,inverted) - .1;
-
-	return x;
-}
-
 float DrawNumbers(float xpos, float ypos, float spacing)
 {
 	float[5] b;
@@ -339,44 +73,44 @@ float DrawNumbers(float xpos, float ypos, float spacing)
 		{
 			case 0:
 				//min one side of the field with the other
-				b[i] = min(Zero(vec2(xpos + space,-ypos),false),Zero(vec2(-xpos + space,-ypos),false));
-				t[i] = min(Zero(vec2(xpos + -space,ypos),true),Zero(vec2(-xpos + -space,ypos),true));
+				b[i] = min(Zero(fieldPos, vec2(xpos + space,-ypos),false, false, .25, 1.0),Zero(fieldPos, vec2(-xpos + space,-ypos),false, false, .25, 1.0));
+				t[i] = min(Zero(fieldPos, vec2(xpos + -space,ypos),true, true, .25, 1.0),Zero(fieldPos, vec2(-xpos + -space,ypos),true, true, .25, 1.0));
 				break;
 			case 1:
-				b[i] = min(One(vec2(xpos + space,-ypos),false),One(vec2(-xpos + space,-ypos),false));
-				t[i] = min(One(vec2(xpos + -space,ypos),true),One(vec2(-xpos + -space,ypos),true));
+				b[i] = min(One(fieldPos, vec2(xpos + space,-ypos),false, false, .25, 1.0),One(fieldPos, vec2(-xpos + space,-ypos),false, false, .25, 1.0));
+				t[i] = min(One(fieldPos, vec2(xpos + -space,ypos),true, true, .25, 1.0),One(fieldPos, vec2(-xpos + -space,ypos),true, true, .25, 1.0));
 				break;
 			case 2:
-				b[i] = min(Two(vec2(xpos + space,-ypos),false),Two(vec2(-xpos + space,-ypos),false));
-				t[i] = min(Two(vec2(xpos + -space,ypos),true),Two(vec2(-xpos + -space,ypos),true));
+				b[i] = min(Two(fieldPos, vec2(xpos + space,-ypos),false, false, .25, 1.0),Two(fieldPos, vec2(-xpos + space,-ypos),false, false, .25, 1.0));
+				t[i] = min(Two(fieldPos, vec2(xpos + -space,ypos),true, true, .25, 1.0),Two(fieldPos, vec2(-xpos + -space,ypos),true, true, .25, 1.0));
 				break;
 			case 3:
-				b[i] = min(Three(vec2(xpos + space,-ypos),false),Three(vec2(-xpos + space,-ypos),false));
-				t[i] = min(Three(vec2(xpos + -space,ypos),true),Three(vec2(-xpos + -space,ypos),true));
+				b[i] = min(Three(fieldPos, vec2(xpos + space,-ypos),false, false, .25, 1.0),Three(fieldPos, vec2(-xpos + space,-ypos),false, false, .25, 1.0));
+				t[i] = min(Three(fieldPos, vec2(xpos + -space,ypos),true, true, .25, 1.0),Three(fieldPos, vec2(-xpos + -space,ypos),true, true, .25, 1.0));
 				break;
 			case 4:
-				b[i] = min(Four(vec2(xpos + space,-ypos),false),Four(vec2(-xpos + space,-ypos),false));
-				t[i] = min(Four(vec2(xpos + -space,ypos),true),Four(vec2(-xpos + -space,ypos),true));
+				b[i] = min(Four(fieldPos, vec2(xpos + space,-ypos),false, false, .25, 1.0),Four(fieldPos, vec2(-xpos + space,-ypos),false, false, .25, 1.0));
+				t[i] = min(Four(fieldPos, vec2(xpos + -space,ypos),true, true, .25, 1.0),Four(fieldPos, vec2(-xpos + -space,ypos),true, true, .25, 1.0));
 				break;
 			case 5:
-				b[i] = min(Five(vec2(xpos + space,-ypos),false),Five(vec2(-xpos + space,-ypos),false));
-				t[i] = min(Five(vec2(xpos + -space,ypos),true),Five(vec2(-xpos + -space,ypos),true));
+				b[i] = min(Five(fieldPos, vec2(xpos + space,-ypos),false, false, .25, 1.0),Five(fieldPos, vec2(-xpos + space,-ypos),false, false, .25, 1.0));
+				t[i] = min(Five(fieldPos, vec2(xpos + -space,ypos),true, true, .25, 1.0),Five(fieldPos, vec2(-xpos + -space,ypos),true, true, .25, 1.0));
 				break;
 			case 6:
-				b[i] = min(Six(vec2(xpos + space,-ypos),false),Six(vec2(-xpos + space,-ypos),false));
-				t[i] = min(Six(vec2(xpos + -space,ypos),true),Six(vec2(-xpos + -space,ypos),true));
+				b[i] = min(Six(fieldPos, vec2(xpos + space,-ypos),false, false, .25, 1.0),Six(fieldPos, vec2(-xpos + space,-ypos),false, false, .25, 1.0));
+				t[i] = min(Six(fieldPos, vec2(xpos + -space,ypos),true, true, .25, 1.0),Six(fieldPos, vec2(-xpos + -space,ypos),true, true, .25, 1.0));
 				break;
 			case 7:
-				b[i] = min(Seven(vec2(xpos + space,-ypos),false),Seven(vec2(-xpos + space,-ypos),false));
-				t[i] = min(Seven(vec2(xpos + -space,ypos),true),Seven(vec2(-xpos + -space,ypos),true));
+				b[i] = min(Seven(fieldPos, vec2(xpos + space,-ypos),false, false, .25, 1.0),Seven(fieldPos, vec2(-xpos + space,-ypos),false, false, .25, 1.0));
+				t[i] = min(Seven(fieldPos, vec2(xpos + -space,ypos),true, true, .25, 1.0),Seven(fieldPos, vec2(-xpos + -space,ypos),true, true, .25, 1.0));
 				break;
 			case 8:
-				b[i] = min(Eight(vec2(xpos + space,-ypos),false),Eight(vec2(-xpos + space,-ypos),false));
-				t[i] = min(Eight(vec2(xpos + -space,ypos),true),Eight(vec2(-xpos + -space,ypos),true));
+				b[i] = min(Eight(fieldPos, vec2(xpos + space,-ypos),false, false, .25, 1.0),Eight(fieldPos, vec2(-xpos + space,-ypos),false, false, .25, 1.0));
+				t[i] = min(Eight(fieldPos, vec2(xpos + -space,ypos),true, true, .25, 1.0),Eight(fieldPos, vec2(-xpos + -space,ypos),true, true, .25, 1.0));
 				break;
 			case 9:
-				b[i] = min(Nine(vec2(xpos + space,-ypos),false),Nine(vec2(-xpos + space,-ypos),false));
-				t[i] = min(Nine(vec2(xpos + -space,ypos),true),Nine(vec2(-xpos + -space,ypos),true));
+				b[i] = min(Nine(fieldPos, vec2(xpos + space,-ypos),false, false, .25, 1.0),Nine(fieldPos, vec2(-xpos + space,-ypos),false, false, .25, 1.0));
+				t[i] = min(Nine(fieldPos, vec2(xpos + -space,ypos),true, true, .25, 1.0),Nine(fieldPos, vec2(-xpos + -space,ypos),true, true, .25, 1.0));
 				break;
 		}
 		space += 1.15 + spacing;
@@ -389,8 +123,8 @@ float DrawNumbers(float xpos, float ypos, float spacing)
 		d = min(d,s);
 	}
 
-	float arrB = min(Arrow(vec2(xpos + (space / 2.0) - .15,-ypos) , true), Arrow(vec2(-xpos - (space / 2.0) - .15, -ypos), false));
-	float arrT = min(Arrow(vec2(xpos + (space / 2.0) + .15,ypos) , true), Arrow(vec2(-xpos - (space / 2.0) + .15,ypos) , false));
+	float arrB = min(Arrow(fieldPos, vec2(xpos + (space / 2.0) - .15,-ypos) , true, true, .1, 1), Arrow(fieldPos, vec2(-xpos - (space / 2.0) - .15, -ypos), false, false, .1, 1));
+	float arrT = min(Arrow(fieldPos, vec2(xpos + (space / 2.0) + .15,ypos) , true, true, .1, 1), Arrow(fieldPos, vec2(-xpos - (space / 2.0) + .15,ypos) , false, false, .1, 1));
 	float arr = min(arrT, arrB);
 	if(xpos < 1.0) arr = 1000000.0;
 	//float sa = sdBox(vec2(xpos + space,ypos), vec2(05,05));

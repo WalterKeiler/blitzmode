@@ -81,14 +81,13 @@ float smin(float a, float b, float k)
         return dot(input,input);
     }
 
-    float ArrayToSegment(vec2 pos, vec2[arrayMaxLength] points, int size, vec2 offset, bool inverted)
+    float ArrayToSegment(vec2 pos, vec2[arrayMaxLength] points, int size, vec2 offset)
     {
         float d = 1000000000000.0;
-        float invert = inverted ? -1.0 : 1.0;
         for(int i = 0; i < size - 1; i++)
         {
-            vec2 pos1 = points[i] * invert;
-            vec2 pos2 = points[i+1] * invert;
+            vec2 pos1 = points[i];
+            vec2 pos2 = points[i+1];
 
             float p = sdSegment(pos + offset,pos1,pos2);
             d = min(d,p);
