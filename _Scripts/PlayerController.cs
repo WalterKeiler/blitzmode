@@ -453,6 +453,10 @@ public partial class PlayerController : Node3D
 
 		_moveDirection = _moveDirection.Lerp(lastFrameMoveDir, .75f);
 		_moveDirection = _moveDirection.LimitLength();
+
+		float deg = Mathf.RadToDeg(Mathf.Atan2(_moveDirection.X, _moveDirection.Z));
+
+		playerMesh.SetRotationDegrees(new Vector3(0,deg - 90,0));
 		
 		Translate(_moveDirection * (float)delta * ((playerStats.Speed + teamStats.Running) + _sprintMultiplier) * movementMultiplier);
 		lastFrameMoveDir = _moveDirection;
