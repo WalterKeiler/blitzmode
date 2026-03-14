@@ -10,6 +10,7 @@ public partial class PlayerIK : Node3D
     [ExportToolButton("Set To Throw")] public Callable SetToThrowButton => Callable.From(SetToThrow);
     
     [Export] public MeshInstance3D mesh;
+    [Export] public PhysicalBoneSimulator3D ragdoll;
     
     [Export, ExportGroup("Targets")] public Node3D targetLegsL;
     [Export] public Node3D targetLegsR;
@@ -65,6 +66,8 @@ public partial class PlayerIK : Node3D
         StiffArmIK.Active = false;
         StiffArmBodyIK.Active = false;
         stiffArmTarget = targetStiffArm;
+        
+        ragdoll.PhysicalBonesStartSimulation();
         
         //ToggleStiffArm(targetStiffArm);
     }
