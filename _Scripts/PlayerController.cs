@@ -21,7 +21,7 @@ public partial class PlayerController : Node3D
 	[Export] public AIManager aiManager;
 	[Export] public bool isPlayerControlled;
 	[Export] public bool isOffence;
-	[Export] PlayerIK playerMesh;
+	[Export] public PlayerIK playerMesh;
 	[Export] Material mat;
 	[Export] bool debugMode;
 	
@@ -654,6 +654,8 @@ public partial class PlayerController : Node3D
 			int id = inputID;
 			InputManager im = inputManager;
 			List<PlayerActions> pa = PlayerAction;
+
+			isPlayerControlled = false;
 			
 			inputID = -1;
 			_moveDirection = Vector3.Zero;
@@ -915,7 +917,8 @@ public partial class PlayerController : Node3D
 	{
 		PlayerActions[] restrictions =
 		{
-			PlayerActions.Tackled
+			PlayerActions.Tackled,
+			PlayerActions.Throw
 		};
 		if(!CanDoAction(PlayerActions.Tackled, restrictions)) return;
 		
@@ -924,8 +927,13 @@ public partial class PlayerController : Node3D
 		CanCatch = false;
 		CanMove = false;
 		
-		if(HasBall && ball.ballState == BallState.Held && !PlayManager.Instance.inbetweenPlays)
+		//playerMesh.SetRagdoll();
+		
+		if(HasBall && ball.ballState == BallState.Held && 
+		   !PlayManager.Instance.inbetweenPlays)
 		{
+			GD.Print("Has Ball: " + HasBall);
+			GD.Print("Ball State: " + ball.ballState);
 			PlayManager.Instance.InvokeEndPlay(true);
 			return;
 		}
@@ -1001,7 +1009,8 @@ public partial class PlayerController : Node3D
 		PlayerActions[] restrictions =
 		{
 			PlayerActions.SpinMove,
-			PlayerActions.StiffArm
+			PlayerActions.StiffArm,
+			PlayerActions.Tackled
 		};
 		if(!CanDoAction(PlayerActions.Throw, restrictions))
 		{
@@ -1062,6 +1071,7 @@ public partial class PlayerController : Node3D
 		ball.endPoint = endPoint;
 		ball.ballSpeed = throwSpeed;// * (float)GetProcessDeltaTime();
 		ball.ballState = BallState.Thrown;
+		HasBall = false;
 		ball.throwingPlayer = this;
 		ball.ResetCatchData();
 		GD.Print(ball.ballState);

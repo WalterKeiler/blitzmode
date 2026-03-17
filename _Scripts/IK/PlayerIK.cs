@@ -10,7 +10,7 @@ public partial class PlayerIK : Node3D
     [ExportToolButton("Set To Throw")] public Callable SetToThrowButton => Callable.From(SetToThrow);
     
     [Export] public MeshInstance3D mesh;
-    [Export] public PhysicalBoneSimulator3D ragdoll;
+    //[Export] public PhysicalBoneSimulator3D ragdoll;
     
     [Export, ExportGroup("Targets")] public Node3D targetLegsL;
     [Export] public Node3D targetLegsR;
@@ -63,11 +63,9 @@ public partial class PlayerIK : Node3D
         walkPathBody.ProgressRatio = 0;
         
         isStiffArming = false;
-        StiffArmIK.Active = false;
-        StiffArmBodyIK.Active = false;
+        StiffArmIK.Influence = 0;
+        StiffArmBodyIK.Influence = 0;
         stiffArmTarget = targetStiffArm;
-        
-        ragdoll.PhysicalBonesStartSimulation();
         
         //ToggleStiffArm(targetStiffArm);
     }
@@ -111,82 +109,84 @@ public partial class PlayerIK : Node3D
     public void SetToStiffArm()
     {
         isStiffArming = true;
-        StiffArmIK.Active = isStiffArming;
-        StiffArmBodyIK.Active = isStiffArming;
-        RightArmIK.Active = !isStiffArming;
+        StiffArmIK.Influence = isStiffArming ? 1 : 0;
+        StiffArmBodyIK.Influence = isStiffArming ? 1 : 0;
+        RightArmIK.Influence = !isStiffArming ? 1 : 0;
         
-        BallArmIK.Active = true;
+        BallArmIK.Influence = 1;
     }
 
     public void SetToNeutral()
     {
-        BodyIK.Active = false;
-        HeadIK.Active = false;
-        HeadLookAt.Active = false;
-        LeftLegIK.Active = false;
-        RightLegIK.Active = false;
-        RightArmIK.Active = false;
-        LeftArmIK.Active = false;
+        BodyIK.Influence = 0;
+        HeadIK.Influence = 0;
+        HeadLookAt.Influence = 0;
+        LeftLegIK.Influence = 0;
+        RightLegIK.Influence = 0;
+        RightArmIK.Influence = 0;
+        LeftArmIK.Influence = 0;
         
         isStiffArming = false;
-        StiffArmIK.Active = false;
-        StiffArmBodyIK.Active = false;
+        StiffArmIK.Influence = 0;
+        StiffArmBodyIK.Influence = 0;
 
         isThrowable = false;
-        ThrowBodyLookAt.Active = false;
-        ThrowHandLookAt.Active = false;
-        LeftArmThrowIK.Active = false;
-        RightArmThrowIK.Active = false;
-        LeftLegThrowIK.Active = false;
-        RightLegThrowIK.Active = false;
+        ThrowBodyLookAt.Influence = 0;
+        ThrowHandLookAt.Influence = 0;
+        LeftArmThrowIK.Influence = 0;
+        RightArmThrowIK.Influence = 0;
+        LeftLegThrowIK.Influence = 0;
+        RightLegThrowIK.Influence = 0;
 
-        BallArmIK.Active = false;
+        BallArmIK.Influence = 0;
 
         isHoldingBall = false;
+        
+        //ragdoll.PhysicalBonesStopSimulation();
         
         stiffArmTarget = targetStiffArm;
     }
 
     public void SetToRun()
     {
-        BodyIK.Active = true;
-        HeadIK.Active = true;
-        HeadLookAt.Active = true;
-        LeftLegIK.Active = true;
-        RightLegIK.Active = true;
-        RightArmIK.Active = true;
+        BodyIK.Influence = 1;
+        HeadIK.Influence = .25f;
+        HeadLookAt.Influence = 1;
+        LeftLegIK.Influence = 1;
+        RightLegIK.Influence = 1;
+        RightArmIK.Influence = 1;
 
         if (!isStiffArming)
         {
             isStiffArming = false;
-            StiffArmIK.Active = false;
-            StiffArmBodyIK.Active = false;
+            StiffArmIK.Influence = 0;
+            StiffArmBodyIK.Influence = 0;
         }
 
         if (!isThrowable)
         {
-            ThrowBodyLookAt.Active = false;
-            ThrowHandLookAt.Active = false;
-            LeftArmThrowIK.Active = false;
-            RightArmThrowIK.Active = false;
-            LeftLegThrowIK.Active = false;
-            RightLegThrowIK.Active = false;
-            LeftArmIK.Active = true;
+            ThrowBodyLookAt.Influence = 0;
+            ThrowHandLookAt.Influence = 0;
+            LeftArmThrowIK.Influence = 0;
+            RightArmThrowIK.Influence = 0;
+            LeftLegThrowIK.Influence = 0;
+            RightLegThrowIK.Influence = 0;
+            LeftArmIK.Influence = 1;
         }
         
         if (!isThrowing)
         {
-            LeftLegThrowIK.Active = false;
-            RightLegThrowIK.Active = false;
+            LeftLegThrowIK.Influence = 0;
+            RightLegThrowIK.Influence = 0;
         }
 
         if (isHoldingBall)
         {
-            BallArmIK.Active = true;
+            BallArmIK.Influence = 1;
         }
         else
         {
-            BallArmIK.Active = false;
+            BallArmIK.Influence = 0;
         }
         
         walkPathLegsL.ProgressRatio = 0;
@@ -202,28 +202,32 @@ public partial class PlayerIK : Node3D
 
         isThrowing = true;
         
-        LeftArmIK.Active = false;
-        RightArmIK.Active = false;
+        LeftArmIK.Influence = 0;
+        RightArmIK.Influence = 0;
         
         isStiffArming = false;
-        StiffArmIK.Active = false;
-        StiffArmBodyIK.Active = false;
+        StiffArmIK.Influence = 0;
+        StiffArmBodyIK.Influence = 0;
         
-        ThrowBodyLookAt.Active = true;
-        ThrowHandLookAt.Active = true;
-        LeftArmThrowIK.Active = true;
-        RightArmThrowIK.Active = true;
-        LeftLegThrowIK.Active = true;
-        RightLegThrowIK.Active = true;
+        ThrowBodyLookAt.Influence = 1;
+        ThrowHandLookAt.Influence = 1;
+        LeftArmThrowIK.Influence = 1;
+        RightArmThrowIK.Influence = 1;
+        LeftLegThrowIK.Influence = 1;
+        RightLegThrowIK.Influence = 1;
 
         if (isThrowing)
         {
-            LeftLegIK.Active = false;
-            RightLegIK.Active = false;
-            BodyIK.Active = false;
+            LeftLegIK.Influence = 0;
+            RightLegIK.Influence = 0;
+            BodyIK.Influence = 0;
         }
         
-        BallArmIK.Active = false;
+        BallArmIK.Influence = 0;
+    }
 
+    public void SetRagdoll()
+    {
+        //ragdoll.PhysicalBonesStartSimulation();
     }
 }

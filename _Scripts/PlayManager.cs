@@ -193,6 +193,8 @@ public partial class PlayManager : Node
 			gm.players[i].playerID = i;
 			gm.players[i].aiManager.currentZone = null;
 			gm.players[i].aiManager.currentRoute = null;
+			//gm.players[i].playerMesh.SetToNeutral();
+			//gm.players[i].playerMesh.SetToRun();
 			
 			if (gm.players[i].isOffence)
 			{
