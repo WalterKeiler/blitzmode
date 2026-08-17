@@ -184,6 +184,11 @@ public partial class PlayManager : Node
 		int r = 0;
 		int o = 0;
 		int d = 0;
+		
+		float targetPointX = rng.Next((int)(gm.fieldLength / 2.5f), (int)((gm.fieldLength / 2f) + (gm.EndzoneDepth / 4f))) * -PlayDirection;
+		float targetPointZ = rng.Next(-(int)(gm.fieldWidth / 2f), (int)(gm.fieldWidth / 2f));
+		Vector3 targetPos = new Vector3(targetPointX, 0, targetPointZ);
+		
 		for (int i = 0; i < gm.players.Length; i++)
 		{
 			gm.players[i].HasBall = false;
@@ -207,9 +212,8 @@ public partial class PlayManager : Node
 				if (isKickoff)
 				{
 					gm.players[i].Position = new Vector3((gm.fieldLength / 6f) * pos.Y * PlayDirection, 1, pos.X);
-					float targetPointX = rng.Next((int)(gm.fieldLength / 2.5f), (int)((gm.fieldLength / 2f) + (gm.EndzoneDepth / 4f))) * -PlayDirection;
-					float targetPointZ = rng.Next(-(int)(gm.fieldWidth / 2f), (int)(gm.fieldWidth / 2f));
-					Vector3 targetPos = new Vector3(targetPointX, 0, targetPointZ);
+					
+					
 					Ball.Instance.endPoint = targetPos;
 					BallCatchData data = new BallCatchData
 					{

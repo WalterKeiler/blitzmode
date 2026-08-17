@@ -174,12 +174,10 @@ public partial class PlayerController : Node3D
 				ball = Ball.Instance;
 				((Node)ball).Reparent(this, false);
 				ball.Position = new Vector3(.5f, -.25f, 0) * PlayManager.Instance.PlayDirection;
-				snap = true;
 				ball.ballSpeed = .25f;
 				ball.ballState = BallState.Thrown;
 				ball.throwingPlayer = this;
 				ball.ResetCatchData();
-				snap = false;
 				Snapped?.Invoke(true);
 				GD.Print("Kickoff");
 			}
@@ -275,12 +273,12 @@ public partial class PlayerController : Node3D
 		}
 		//else if (HasBall) HasBall = false;
 		
-		if (Ball.Instance.ballState == BallState.Thrown && CanCatch && !PlayerAction.Contains(PlayerActions.Throw))
+		if ((ball.ballState == BallState.Thrown || ball.ballState == BallState.Snapped) && CanCatch && !PlayerAction.Contains(PlayerActions.Throw))
 		{
 			CheckForCatch();
 		}
 		
-		if (ball.ballState is BallState.Free or BallState.Fumbled && !snap)
+		if (ball.ballState is BallState.Free or BallState.Fumbled or BallState.Snapped && !snap)
 		{
 			float dist = ball.GlobalPosition.DistanceTo(GlobalPosition);
 
