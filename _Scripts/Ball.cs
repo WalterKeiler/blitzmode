@@ -80,12 +80,9 @@ public partial class Ball : RigidBody3D
     void Snap(bool isSpecialTeams)
     {
         if(ballState == BallState.Free) return;
-        //if(init) return;
         if(isSpecialTeams)
         {
             init = true;
-            ballState = ballState;
-            //ballState = BallState.Thrown;
             return;
         }
         
@@ -98,19 +95,14 @@ public partial class Ball : RigidBody3D
         BallCatchData data = new BallCatchData
         {
             BallDot = 1,
-            CatchPriority = qb.playerStats.Catching + 100,
+            CatchPriority = float.MaxValue,
             DistanceToBall = qb.GlobalPosition.DistanceTo(Ball.Instance.GlobalPosition),
             DistanceToTarget = qb.GlobalPosition.DistanceTo(Ball.Instance.GlobalPosition),
             Player = qb
         };
         AddCatchOption(data);
-        //Vector3 moveDirection = GlobalPosition.DirectionTo(endPoint);
         ballState = BallState.Snapped;
-        //Freeze = false;
-        //GlobalPosition = endPoint;
-        //ApplyCentralImpulse(moveDirection * 10);
         isSnap = true;
-        //ApplyImpulse(moveDirection * ballSpeed);
     }
     
     public override void _PhysicsProcess(double delta)
@@ -122,43 +114,34 @@ public partial class Ball : RigidBody3D
             if (bestOption != null && ((GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 5f &&
                                         GlobalPosition.DistanceTo(endPoint) <= (startPoint.DistanceTo(endPoint) / 2)) || bestOption.CalculateScore() >= 600))
             {
-                //endPoint = bestOption.Player.GlobalPosition;
-
                 if (bestOption.Player.isOffence)
                 {
                     bestOption.Player.aiManager.overrideTargetPoint = endPoint;
                 }
-                // GD.Print("Updated End Point");
             }
             if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 1f)
             {
                 GD.Print("Caught");
-                //bestOption.Player.HasBall = true;
                 Caught(bestOption.Player);
             }
             
         }
         
         if(!init) return;
-        //GD.Print(ballState);
         if (ballState == BallState.Thrown)
         {
             Move(delta);
             if (bestOption != null && ((GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 5f &&
                                         GlobalPosition.DistanceTo(endPoint) <= (startPoint.DistanceTo(endPoint) / 2)) || bestOption.CalculateScore() >= 600))
             {
-                //endPoint = bestOption.Player.GlobalPosition;
-
                 if (bestOption.Player.isOffence)
                 {
                     bestOption.Player.aiManager.overrideTargetPoint = endPoint;
                 }
-                // GD.Print("Updated End Point");
             }
             if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 1f)
             {
                 GD.Print("Caught");
-                //bestOption.Player.HasBall = true;
                 Caught(bestOption.Player);
             }
         }
@@ -168,7 +151,6 @@ public partial class Ball : RigidBody3D
             Freeze = false;
         }
         
-        //GD.Print(GlobalPosition.X * pm.PlayDirection >= GameManager.Instance.fieldLength / 2f);
         if (ballState == BallState.Held && !pm.midTurnover && !pm.inbetweenPlays && 
             (GlobalPosition.X * pm.PlayDirection >= GameManager.Instance.fieldLength / 2f &&
              GlobalPosition.X * pm.PlayDirection <=
@@ -208,6 +190,8 @@ public partial class Ball : RigidBody3D
         if (isSnap)
         {
             isSnap = false;
+            GameManager.Instance.GetPlayerControlledPlayer(true).SetAIControlled();
+            catchPlayer.SetPlayerControlled(catchPlayer.isOffence);
             return;
         }
         
@@ -228,10 +212,10 @@ public partial class Ball : RigidBody3D
         {
             BallCaught?.Invoke(false);
         }
-        
-        //Freeze = true;
-        //endPoint = Vector3.Inf;
-        //startPoint = Vector3.Inf;
+        if (pm.isKickoff)
+        {
+            catchPlayer.SetPlayerControlled(true);
+        }
     }
     
     void Move(double delta)
@@ -283,11 +267,9 @@ public partial class Ball : RigidBody3D
             {
                 bestPick = data;
                 bestScore = score;
-                //GD.Print("Best Local: " + bestPick.Player.isOffence + ", Score: " + bestScore);
             }
         }
         bestOption = bestPick;
-        // GD.Print("Best Calculated is Off: " + bestPick.Player.isOffence + ", Score: " + bestScore);
     }
     
     public Vector3 CalculateBallDirection()

@@ -85,8 +85,6 @@ public partial class PlayManager : Node
 	{
 		await ToSignal(GetTree().CreateTimer(.25f), "timeout");
 		
-		//playSelectionUI.Visible = true;
-		//psm.Init(false);
 	}
 	
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -240,9 +238,11 @@ public partial class PlayManager : Node
 					gm.players[i].HasBall = true;
 					gm.players[i].CanThrow = true;
 				}
+				
+				SetPlayerInitalVars(true, i, play, null);
+				
 				if(!play.IsPlayer)
 				{
-					SetPlayerInitalVars(true, i, play, null);
 					if(play.Route != null)
 					{
 						play.Route.currentIndex = 0;
@@ -257,7 +257,6 @@ public partial class PlayManager : Node
 					{
 						if (gm.playerInputTeam1.Length <= team1PlayerIndex)
 						{
-							SetPlayerInitalVars(true, i, play, null);
 							o++;
 							continue;
 						}
@@ -269,7 +268,6 @@ public partial class PlayManager : Node
 					{
 						if (gm.playerInputTeam2.Length <= team2PlayerIndex)
 						{
-							SetPlayerInitalVars(true, i, play, null);
 							o++;
 							continue;
 						}
@@ -315,12 +313,8 @@ public partial class PlayManager : Node
 					gm.players[i].aiManager.targetPlayer = reciverPositions[r];
 					r++;
 				}
-				
-				if(!play.IsPlayer)
-				{
-					SetPlayerInitalVars(false, i, null, play);
-				}
-				else
+				SetPlayerInitalVars(false, i, null, play);
+				if(play.IsPlayer)
 				{
 					InputManager input;
 					
@@ -328,7 +322,6 @@ public partial class PlayManager : Node
 					{
 						if (gm.playerInputTeam2.Length <= team2PlayerIndex)
 						{
-							SetPlayerInitalVars(false, i, null, play);
 							d++;
 							continue;
 						}
@@ -340,7 +333,6 @@ public partial class PlayManager : Node
 					{
 						if (gm.playerInputTeam1.Length <= team1PlayerIndex)
 						{
-							SetPlayerInitalVars(false, i, null, play);
 							d++;
 							continue;
 						}

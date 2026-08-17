@@ -110,14 +110,7 @@ public partial class PlayerController : Node3D
 	// Called when the node enters the scene tree for the first time.
 	public void Init(bool isSpecialTeams)
 	{
-		//snap = false;
-		//GD.Print(mat.ResourceName);
 		PlayerAction = new List<PlayerActions>();
-		// if (inputManager != null)
-		// {
-		// 	inputID = inputManager.PlayerID;
-		// }
-		
 		PlayersOnTeam = new List<PlayerController>();
 		PlayersNotOnTeam = new List<PlayerController>();
 		_moveDirection = Vector3.Zero;
@@ -159,7 +152,6 @@ public partial class PlayerController : Node3D
 			PlayersNotOnTeam = gm.offencePlayers;
 		}
 		init = true;
-		//if (PlayManager.Instance.isKickoff) CanMove = false;
 		aiManager.Init();
 	}
 
@@ -188,7 +180,6 @@ public partial class PlayerController : Node3D
 		
 		ball = Ball.Instance;
 		ball.Freeze = true;
-		//GD.Print("Ball: "  + ball.GetParent().Name);
 		ball.Position = new Vector3(-.5f, -.25f, 0) * PlayManager.Instance.PlayDirection;
 		
 		((Node)ball).Reparent(this, false);
@@ -221,8 +212,6 @@ public partial class PlayerController : Node3D
 				aiManager.rushBall = 1;
 			}
 		}
-
-		//if (PlayManager.Instance.isKickoff) CanMove = true;
 	}
 
 	void OnPlayerWithBallTackled(bool incompletePass)
@@ -244,7 +233,7 @@ public partial class PlayerController : Node3D
 		if(CanMove)
 			Move(delta);
 		
-		if (CanThrow && ball.GetParent() == this)// && !HasBall)
+		if (CanThrow && ball.GetParent() == this)
 		{
 			if (PlayManager.Instance.PlayDirection > 0)
 			{
@@ -271,7 +260,6 @@ public partial class PlayerController : Node3D
 			}
 			HasBall = true;
 		}
-		//else if (HasBall) HasBall = false;
 		
 		if ((ball.ballState == BallState.Thrown || ball.ballState == BallState.Snapped) && CanCatch && !PlayerAction.Contains(PlayerActions.Throw))
 		{
@@ -324,31 +312,15 @@ public partial class PlayerController : Node3D
 		for (int i = 0; i < PlayersOnTeam.Count; i++)
 		{
 			if(PlayersOnTeam[i] == this) continue;
-			//if(throwTarget != null) break;
-			if(!((PlayerController)PlayersOnTeam[i]).playerStats.canBeThrowTarget) continue;
+			if(!PlayersOnTeam[i].playerStats.canBeThrowTarget) continue;
 			
 			Vector3 dir = GlobalPosition.DirectionTo(PlayersOnTeam[i].GlobalPosition);
 			float dot = dir.Dot(_moveDirection);
 			
 			if (dot >= closest)
 			{
-				//GD.Print(dot);
-				// if (dot - closest <= .1f)
-				// {
-				// 	GD.Print("In Line");
-				// 	if(GlobalPosition.DistanceTo(PlayersOnTeam[i].GlobalPosition) <= GlobalPosition.DistanceTo(endPoint))
-				// 	{
-				// 		closest = dot;
-				// 		endPoint = PlayersOnTeam[i].GlobalPosition;
-				// 		target = (PlayerController)PlayersOnTeam[i];
-				// 	}
-				// }
-				// else
-				{
-					closest = dot;
-					endPoint = PlayersOnTeam[i].GlobalPosition;
-					target = (PlayerController)PlayersOnTeam[i];
-				}
+				closest = dot;
+				target = PlayersOnTeam[i];
 			}
 		}
 		
@@ -579,8 +551,6 @@ public partial class PlayerController : Node3D
 		for (int i = 0; i < target.Length; i++)
 		{
 			target[i] = GetNearestPlayer(sameTeam, prioritizeBall, false, target);
-			//GD.Print("Found: " + target[i].Name);
-
 		}
 
 		return target;
@@ -625,6 +595,27 @@ public partial class PlayerController : Node3D
 		}
 
 		if (inputManager == null && inputID != -1) inputManager = gm.GetInputByPlayerID(inputID);
+	}
+
+	public void SetPlayerControlled(bool isOffence)
+	{
+		InputManager im = gm.playerInputTeam1[0].isOffence == isOffence ? gm.playerInputTeam1[0] : gm.playerInputTeam2[0];
+		
+		inputID = im.PlayerID;
+		_moveDirection = Vector3.Zero;
+		inputManager = im;
+		PlayerAction = new List<PlayerActions>();
+		
+		if (inputManager == null && inputID != -1) inputManager = gm.GetInputByPlayerID(inputID);
+	}
+
+	public void SetAIControlled()
+	{
+		inputID = -1;
+		_moveDirection = Vector3.Zero;
+		inputManager = null;
+		PlayerAction = new List<PlayerActions>();
+		isPlayerControlled = false;
 	}
 	
 	public void DoAction(PlayerActions action, int calledPlayerId, bool forceAction = false, bool playerAction = false, bool isSecondaryAction = false)
@@ -695,8 +686,6 @@ public partial class PlayerController : Node3D
 				Tackled();
 				break;
 		}
-		//if(!PlayerAction.Contains(action))
-		//	PlayerAction.Add(action);
 	}
 	public void CancelAction(PlayerActions action, int calledPlayerId, bool forceAction, bool playerAction)
 	{
@@ -740,7 +729,6 @@ public partial class PlayerController : Node3D
 		CanBlock = false;
 		PlayerController nearestPlayer = GetNearestPlayer(false);
 		Vector3 dir = GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition);
-		//GD.Print(nearestPlayer._moveDirection.Dot(dir) < 0.75f);
 		if (nearestPlayer._moveDirection.Dot(dir) < 0.95f && ((nearestPlayer.playerStats.Strength + nearestPlayer.teamStats.Linemen) / 2) < blockStamina)
 		{
 			nearestPlayer._moveDirection = Vector3.Zero;
@@ -806,8 +794,6 @@ public partial class PlayerController : Node3D
 		};
 		if(!CanDoAction(PlayerActions.Jump, restrictions)) return;
 		
-		//if(tackleBox.GetOverlappingAreas().Count > 1) return;
-		
 		float jumpHeight = 3;
 		testMat.SetAlbedo((Colors.Blue));
 		canTakeInput = false;
@@ -851,7 +837,6 @@ public partial class PlayerController : Node3D
 		if(!CanDoAction(PlayerActions.Tackle, restrictions)) return;
 		
 		testMat.SetAlbedo((Colors.Green));
-		//PlayerController tackleTarget = GetNearestPlayer(tackleBox, false, true);
 		PlayerController tackleTarget = GetNearestPlayer(false, true);
 		if (tackleTarget != null)
 		{
@@ -976,14 +961,9 @@ public partial class PlayerController : Node3D
 		Vector3 startPoint = ball.GlobalPosition;
 		Vector3 endPoint = throwTarget.GlobalPosition;
 
-		// ball.Reparent(ballPathFollow);
-		// ball.Position = Vector3.Zero;
-		// ball.Rotation = Vector3.Zero;
-
 		
 		float distance = startPoint.DistanceTo(endPoint);
 		float throwSpeed = (playerStats.Agility + teamStats.Passing) * (float)GetPhysicsProcessDeltaTime() * 3;// * distance;
-		//GD.Print("Speed: " + throwSpeed + " Agility: " + playerStats.Agility + " processTime: " + (float)GetPhysicsProcessDeltaTime());
 		float maxThrowDistance = Mathf.Clamp((playerStats.Agility + teamStats.Passing) * (playerStats.Strength + teamStats.Passing) * 5, 0, MAXTHROWDISTANCE);
 		
 		
@@ -991,7 +971,6 @@ public partial class PlayerController : Node3D
 			endPoint = throwTarget.aiManager.currentRoute.GetThrowToPoint(distance,endPoint, startPoint
 				, (throwTarget.playerStats.Speed + throwTarget.teamStats.Running) * (float)GetPhysicsProcessDeltaTime(), ref throwSpeed);
 		GD.Print(endPoint);
-		//GD.Print("Speed: " + throwSpeed * (float)GetPhysicsProcessDeltaTime());
 
 		if (startPoint.DistanceTo(endPoint) > maxThrowDistance)
 		{
@@ -1007,7 +986,7 @@ public partial class PlayerController : Node3D
 		((Node)ball).Reparent(GetTree().Root.GetChild(0));
 		ball.startPoint = startPoint;
 		ball.endPoint = endPoint;
-		ball.ballSpeed = throwSpeed;// * (float)GetProcessDeltaTime();
+		ball.ballSpeed = throwSpeed;
 		ball.ballState = BallState.Thrown;
 		ball.throwingPlayer = this;
 		ball.ResetCatchData();
@@ -1022,9 +1001,6 @@ public partial class PlayerController : Node3D
 			GetParent().AddChild(testMesh);
 			//debugBox = testMesh;
 		}
-		
-		//if (PlayerAction.Contains(PlayerActions.Throw))
-		//	PlayerAction.Remove(PlayerActions.Throw);
 	}
 	async void ChangePlayer()
 	{
