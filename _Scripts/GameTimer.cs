@@ -15,9 +15,9 @@ public partial class GameTimer : Label
         pm = PlayManager.Instance;
     }
 
-    public override void _Process(double delta)
+    public override void _PhysicsProcess(double delta)
     {
-        base._Process(delta);
+        base._PhysicsProcess(delta);
 
         int min = Mathf.FloorToInt(pm.quarterTimer / 60);
         int sec = Mathf.FloorToInt(pm.quarterTimer) - (min * 60);

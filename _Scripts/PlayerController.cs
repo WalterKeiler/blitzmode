@@ -234,7 +234,8 @@ public partial class PlayerController : Node3D
 		CanAct = false;
 	}
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+
+	public override void _PhysicsProcess(double delta)
 	{
 		if(!init) return;
 
@@ -273,7 +274,7 @@ public partial class PlayerController : Node3D
 			HasBall = true;
 		}
 		//else if (HasBall) HasBall = false;
-
+		
 		if (Ball.Instance.ballState == BallState.Thrown && CanCatch && !PlayerAction.Contains(PlayerActions.Throw))
 		{
 			CheckForCatch();

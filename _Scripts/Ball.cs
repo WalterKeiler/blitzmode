@@ -25,6 +25,7 @@ public partial class Ball : RigidBody3D
     private bool crossedLOS = false;
     
     private bool init = false;
+    private bool isSnap = false;
 
     private PlayManager pm;
     
@@ -92,18 +93,54 @@ public partial class Ball : RigidBody3D
         GD.Print("Snap");
         
         PlayerController qb = GameManager.Instance.offencePlayers.Find(x => x.playerStats.PlayerType == PlayerType.Quarterback);
+        startPoint = GlobalPosition;
         endPoint = qb.GlobalPosition + Vector3.Up * .75f;
-        Vector3 moveDirection = GlobalPosition.DirectionTo(endPoint);
-        ballState = BallState.Free;
-        Freeze = false;
+        BallCatchData data = new BallCatchData
+        {
+            BallDot = 1,
+            CatchPriority = qb.playerStats.Catching + 100,
+            DistanceToBall = qb.GlobalPosition.DistanceTo(Ball.Instance.GlobalPosition),
+            DistanceToTarget = qb.GlobalPosition.DistanceTo(Ball.Instance.GlobalPosition),
+            Player = qb
+        };
+        AddCatchOption(data);
+        //Vector3 moveDirection = GlobalPosition.DirectionTo(endPoint);
+        ballState = BallState.Thrown;
+        //Freeze = false;
         //GlobalPosition = endPoint;
-        ApplyCentralImpulse(moveDirection * 10);
-        init = true;
+        //ApplyCentralImpulse(moveDirection * 10);
+        isSnap = true;
         //ApplyImpulse(moveDirection * ballSpeed);
     }
     
-    public override void _Process(double delta)
+    public override void _PhysicsProcess(double delta)
     {
+        if (isSnap)
+        {
+            Move(delta);
+            if (ballState == BallState.Thrown)
+            {
+                Move(delta);
+                if (bestOption != null && ((GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 5f &&
+                                            GlobalPosition.DistanceTo(endPoint) <= (startPoint.DistanceTo(endPoint) / 2)) || bestOption.CalculateScore() >= 600))
+                {
+                    //endPoint = bestOption.Player.GlobalPosition;
+
+                    if (bestOption.Player.isOffence)
+                    {
+                        bestOption.Player.aiManager.overrideTargetPoint = endPoint;
+                    }
+                    // GD.Print("Updated End Point");
+                }
+                if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 1f)
+                {
+                    GD.Print("Caught");
+                    //bestOption.Player.HasBall = true;
+                    Caught(bestOption.Player);
+                }
+            }
+        }
+        
         if(!init) return;
         //GD.Print(ballState);
         if (ballState == BallState.Thrown)
@@ -163,8 +200,19 @@ public partial class Ball : RigidBody3D
 
     public void Caught(PlayerController catchPlayer)
     {
+        init = true;
         catchPlayer.HasBall = true;
         Reparent(catchPlayer);
+        
+        Position = Vector3.Up;
+        ballState = BallState.Held;
+
+        if (isSnap)
+        {
+            isSnap = false;
+            return;
+        }
+        
         if (throwingPlayer != null && throwingPlayer.PlayerAction.Contains(PlayerActions.Throw))
             throwingPlayer.PlayerAction.Remove(PlayerActions.Throw);
         
@@ -186,10 +234,6 @@ public partial class Ball : RigidBody3D
         //Freeze = true;
         //endPoint = Vector3.Inf;
         //startPoint = Vector3.Inf;
-        
-        
-        Position = Vector3.Up;
-        ballState = BallState.Held;
     }
     
     void Move(double delta)
@@ -197,7 +241,8 @@ public partial class Ball : RigidBody3D
         Vector3 moveDirection = CalculateBallDirection();
         if(GlobalPosition.Y >= .15f)
         {
-            GlobalPosition += moveDirection * ballSpeed;
+            float s = isSnap ? ballSpeed / 4 : ballSpeed;
+            GlobalPosition += moveDirection * s;
 
             LookAt(GlobalPosition + moveDirection);
             ((Node3D)GetChild(0)).RotateZ(this.ballSpeed);
@@ -256,6 +301,7 @@ public partial class Ball : RigidBody3D
         float distance = startPoint.DistanceTo(endPoint);
         midPoint.Y = Mathf.Clamp(BALLHEIGHTMULTIPLIER * distance, 1, 10);
         if (pm.isKickoff) midPoint.Y *= 2;
+        if (isSnap) midPoint.Y = 2;
         Vector3 upDir = startPoint.DirectionTo(midPoint);
         Vector3 downDir = midPoint.DirectionTo(endPoint);
 

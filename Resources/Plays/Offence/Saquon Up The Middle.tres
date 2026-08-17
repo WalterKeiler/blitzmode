@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Play" load_steps=15 format=4 uid="uid://bfsuyo3p3p5db"]
+[gd_resource type="Resource" script_class="Play" format=4 uid="uid://bfsuyo3p3p5db"]
 
 [ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="1_f1adn"]
 [ext_resource type="Script" uid="uid://dys3y3oj7sr6d" path="res://_Scripts/Resources/PlayerDataOffence.cs" id="2_saxlx"]

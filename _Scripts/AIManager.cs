@@ -77,7 +77,7 @@ public partial class AIManager : Node
         
     }
     
-    public override void _Process(double delta)
+    public override void _PhysicsProcess(double delta)
     {
         if(!init || !player.CanAct) return;
 

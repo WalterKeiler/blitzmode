@@ -43,6 +43,7 @@ public partial class PlayManager : Node
 	
 	private GameManager gm;
 	PlaySelectionUIManager psm;
+	Random rng = new Random();
 	public override void _EnterTree()
 	{
 		base._EnterTree();
@@ -89,7 +90,7 @@ public partial class PlayManager : Node
 	}
 	
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public override void _PhysicsProcess(double delta)
 	{
 		if(timerRunning) quarterTimer -= (float)delta;
 		if(quarterTimer < 0)
@@ -206,16 +207,25 @@ public partial class PlayManager : Node
 				if (isKickoff)
 				{
 					gm.players[i].Position = new Vector3((gm.fieldLength / 6f) * pos.Y * PlayDirection, 1, pos.X);
-					Ball.Instance.endPoint = gm.players[i].GlobalPosition;
+					float targetPointX = rng.Next((int)(gm.fieldLength / 2.5f), (int)((gm.fieldLength / 2f) + (gm.EndzoneDepth / 4f))) * -PlayDirection;
+					float targetPointZ = rng.Next(-(int)(gm.fieldWidth / 2f), (int)(gm.fieldWidth / 2f));
+					Vector3 targetPos = new Vector3(targetPointX, 0, targetPointZ);
+					Ball.Instance.endPoint = targetPos;
 					BallCatchData data = new BallCatchData
 					{
 						BallDot = 1,
 						CatchPriority = float.MaxValue,
-						DistanceToBall = gm.players[i].GlobalPosition.DistanceTo(Ball.Instance.GlobalPosition),
-						DistanceToTarget = gm.players[i].GlobalPosition.DistanceTo(Ball.Instance.GlobalPosition),
+						DistanceToBall = targetPos.DistanceTo(Ball.Instance.GlobalPosition),
+						DistanceToTarget = targetPos.DistanceTo(Ball.Instance.GlobalPosition),
 						Player = gm.players[i]
 					};
 					Ball.Instance.AddCatchOption(data);
+					gm.players[i].aiManager.overrideTargetPoint = targetPos;
+
+					if (gm.players[i].playerStats.PlayerType == PlayerType.Quarterback)
+					{
+						gm.players[i].Position = new Vector3(targetPointX, 1, targetPointZ);
+					}
 				}
 				gm.players[i].Name = (play.PlayerType.PlayerType + " " + o);
 				

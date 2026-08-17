@@ -186,9 +186,9 @@ public partial class PlaySelectionUIManager : Control
         }
     }
 
-    public override void _Process(double delta)
+    public override void _PhysicsProcess(double delta)
     {
-        base._Process(delta);
+        base._PhysicsProcess(delta);
         if(!Visible) return;
         playSelectionTimer -= (float) delta;
         selectionTimerText.Text = $"{Mathf.CeilToInt(playSelectionTimer):D2}";
