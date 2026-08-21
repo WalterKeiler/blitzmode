@@ -1,11 +1,11 @@
-[gd_resource type="Resource" script_class="Play" load_steps=19 format=4]
+[gd_resource type="Resource" script_class="Play" format=4 uid="uid://cnxxh843xmo8m"]
 
-[ext_resource type="Resource" path="res://Resources/Stats/Players/Quarterback.tres" id="1_qo3kr"]
-[ext_resource type="Script" path="res://_Scripts/Resources/PlayerDataOffence.cs" id="2_6vc3p"]
-[ext_resource type="Resource" path="res://Resources/Stats/Players/OLinebacker.tres" id="3_651wf"]
-[ext_resource type="Resource" path="res://Resources/Stats/Players/WideReceiver.tres" id="4_0u5s1"]
-[ext_resource type="Script" path="res://_Scripts/Resources/Route.cs" id="5_uc0ms"]
-[ext_resource type="Script" path="res://_Scripts/Resources/Play.cs" id="6_gg5g3"]
+[ext_resource type="Resource" uid="uid://dub6i7p5ohdk7" path="res://Resources/Stats/Players/Quarterback.tres" id="1_qo3kr"]
+[ext_resource type="Script" uid="uid://dys3y3oj7sr6d" path="res://_Scripts/Resources/PlayerDataOffence.cs" id="2_6vc3p"]
+[ext_resource type="Resource" uid="uid://y3r1urc4bi1s" path="res://Resources/Stats/Players/OLinebacker.tres" id="3_651wf"]
+[ext_resource type="Resource" uid="uid://c3iwmer7t8bnr" path="res://Resources/Stats/Players/WideReceiver.tres" id="4_0u5s1"]
+[ext_resource type="Script" uid="uid://cbqyfumputku2" path="res://_Scripts/Resources/Route.cs" id="5_uc0ms"]
+[ext_resource type="Script" uid="uid://dcvk4jwtiq13o" path="res://_Scripts/Resources/Play.cs" id="6_gg5g3"]
 
 [sub_resource type="Resource" id="Resource_u352b"]
 script = ExtResource("2_6vc3p")

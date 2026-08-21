@@ -33,6 +33,7 @@ public partial class GameManager : Node
 	
 	public PlayerController[] players;
 
+	public Random rand = new Random();
 	
 	public override void _EnterTree()
 	{
@@ -65,6 +66,35 @@ public partial class GameManager : Node
 		return null;
 	}
 
+	public InputManager GetRandomPlayerInput(bool isOffence)
+	{
+		
+		switch (playerInputTeam1.Length)
+		{
+			case < 1:
+				goto NullExit;
+			case 1 when playerInputTeam1[0].isOffence == isOffence:
+				return playerInputTeam1[0];
+			case > 1 when playerInputTeam1[0].isOffence == isOffence:
+				return playerInputTeam1[rand.Next(0, playerInputTeam1.Length - 1)];
+		}
+		
+		switch (playerInputTeam2.Length)
+		{
+			case < 1:
+				goto NullExit;
+			case 1 when playerInputTeam2[0].isOffence == isOffence:
+				return playerInputTeam2[0];
+			case > 1 when playerInputTeam2[0].isOffence == isOffence:
+				return playerInputTeam2[rand.Next(0, playerInputTeam2.Length - 1)];
+		}
+		
+		
+		NullExit:
+		GD.PrintErr("Player input not found");
+		return null;
+	}
+	
 	public InputManager GetInputByPlayerID(int ID)
 	{
 		foreach (var p1 in playerInputTeam1)

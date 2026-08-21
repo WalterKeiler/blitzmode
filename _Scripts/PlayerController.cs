@@ -599,7 +599,13 @@ public partial class PlayerController : Node3D
 
 	public void SetPlayerControlled(bool isOffence)
 	{
-		InputManager im = gm.playerInputTeam1[0].isOffence == isOffence ? gm.playerInputTeam1[0] : gm.playerInputTeam2[0];
+		InputManager im = gm.GetRandomPlayerInput(isOffence);
+		
+		if(im == null)
+		{
+			GD.Print("No player to set");
+			return;
+		}
 		
 		inputID = im.PlayerID;
 		_moveDirection = Vector3.Zero;
