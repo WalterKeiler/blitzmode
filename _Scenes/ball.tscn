@@ -26,7 +26,6 @@ collision_layer = 9
 physics_material_override = SubResource("PhysicsMaterial_aemly")
 sleeping = true
 freeze = true
-freeze_mode = 1
 linear_damp = 0.1
 angular_damp = 0.2
 script = ExtResource("1_ax1bg")

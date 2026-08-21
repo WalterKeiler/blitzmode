@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Play" load_steps=14 format=4 uid="uid://b8s3gimyaofkn"]
+[gd_resource type="Resource" script_class="Play" format=4 uid="uid://b8s3gimyaofkn"]
 
 [ext_resource type="Resource" uid="uid://blpydpdwlcl2a" path="res://Resources/Stats/Players/Safety.tres" id="1_cqnwl"]
 [ext_resource type="Script" uid="uid://c53peuqjd114t" path="res://_Scripts/Resources/PlayerDataDefence.cs" id="2_ncf4c"]

@@ -20,7 +20,10 @@ public partial class AIManager : Node
 
     [Export] public Route currentRoute;
     [Export] public Zone currentZone;
-
+    
+    [ExportCategory("General Stats")] 
+    [Export] public float tackleRange = 1.65f;
+    
     public Vector3 overrideTargetPoint;
     
     public PlayerController targetPlayer;
@@ -120,7 +123,7 @@ public partial class AIManager : Node
 
             PlayerController tp = player.GetNearestPlayerToBall(false);
             
-            if(tp != null && player.GlobalPosition.DistanceTo(tp.GlobalPosition) < 1.65f)
+            if(tp != null && player.GlobalPosition.DistanceTo(tp.GlobalPosition) < tackleRange && !tp.PlayerAction.Contains(PlayerActions.Tackled))
             {
                 player.DoAction(PlayerActions.Tackle, player.playerID);
             }

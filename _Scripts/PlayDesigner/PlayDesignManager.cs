@@ -156,6 +156,7 @@ public partial class PlayDesignManager : Node3D
 	
 	public override void _Input(InputEvent inEvent)
 	{
+		if(pdUI.name.IsEditing()) return;
 		if (inEvent.IsAction("ui_accept") && !playerSelected)
 		{
 			if (inEvent is InputEventMouseButton mouseButton)

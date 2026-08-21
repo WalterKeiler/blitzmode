@@ -96,7 +96,7 @@ public partial class Ball : RigidBody3D
         Vector3 dir = GlobalPosition.DirectionTo(qb.GlobalPosition);
         dir.Y = 0;
         dir = dir.Normalized();
-        endPoint = qb.GlobalPosition + (dir * 6) + Vector3.Up * .75f;
+        endPoint = qb.GlobalPosition + (dir * 6);// + Vector3.Up * .75f;
         BallCatchData data = new BallCatchData
         {
             BallDot = 1,
@@ -223,9 +223,9 @@ public partial class Ball : RigidBody3D
     void Move(double delta)
     {
         Vector3 moveDirection = CalculateBallDirection();
+        float s = isSnap ? ballSpeed / 2 : ballSpeed;
         if(GlobalPosition.Y >= .15f)
         {
-            float s = isSnap ? ballSpeed / 3 : ballSpeed;
             GlobalPosition += moveDirection * s;
 
             LookAt(GlobalPosition + moveDirection);
@@ -239,9 +239,11 @@ public partial class Ball : RigidBody3D
                 pm.InvokeEndPlay(false);
                 return;
             }
+            init = true;
+            isSnap = false;
             ballState = BallState.Free;
             Freeze = false;
-            ApplyImpulse(moveDirection * ballSpeed * 100);
+            ApplyImpulse(moveDirection * s * 100);
         }
     }
 
@@ -292,6 +294,8 @@ public partial class Ball : RigidBody3D
         float t = s.DistanceTo(c) / distance;
         
         t = Mathf.Clamp(t, 0, 1);
+        
+        if(t >= .999f) downDir = midPoint.DirectionTo(endPoint);
         
         Vector3 dir = upDir.Lerp(downDir, t);
         

@@ -861,6 +861,8 @@ public partial class PlayerController : Node3D
 			PlayerActions.Tackled
 		};
 		if(!CanDoAction(PlayerActions.Tackled, restrictions)) return;
+
+		PlayerAction.Clear();
 		
 		testMat.SetAlbedo((Colors.Black));
 		CanCatch = false;
