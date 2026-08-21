@@ -13,6 +13,7 @@ public partial class Ball : RigidBody3D
     [Export] public BallState ballState;
     [Export] public float ballSpeed;
     [Export] public float catchDelay;
+    [Export] public float fumbleDelay = 1;
     [Export] public Vector3 startPoint;
     [Export] public Vector3 endPoint;
 
@@ -30,11 +31,13 @@ public partial class Ball : RigidBody3D
     private bool isSnap = false;
 
     private PlayManager pm;
+    private GameManager gm;
     
     public override void _Ready()
     {
         Freeze = true;
         pm = PlayManager.Instance;
+        gm = GameManager.Instance;
     }
     
     public override void _EnterTree()
@@ -144,9 +147,10 @@ public partial class Ball : RigidBody3D
             }
         }
 
-        if (ballState == BallState.Free)
+        if (ballState == BallState.Free || ballState == BallState.Fumbled)
         {
             Freeze = false;
+            inAirTimer += (float)delta;
         }
         
         if (ballState == BallState.Held && !pm.midTurnover && !pm.inbetweenPlays && 
@@ -178,7 +182,8 @@ public partial class Ball : RigidBody3D
 
     public void Caught(PlayerController catchPlayer)
     {
-        if(inAirTimer <= catchDelay && (ballState != BallState.Free || ballState != BallState.Fumbled)) return;
+        float d = ballState != BallState.Fumbled ? catchDelay : fumbleDelay;
+        if(inAirTimer <= d) return;
         
         GD.Print(inAirTimer);
         inAirTimer = 0;
@@ -186,19 +191,30 @@ public partial class Ball : RigidBody3D
         catchPlayer.HasBall = true;
         Reparent(catchPlayer);
         
+        Freeze = true;
         Position = Vector3.Up;
         ballState = BallState.Held;
 
+        if (ballState is BallState.Free or BallState.Fumbled)
+        {
+            BallCaught?.Invoke(catchPlayer.isOffence);
+            catchPlayer.SetPlayerControlled(catchPlayer.isOffence);
+            return;
+        }
+        
         if (isSnap)
         {
             isSnap = false;
             GameManager.Instance.GetPlayerControlledPlayer(true).SetAIControlled();
             catchPlayer.SetPlayerControlled(catchPlayer.isOffence);
+            catchPlayer.ballControll = PlayerController.BALLCONTROLLOFFSNAP;
             return;
         }
         
         if (throwingPlayer != null && throwingPlayer.PlayerAction.Contains(PlayerActions.Throw))
             throwingPlayer.PlayerAction.Remove(PlayerActions.Throw);
+        
+        catchPlayer.ballControll = PlayerController.BALLCONTROLLOFFTHROW;
         
         if(throwingPlayer != null && catchPlayer.isOffence == throwingPlayer.isOffence)
         {
@@ -247,6 +263,15 @@ public partial class Ball : RigidBody3D
         }
     }
 
+    public void Fumble()
+    {
+        Reparent(GetTree().Root.GetChild(0));
+        ballState = BallState.Fumbled;
+        Freeze = false;
+        Vector3 moveDirection = new Vector3(gm.rand.Next(10) / 10f, .5f, gm.rand.Next(10) / 10f).Normalized();
+        ApplyImpulse(moveDirection * 5);
+    }
+    
     public void ResetCatchData()
     {
         catchOptions = new List<BallCatchData>();

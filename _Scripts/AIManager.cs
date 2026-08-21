@@ -123,7 +123,8 @@ public partial class AIManager : Node
 
             PlayerController tp = player.GetNearestPlayerToBall(false);
             
-            if(tp != null && player.GlobalPosition.DistanceTo(tp.GlobalPosition) < tackleRange && !tp.PlayerAction.Contains(PlayerActions.Tackled))
+            if(tp != null && player.GlobalPosition.DistanceTo(tp.GlobalPosition) < tackleRange 
+                          && !tp.PlayerAction.Contains(PlayerActions.Tackled) && (ball.ballState != BallState.Fumbled || ball.ballState != BallState.Free))
             {
                 player.DoAction(PlayerActions.Tackle, player.playerID);
             }

@@ -9,13 +9,17 @@ public partial class PlayerController : Node3D
 {
 	public const float MAXTHROWDISTANCE = 60;
 	public const float SWITCHTARGETCOOLDOWN = .25f;
+	public const float BALLCONTROLLOFFTHROW = .85f;
+	public const float BALLCONTROLLOFFGROUND = .75f;
+	public const float BALLCONTROLLOFFSNAP = .95f;
 	public const int PATHFINDING_STEPS = 32;
 	
 	
 	[Export] public int playerID = -1;
 	[Export] public int inputID = -1;
 	[Export] public PlayerStats playerStats;
-	[Export(PropertyHint.Range, "0,1,")] float _PlayerSprintAmount = 1;
+	[Export(PropertyHint.Range, "0,1,")] public float PlayerSprintAmount = 1;
+	[Export(PropertyHint.Range, "0,1,")] public float ballControll = 1;
 	[Export] public Node3D _mainCam;
 	[Export] public InputManager inputManager;
 	[Export] public AIManager aiManager;
@@ -233,7 +237,9 @@ public partial class PlayerController : Node3D
 		if(CanMove)
 			Move(delta);
 		
-		if (CanThrow && ball.GetParent() == this)
+		HasBall = ball.GetParent() == this;
+		
+		if (CanThrow && HasBall)
 		{
 			if (PlayManager.Instance.PlayDirection > 0)
 			{
@@ -258,7 +264,6 @@ public partial class PlayerController : Node3D
 			{
 				SelectThrowTarget();
 			}
-			HasBall = true;
 		}
 		
 		if ((ball.ballState == BallState.Thrown || ball.ballState == BallState.Snapped) && CanCatch && !PlayerAction.Contains(PlayerActions.Throw))
@@ -266,13 +271,15 @@ public partial class PlayerController : Node3D
 			CheckForCatch();
 		}
 		
-		if (ball.ballState is BallState.Free or BallState.Fumbled or BallState.Snapped && !snap)
+		if (ball.ballState is BallState.Free or BallState.Fumbled or BallState.Snapped)// && !snap)// && 
+		    //!PlayerAction.Contains(PlayerActions.Tackle) && !PlayerAction.Contains(PlayerActions.Tackled))
 		{
 			float dist = ball.GlobalPosition.DistanceTo(GlobalPosition);
 
-			if (dist <= 1.25f)
+			if (dist <= 1.5f)
 			{
 				ball.Caught(this);
+				ballControll = BALLCONTROLLOFFGROUND;
 			}
 		}
 		
@@ -781,7 +788,8 @@ public partial class PlayerController : Node3D
 			PlayerActions.StiffArm
 		};
 		if(!CanDoAction(PlayerActions.SpinMove, restrictions)) return;
-		
+
+		ballControll -= (float)gm.rand.Next(0, 25) / 100;
 		
 		testMat.SetAlbedo((Colors.Red));
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
@@ -870,8 +878,19 @@ public partial class PlayerController : Node3D
 		
 		if(HasBall && ball.ballState == BallState.Held && !PlayManager.Instance.inbetweenPlays)
 		{
-			PlayManager.Instance.InvokeEndPlay(true);
-			return;
+			float fumbleChance = (gm.rand.Next(100) / 100f) - ballControll;
+			if (fumbleChance > 0)
+			{
+				GD.Print("Fumble");
+				HasBall = false;
+				CanThrow = false;
+				ball.Fumble();
+			}
+			else
+			{
+				PlayManager.Instance.InvokeEndPlay(true);
+				return;
+			}
 		}
 		
 		await ToSignal(GetTree().CreateTimer(1), "timeout");
