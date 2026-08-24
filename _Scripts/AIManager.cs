@@ -301,7 +301,7 @@ public partial class AIManager : Node
         }
         if (currentZone.GetLOSCenter().DistanceTo(nearestPlayer.GlobalPosition) < currentZone.radius)
         {
-            return player.GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition + nearestPlayer._moveDirection);
+            return player.GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition + nearestPlayer.moveDirection);
         }
         else
         {
@@ -333,13 +333,13 @@ public partial class AIManager : Node
         
         Vector3 nearestPlayer = targetPlayer.GlobalPosition;
         if (player.GlobalPosition.DistanceTo(nearestPlayer) < 1.5f || 
-            targetPlayer._moveDirection.Dot(targetPlayer.GlobalPosition.DirectionTo(player.GlobalPosition)) > .85f)
+            targetPlayer.moveDirection.Dot(targetPlayer.GlobalPosition.DirectionTo(player.GlobalPosition)) > .85f)
         {
             return Vector3.Zero;
         }
 
-        return QuerySDF(nearestPlayer + targetPlayer._moveDirection);
-        return player.GlobalPosition.DirectionTo(nearestPlayer + targetPlayer._moveDirection);
+        return QuerySDF(nearestPlayer + targetPlayer.moveDirection);
+        return player.GlobalPosition.DirectionTo(nearestPlayer + targetPlayer.moveDirection);
     }
     Vector3 RushBall()
     {

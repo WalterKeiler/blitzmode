@@ -174,7 +174,8 @@ public partial class Ball : RigidBody3D
             pm.InvokeEndPlay(true);
         }
         
-        if (Mathf.Abs(GlobalPosition.Z) >= (GameManager.Instance.fieldWidth + 1.5f) / 2f && !pm.inbetweenPlays)
+        if ((Mathf.Abs(GlobalPosition.Z) >= (GameManager.Instance.fieldWidth + 1.5f) / 2f ||
+            Mathf.Abs(GlobalPosition.X) >= (GameManager.Instance.fieldLength / 2f) + GameManager.Instance.EndzoneDepth / 2f)  && !pm.inbetweenPlays)
         {
             pm.InvokeEndPlay(ballState == BallState.Held);
         }
@@ -198,6 +199,7 @@ public partial class Ball : RigidBody3D
         if (ballState is BallState.Free or BallState.Fumbled)
         {
             BallCaught?.Invoke(catchPlayer.isOffence);
+            
             catchPlayer.SetPlayerControlled(catchPlayer.isOffence);
             return;
         }

@@ -29,6 +29,7 @@ public partial class PlayManager : Node
 
 	public bool isExtraPointPlay;
 	public bool isKickoff;
+	public bool caughtKickoff;
 	
 	bool timerRunning = false;
 	public bool midTurnover = false;
@@ -403,6 +404,8 @@ public partial class PlayManager : Node
 		if ((((PlayDirection == 1 && newLos > firstDownLine) || (PlayDirection == -1 && newLos < firstDownLine)) &&
 		     moveLineOfScrimmage) || isKickoff)
 		{
+			if (Mathf.Abs(newLos) >= gm.fieldLength / 2f)
+				newLos = gm.touchBackDistance * -PlayDirection;
 			lineOfScrimmage = newLos;
 			FirstDown();
 		}
@@ -486,6 +489,7 @@ public partial class PlayManager : Node
 		OffencePlay = KickoffPlay;
 		DefencePlay = KickoffPlay;
 		isKickoff = true;
+		caughtKickoff = false;
 		playSelectionUI.Visible = false;
 		CurrentDown = 0;
 		StartPlay();
@@ -595,7 +599,8 @@ public partial class PlayManager : Node
 	
 	private void BallCaught(bool isOff)
 	{
-		if(!isOff && !isKickoff) Turnover(true);
+		if(!isOff && (!isKickoff || caughtKickoff)) Turnover(true);
+		if(isKickoff) caughtKickoff = true;
 	}
 	
 	public async void InvokeEndPlay(bool moveLineOfScrimmage)

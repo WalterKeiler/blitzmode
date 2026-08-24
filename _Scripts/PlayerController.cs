@@ -39,7 +39,7 @@ public partial class PlayerController : Node3D
 	public bool CanBlock;
 	public bool IsBlocked;
 	public bool IsTargeted;
-	public Vector3 _moveDirection;
+	public Vector3 moveDirection;
 	public float blockStamina;
 	public float movementMultiplier = 1;
 	public bool IsTeam1;
@@ -117,7 +117,7 @@ public partial class PlayerController : Node3D
 		PlayerAction = new List<PlayerActions>();
 		PlayersOnTeam = new List<PlayerController>();
 		PlayersNotOnTeam = new List<PlayerController>();
-		_moveDirection = Vector3.Zero;
+		moveDirection = Vector3.Zero;
 		CanCatch = true;
 		CanAct = true;
 		CanMove = true;
@@ -322,7 +322,7 @@ public partial class PlayerController : Node3D
 			if(!PlayersOnTeam[i].playerStats.canBeThrowTarget) continue;
 			
 			Vector3 dir = GlobalPosition.DirectionTo(PlayersOnTeam[i].GlobalPosition);
-			float dot = dir.Dot(_moveDirection);
+			float dot = dir.Dot(moveDirection);
 			
 			if (dot >= closest)
 			{
@@ -372,31 +372,31 @@ public partial class PlayerController : Node3D
 		
 		zDir = inputDir.Z * _mainCam.GetGlobalBasis().X.Normalized();
 		xDir = -inputDir.X * _mainCam.GetGlobalBasis().Z.Normalized();
-		_moveDirection = xDir + zDir;
+		moveDirection = xDir + zDir;
 
-		if(_moveDirection.Length() > .1f)
-			_moveDirection = QuerySDF(GlobalPosition + _moveDirection).Normalized();
+		if(moveDirection.Length() > .1f)
+			moveDirection = QuerySDF(GlobalPosition + moveDirection, moveDirection).Normalized();
 		
-		_moveDirection.Y = 0;
+		moveDirection.Y = 0;
 	}
 
 	public void GetInput(Vector3 direction)
 	{
 		if (inputID != -1 || !canTakeInput) return;
-		_moveDirection = direction.Normalized();
+		moveDirection = direction.Normalized();
 		
-		_moveDirection.Y = 0;
+		moveDirection.Y = 0;
 	}
 
 	void Move(double delta)
 	{
-		_moveDirection.Normalized();
+		moveDirection.Normalized();
 
-		_moveDirection = _moveDirection.Lerp(lastFrameMoveDir, .75f);
-		_moveDirection = _moveDirection.LimitLength();
+		moveDirection = moveDirection.Lerp(lastFrameMoveDir, .75f);
+		moveDirection = moveDirection.LimitLength();
 		
-		Translate(_moveDirection * (float)delta * ((playerStats.Speed + teamStats.Running) + _sprintMultiplier) * movementMultiplier);
-		lastFrameMoveDir = _moveDirection;
+		Translate(moveDirection * (float)delta * ((playerStats.Speed + teamStats.Running) + _sprintMultiplier) * movementMultiplier);
+		lastFrameMoveDir = moveDirection;
 	}
 	
 	
@@ -593,7 +593,7 @@ public partial class PlayerController : Node3D
 			List<PlayerActions> pa = PlayerAction;
 			
 			inputID = -1;
-			_moveDirection = Vector3.Zero;
+			moveDirection = Vector3.Zero;
 			inputManager = null;
 			PlayerAction = new List<PlayerActions>();
 			otherPlayer.inputID = id;
@@ -615,7 +615,7 @@ public partial class PlayerController : Node3D
 		}
 		
 		inputID = im.PlayerID;
-		_moveDirection = Vector3.Zero;
+		moveDirection = Vector3.Zero;
 		inputManager = im;
 		PlayerAction = new List<PlayerActions>();
 		
@@ -625,7 +625,7 @@ public partial class PlayerController : Node3D
 	public void SetAIControlled()
 	{
 		inputID = -1;
-		_moveDirection = Vector3.Zero;
+		moveDirection = Vector3.Zero;
 		inputManager = null;
 		PlayerAction = new List<PlayerActions>();
 		isPlayerControlled = false;
@@ -742,9 +742,9 @@ public partial class PlayerController : Node3D
 		CanBlock = false;
 		PlayerController nearestPlayer = GetNearestPlayer(false);
 		Vector3 dir = GlobalPosition.DirectionTo(nearestPlayer.GlobalPosition);
-		if (nearestPlayer._moveDirection.Dot(dir) < 0.95f && ((nearestPlayer.playerStats.Strength + nearestPlayer.teamStats.Linemen) / 2) < blockStamina)
+		if (nearestPlayer.moveDirection.Dot(dir) < 0.95f && ((nearestPlayer.playerStats.Strength + nearestPlayer.teamStats.Linemen) / 2) < blockStamina)
 		{
-			nearestPlayer._moveDirection = Vector3.Zero;
+			nearestPlayer.moveDirection = Vector3.Zero;
 			nearestPlayer.IsBlocked = true;
 		}
 		else
@@ -866,7 +866,7 @@ public partial class PlayerController : Node3D
 	{
 		PlayerActions[] restrictions =
 		{
-			PlayerActions.Tackled
+			PlayerActions.Tackled,
 		};
 		if(!CanDoAction(PlayerActions.Tackled, restrictions)) return;
 
@@ -915,11 +915,11 @@ public partial class PlayerController : Node3D
 		canTakeInput = false;
 		
 		PlayerController tackleTarget = GetNearestPlayer(nearbyPayersBox, false, true);
-		Vector3 diveDirection = _moveDirection;
+		Vector3 diveDirection = moveDirection;
 		if(tackleTarget != null)
 		{
-			diveDirection = _moveDirection.Dot(GlobalPosition.DirectionTo(tackleTarget.GlobalPosition)) > .25f ?
-				GlobalPosition.DirectionTo(tackleTarget.GlobalPosition).Normalized() : _moveDirection;
+			diveDirection = moveDirection.Dot(GlobalPosition.DirectionTo(tackleTarget.GlobalPosition)) > .25f ?
+				GlobalPosition.DirectionTo(tackleTarget.GlobalPosition).Normalized() : moveDirection;
 		}
 
 		if (diveDirection == Vector3.Zero)
@@ -928,7 +928,7 @@ public partial class PlayerController : Node3D
 			diveDirection = GlobalPosition.DirectionTo(tackleTarget.GlobalPosition).Normalized();
 		}
 		
-		_moveDirection = Vector3.Zero;
+		moveDirection = Vector3.Zero;
 		
 		var tween = CreateTween();
 		tween.SetParallel(true);
@@ -1044,7 +1044,7 @@ public partial class PlayerController : Node3D
 			PlayerAction.Remove(PlayerActions.ChangePlayer);
 	}
 	
-	Vector3 QuerySDF(Vector3 target)
+	Vector3 QuerySDF(Vector3 target, Vector3 intendedDirection)
 	{
 		float minWeight = float.MaxValue;
 		Vector3 finalDir = Vector3.Zero;
@@ -1061,6 +1061,8 @@ public partial class PlayerController : Node3D
 			}
 		}
 
+		if(finalDir.Dot(intendedDirection) < .25f) return Vector3.Zero;
+		
 		return finalDir;
 	}
 }
