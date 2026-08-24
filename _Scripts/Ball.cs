@@ -117,12 +117,12 @@ public partial class Ball : RigidBody3D
     {
         if (isSnap)
         {
-            inAirTimer += (float)delta;
             Move(delta);
+            inAirTimer += (float)delta;
             
             if (bestOption != null && GlobalPosition.DistanceTo(bestOption.Player.GlobalPosition) <= 1f)
             {
-                GD.Print("Caught");
+                GD.Print("Snap Caught");
                 Caught(bestOption.Player);
             }
         }
@@ -185,7 +185,8 @@ public partial class Ball : RigidBody3D
     {
         float d = ballState != BallState.Fumbled ? catchDelay : fumbleDelay;
         if(inAirTimer <= d) return;
-        
+        GD.Print("landPos: " + GlobalPosition + " TargetPos: " + endPoint + " Error: " + GlobalPosition.DistanceTo(endPoint));
+
         GD.Print(inAirTimer);
         inAirTimer = 0;
         init = true;
@@ -240,7 +241,8 @@ public partial class Ball : RigidBody3D
     
     void Move(double delta)
     {
-        Vector3 moveDirection = CalculateBallDirection();
+        Vector3 moveDirection = CalculateBallDirection(delta);
+        GD.Print(delta);
         float s = isSnap ? ballSpeed / 2 : ballSpeed;
         if(GlobalPosition.Y >= .15f)
         {
@@ -251,6 +253,7 @@ public partial class Ball : RigidBody3D
         }
         else
         {
+            GD.Print("landPos: " + GlobalPosition + " TargetPos: " + endPoint + " Error: " + GlobalPosition.DistanceTo(endPoint));
             if(ballState == BallState.Thrown && !pm.isKickoff && !pm.inbetweenPlays)
             {
                 GD.Print("Incomplete Pass");
@@ -302,11 +305,11 @@ public partial class Ball : RigidBody3D
         }
         bestOption = bestPick;
     }
-    
-    public Vector3 CalculateBallDirection()
+
+    public Vector3 CalculateBallDirection(double delta)
     {
         if (bestOption is {CatchPriority: > 10000000}) endPoint = bestOption.Player.GlobalPosition;
-        
+
         Vector3 midPoint = endPoint.Lerp(startPoint, .5f);
         float distance = startPoint.DistanceTo(endPoint);
         midPoint.Y = Mathf.Clamp(BALLHEIGHTMULTIPLIER * distance, 1, 10);
@@ -317,15 +320,25 @@ public partial class Ball : RigidBody3D
 
         Vector2 s = new Vector2(startPoint.X, startPoint.Z);
         Vector2 c = new Vector2(GlobalPosition.X, GlobalPosition.Z);
+        Vector2 m = new Vector2(midPoint.X, midPoint.Z);
+        Vector2 e = new Vector2(endPoint.X, endPoint.Z);
 
         float t = s.DistanceTo(c) / distance;
-        
-        t = Mathf.Clamp(t, 0, 1);
-        
-        if(t >= .999f) downDir = midPoint.DirectionTo(endPoint);
-        
+
+        float t2 = m.DistanceTo(c) / (distance / 2);
+
+        t = Mathf.Clamp(t + .01f, 0, 1);
+
+        Vector2 xz = s.Lerp(e, t);
+
+        float y = Mathf.Lerp(midPoint.Y, 0, t2);
+
+        Vector3 p = new Vector3(xz.X, y, xz.Y);
+
+        if (t >= .999f || !pm.isKickoff) downDir = midPoint.DirectionTo(endPoint);
+
         Vector3 dir = upDir.Lerp(downDir, t);
-        
+        //ir = GlobalPosition.DirectionTo(p);
         return dir.Normalized();
     }
 }

@@ -9,9 +9,9 @@ public partial class PlayerController : Node3D
 {
 	public const float MAXTHROWDISTANCE = 60;
 	public const float SWITCHTARGETCOOLDOWN = .25f;
-	public const float BALLCONTROLLOFFTHROW = .85f;
-	public const float BALLCONTROLLOFFGROUND = .75f;
-	public const float BALLCONTROLLOFFSNAP = .95f;
+	public const float BALLCONTROLLOFFTHROW = .975f;
+	public const float BALLCONTROLLOFFGROUND = .95f;
+	public const float BALLCONTROLLOFFSNAP = .99f;
 	public const int PATHFINDING_STEPS = 32;
 	
 	
@@ -271,7 +271,7 @@ public partial class PlayerController : Node3D
 			CheckForCatch();
 		}
 		
-		if (ball.ballState is BallState.Free or BallState.Fumbled or BallState.Snapped)// && !snap)// && 
+		if (ball.ballState is BallState.Free or BallState.Fumbled or BallState.Snapped && !snap)// && 
 		    //!PlayerAction.Contains(PlayerActions.Tackle) && !PlayerAction.Contains(PlayerActions.Tackled))
 		{
 			float dist = ball.GlobalPosition.DistanceTo(GlobalPosition);
