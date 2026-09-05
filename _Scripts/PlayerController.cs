@@ -13,6 +13,7 @@ public partial class PlayerController : Node3D
 	public const float BALLCONTROLLOFFGROUND = .95f;
 	public const float BALLCONTROLLOFFSNAP = .99f;
 	public const int PATHFINDING_STEPS = 32;
+	public const int PATHFINDING_RANDOMNESS = 2;
 	
 	
 	[Export] public int playerID = -1;
@@ -384,7 +385,8 @@ public partial class PlayerController : Node3D
 	{
 		if (inputID != -1 || !canTakeInput) return;
 		moveDirection = direction.Normalized();
-		
+		if(moveDirection.Length() > .1f)
+			moveDirection = QuerySDF(GlobalPosition + moveDirection, moveDirection).Normalized();
 		moveDirection.Y = 0;
 	}
 
@@ -1050,7 +1052,16 @@ public partial class PlayerController : Node3D
 		Vector3 finalDir = Vector3.Zero;
 		for (int i = 0; i < PATHFINDING_STEPS; i++)
 		{
-			Vector3 unitDir = MathW.PointOnUnitCircleXZ(i,i,PATHFINDING_STEPS);
+			float randX = gm.rand.Next(-PATHFINDING_RANDOMNESS, PATHFINDING_RANDOMNESS);
+			float randZ = gm.rand.Next(-PATHFINDING_RANDOMNESS, PATHFINDING_RANDOMNESS);
+
+			if (inputID != -1)
+			{
+				randX = 0;
+				randZ = 0;
+			}
+			
+			Vector3 unitDir = MathW.PointOnUnitCircleXZ(i + randX,i + randZ,PATHFINDING_STEPS);
             
 			float testWeight = pm.QuerySDF(GlobalPosition + unitDir * .1f, target, this);
             
