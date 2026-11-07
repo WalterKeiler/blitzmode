@@ -151,6 +151,7 @@ public partial class PlaySelectionUIManager : Control
         int currentYard = Mathf.RoundToInt((pm.PlayDirection * pm.lineOfScrimmage) + gm.fieldLength / 2f);
         
         string yardsTillFirst = first + currentYard < gm.fieldLength ? first.ToString() : "Goal";
+        yardsTillFirst = first !=  0 ? yardsTillFirst : "Inches";
         
         yardDownText.Text =
             $"{gm.DownsTillTurnover - (pm.CurrentDown - 1)}{suffixLookup[suffixD]} & " +

@@ -417,7 +417,14 @@ public partial class AIManager : Node
             float ballTarget = float.MaxValue;
 
             if (ball.ballState == BallState.Thrown)
-                ballTarget = pm.QuerySDF(player.GlobalPosition + unitDir * .1f, ball.endPoint, player) - 10;
+            {
+                float ballDist = player.GlobalPosition.DistanceTo(ball.GlobalPosition);
+                ballTarget = Mathf.Clamp(pm.QuerySDF(player.GlobalPosition + unitDir * .1f, ball.endPoint, player) - 10, -2, float.MaxValue);
+                if (ballDist < 5)
+                {
+                    ballTarget = pm.QuerySDF(player.GlobalPosition + unitDir * .1f, ball.endPoint, player) - 10;
+                }
+            }
 
             testWeight = Mathf.Min(testWeight, ballTarget);
             if (minWeight > testWeight)

@@ -13,7 +13,7 @@ public partial class PlayerController : Node3D
 	public const float BALLCONTROLLOFFGROUND = .95f;
 	public const float BALLCONTROLLOFFSNAP = .99f;
 	public const int PATHFINDING_STEPS = 32;
-	public const int PATHFINDING_RANDOMNESS = 2;
+	public const int PATHFINDING_RANDOMNESS = 1;
 	
 	
 	[Export] public int playerID = -1;
